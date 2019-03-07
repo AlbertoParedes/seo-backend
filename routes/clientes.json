@@ -1,0 +1,579 @@
+{
+  "clientes": {
+    "-LJEGvPSWAeib5i9rR90": {
+      "web": "http://www.academiasisa.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPVZnXGjd6rdPu5": {
+      "web": "https://agenciadisenograficomadrid.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPWKbAhCnHFQOd0": {
+      "web": "https://agenciamarketingmadrid.online",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPXk1d63yyOtyzk": {
+      "web": "https://agenciaredessocialesmadrid.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPYBApgL7xlE37L": {
+      "web": "https://agenciasemadwords.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPYBApgL7xlE37M": {
+      "web": "https://agenciaseo.online",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPZYUpZvmTYBbUG": {
+      "web": "https://agenciaseomadrid.online",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPZYUpZvmTYBbUH": {
+      "web": "http://alufase.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvP_PiXHib9OcRvS": {
+      "web": "https://www.arteneo.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvP_PiXHib9OcRvT": {
+      "web": "https://atencionycuidadosdelbebe.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPaOr5zYFVcsmI_": {
+      "web": "http://autoescuelaretiro.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPbJdRTHycJKMsX": {
+      "web": "http://www.babyliss.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPbJdRTHycJKMsY": {
+      "web": "http://www.bertolini.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPd8drNnG3pwXnL": {
+      "web": "http://boracaymasajesmadrid.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPe53Sk2RILjcmA": {
+      "web": "http://www.brainstormer.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPfyejLaJWRSHyU": {
+      "web": "http://www.camisetapersonal.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPg6NjeQoDqhP3w": {
+      "web": "http://www.carisalfashion.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPhiduOS3haF-V3": {
+      "web": "https://casajovenonline.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPi8tAZ5sMW__Qz": {
+      "web": "https://cefegen.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPi8tAZ5sMW__R-": {
+      "web": "http://www.cisdet.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPi8tAZ5sMW__R0": {
+      "web": "https://citasyfrasesde.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPjlOcsKg-jExcE": {
+      "web": "https://www.clickprinting.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPkY_KeUhkiaavi": {
+      "web": "https://www.clinicaelenajimenez.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPmiYDFaAk7ZGLT": {
+      "web": "https://clinic-cloud.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPoDTpmE9Dr_LDp": {
+      "web": "https://consultorseofreelance.eu",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPoDTpmE9Dr_LDq": {
+      "web": "https://cryosense.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPpI4IHaE-P7M-v": {
+      "web": "https://cronopiosidiomas.com/en",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPq__4VMTRp0cZE": {
+      "web": "https://demascotas.info",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPrVcXcdrIsFaHA": {
+      "web": "http://disenopaginaswebmadrid.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPsEopBz0rBoR_8": {
+      "web": "http://doctoraroson.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPsEopBz0rBoR_9": {
+      "web": "https://www.doctoraso.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPthcYNPp_UehuU": {
+      "web": "https://www.drguilarte.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPuwrKnLblWSjcY": {
+      "web": "https://www.elclubdelte.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPvmXYKB7MjXC3c": {
+      "web": "https://empresaseomadrid.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPvmXYKB7MjXC3d": {
+      "web": "https://www.entretartasypanales.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvPvmXYKB7MjXC3e": {
+      "web": "https://eraformacion.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSCNYNh9hmqwqUS": {
+      "web": "https://escritoryredactorfreelance.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSEwFeHsCjc43eS": {
+      "web": "https://www.esenzzia.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSF9C7RbTrna8JB": {
+      "web": "https://financiatuviajefindecurso.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSGSRIjJ-Rqk786": {
+      "web": "https://www.forenex.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSHAg8On2VHOqSo": {
+      "web": "http://fotografosdebodasmadrid.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSHAg8On2VHOqSp": {
+      "web": "http://www.gestiautotramitaciones.net",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSJ9tDMGTvMMEY1": {
+      "web": "http://www.gruasmoreno.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSKzjbGY6ObaP6R": {
+      "web": "https://grupochamartin.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSKzjbGY6ObaP6S": {
+      "web": "https://www.guiasboira.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSMUAuYOEsUCmJn": {
+      "web": "http://hotelandcroquetclubqc.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSOqjLn0bzbokim": {
+      "web": "http://www.iis.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSROvcas8SRj4Gk": {
+      "web": "http://www.madridandbeyond.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSROvcas8SRj4Gl": {
+      "web": "https://madrid-reformasintegrales.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSSYXr4Mbm1fLPc": {
+      "web": "http://masajesindira.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSSYXr4Mbm1fLPd": {
+      "web": "https://www.mipodo.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSUEfKqBFD5_6_2": {
+      "web": "https://mundodelmovil.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSV7o14ebKoDcuh": {
+      "web": "http://www.nomadphotoexpeditions.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSV7o14ebKoDcui": {
+      "web": "https://www.nonamesport.net",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSV7o14ebKoDcuj": {
+      "web": "http://ociuspark.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSWTVnIv_HTQZe9": {
+      "web": "https://ofertasdepanalesbaratosonline.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSXKuBJwt23p-pM": {
+      "web": "http://www.oleomac.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSXKuBJwt23p-pN": {
+      "web": "http://outletbebesonline.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSYZKfP8sPoEFBD": {
+      "web": "https://www.pawnshop.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSYZKfP8sPoEFBF": {
+      "web": "https://perfumesbaratos.online",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSYZKfP8sPoEFBG": {
+      "web": "https://plusultra.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSZWAySLFIUALqJ": {
+      "web": "https://www.poceriasinzanja.es",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvS_8z4V0XzXCpa3": {
+      "web": "https://puntodete.com",
+      "status": 0,
+      "done": false
+    },
+    "-LJEGvSbUmZDWp82vGVi": {
+      "web": "https://www.regalisma.com",
+      "status": 0,
+      "done": false
+    },
+    "-LLYpHiC1VXYRCXxKHHf": {
+      "web": "https://www.vipreformas.es",
+      "status": 0,
+      "done": false
+    },
+    "-LLZ5Xa0XhGmaf5QyLa0": {
+      "web": "https://www.vibrashop.es",
+      "status": 0,
+      "done": false
+    },
+    "-LNU2jug-AbjX4q5eQ8s": {
+      "web": "https://cerrajeroenbarcelona.es",
+      "status": 0,
+      "done": false
+    },
+    "-LNU3iR5iw9V-JPk1f-I": {
+      "web": "https://www.ctxdetectives.com",
+      "status": 0,
+      "done": false
+    },
+    "-LNUD4eN5J070yPAiayp": {
+      "web": "https://institutoeuropeodelsueno.cl",
+      "status": 0,
+      "done": false
+    },
+    "-LNUI2c4nfB4z7qYDqt5": {
+      "web": "https://www.gisela.com",
+      "status": 0,
+      "done": false
+    },
+    "-LNjKdtX9r5iJ4kAqKBu": {
+      "web": "https://www.wunder-house.com",
+      "status": 0,
+      "done": false
+    },
+    "-LNvVgj8kOuI0oO_u5ue": {
+      "web": "https://www.yoseomarketing.com",
+      "status": 0,
+      "done": false
+    },
+    "-LO2yb66iyGZYgsLFQ35": {
+      "web": "http://juraris.es",
+      "status": 0,
+      "done": false
+    },
+    "-LO2zE6-btTEQieCWH5v": {
+      "web": "https://www.autonomosyemprendedor.es",
+      "status": 0,
+      "done": false
+    },
+    "-LOHS_pnaHjHV72UUjvm": {
+      "web": "http://www.lfgcartonaje.com",
+      "status": 0,
+      "done": false
+    },
+    "-LOHVd-R2BnIusVFixGl": {
+      "web": "http://www.novaquasl.es",
+      "status": 0,
+      "done": false
+    },
+    "-LOHYOQsJhPRmzRmz6Wr": {
+      "web": "https://www.segurocochedealquiler.com",
+      "status": 0,
+      "done": false
+    },
+    "-LOHYjntaq89UODtRTN3": {
+      "web": "https://www.seo-posicionamientoweb.com",
+      "status": 0,
+      "done": false
+    },
+    "-LOHc7-Td_2w3UmgA3UL": {
+      "web": "http://www.sinceo2.com",
+      "status": 0,
+      "done": false
+    },
+    "-LOHhSlf3v0JHVKUTaVU": {
+      "web": "http://sleepinstitute.eu",
+      "status": 0,
+      "done": false
+    },
+    "-LOHhh2kmsTfpJjX7858": {
+      "web": "http://www.speakenglishgalicia.com",
+      "status": 0,
+      "done": false
+    },
+    "-LOHi0zoYT1NvwsB6Zbn": {
+      "web": "http://tartasdepanales.com",
+      "status": 0,
+      "done": false
+    },
+    "-LOHkDZXqZhF7OIluvFk": {
+      "web": "https://www.termiser.com",
+      "status": 0,
+      "done": false
+    },
+    "-LOHke48buvBf4foONJx": {
+      "web": "http://tradiciondelgourmet.com",
+      "status": 0,
+      "done": false
+    },
+    "-LOHnVep1YwGi15sbxSw": {
+      "web": "http://www.trainingexpress.es",
+      "status": 0,
+      "done": false
+    },
+    "-LOHoZlMKxdc2gQBAIl4": {
+      "web": "https://tratamientoyenfermedades.com",
+      "status": 0,
+      "done": false
+    },
+    "-LOHozyFjtfGw2CX_Pct": {
+      "web": "https://tumejorestetica.com",
+      "status": 0,
+      "done": false
+    },
+    "-LOHpGSAZ_WahHBJdMql": {
+      "web": "https://valdebebas.es",
+      "status": 0,
+      "done": false
+    },
+    "-LOHpb_sWNRS4wLPbA2m": {
+      "web": "https://www.veithinstitut.com",
+      "status": 0,
+      "done": false
+    },
+    "-LOHv1WvXo_Fb2BuZdPU": {
+      "web": "http://wearebold.es",
+      "status": 0,
+      "done": false
+    },
+    "-LOHxu8nQdG8T1w8KMda": {
+      "web": "https://www.wunder-house.com/es",
+      "status": 0,
+      "done": false
+    },
+    "-LQcVP8CzUNbDnS5AqO4": {
+      "web": "https://neteris.com",
+      "status": 0,
+      "done": false
+    },
+    "-LRQznWr4WQAbZbyCry1": {
+      "web": "https://luppo.es",
+      "status": 0,
+      "done": false
+    },
+    "-LRwIOqNUZLCIqg_-2_k": {
+      "web": "https://sexshop.thagson.com",
+      "status": 0,
+      "done": false
+    },
+    "-LRwcy5mHClHj2On4eV_": {
+      "web": "http://www.vivepanama.es",
+      "status": 0,
+      "done": false
+    },
+    "-LRwdD0fhUe-Y8zqdbGt": {
+      "web": "http://www.vivesrilanka.es",
+      "status": 0,
+      "done": false
+    },
+    "-LSmyoWnX31oEtXWgdyq": {
+      "web": "http://www.maestre.es",
+      "status": 0,
+      "done": false
+    },
+    "-LSmzT1XnUqoCVrzXmQI": {
+      "web": "https://www.thejmum.com",
+      "status": 0,
+      "done": false
+    },
+    "-LTO7N39v_VhQP6sCSEO": {
+      "web": "https://www.clickprinting.fr",
+      "status": 0,
+      "done": false
+    },
+    "-LTR4z5dE50UYSQUnioZ": {
+      "web": "https://cryosenseusa.com",
+      "status": 0,
+      "done": false
+    },
+    "-LTR5hxJ32H1vTdqCiyg": {
+      "web": "https://cabinecryotherapie.fr",
+      "status": 0,
+      "done": false
+    },
+    "-LTgiZr6LHItFEsuPmAy": {
+      "web": "https://somosmejor.es",
+      "status": 0,
+      "done": false
+    },
+    "-LTguLGeTBcPj7kJWQ_-": {
+      "web": "https://alejandroteviste.com",
+      "status": 0,
+      "done": false
+    },
+    "-LU1ItmeKt5WahsSB2OV": {
+      "web": "https://aemahispanica.com",
+      "status": 0,
+      "done": false
+    },
+    "-LU1J7e_jpeXm_3DD0aM": {
+      "web": "https://sotodelhenares.es",
+      "status": 0,
+      "done": false
+    },
+    "-LU1JQnocWv8eOvjVHx3": {
+      "web": "https://aema.info",
+      "status": 0,
+      "done": false
+    },
+    "-LVN-Leq_ompfXpr4pM0": {
+      "web": "https://cryosense.de",
+      "status": 0,
+      "done": false
+    },
+    "-LWH9VydJFGqDbTktMV_": {
+      "web": "https://shawellnessclinic.com/es",
+      "status": 0,
+      "done": false
+    },
+    "-LWH9gcqyAnCwqAYrYGF": {
+      "web": "https://shawellnessclinic.com/en",
+      "status": 0,
+      "done": false
+    },
+    "-LWH9rG01r8E_aE86Hcf": {
+      "web": "https://shawellnessclinic.com/ru",
+      "status": 0,
+      "done": false
+    },
+    "-LXre2IXHLvtaDpZLrHk": {
+      "web": "https://atiempoadicciones.com",
+      "status": 0,
+      "done": false
+    },
+    "-LXrfx0AtLDAszkLoLBG": {
+      "web": "https://www.ladolcecita.es",
+      "status": 0,
+      "done": false
+    },
+    "-LXrhAR8JRBDcIH3z5_U": {
+      "web": "https://englishforfun.es",
+      "status": 0,
+      "done": false
+    },
+    "-LZ0CiIYJ2ZSnY2cI48M": {
+      "web": "https://www.ircongas.com",
+      "status": 0,
+      "done": false
+    },
+    "-LZuOgemlu6XBEG66uig": {
+      "web": "https://tuboutiquenatural.com",
+      "status": 0,
+      "done": false
+    }
+  }
+}
