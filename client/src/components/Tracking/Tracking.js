@@ -34,7 +34,7 @@ class Tracking extends Component {
   render() {
 
     return (
-      <div className={`${!this.props.visibility?'display_none':'panel-colegios'}`} >
+      <div className={`${!this.props.visibility?'display_none':'panel-tracking'}`} >
 
         <HeaderTracking
 

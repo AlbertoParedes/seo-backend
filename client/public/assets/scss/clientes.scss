@@ -1,0 +1,41 @@
+/*PANEL CLIENTE TRACKING*/
+.panel-clientes{background: #FEFEFE;display: inline-grid;width: 100%;}
+
+#table-clientes{width: 100%;border-collapse: collapse;table-layout: fixed;}
+#table-clientes thead {background: #EAEEF0;border: 1px solid #e5e6e7;color: #8298A3;font-size: 11px;}
+#table-clientes tr td{border-bottom: 1px solid #e5e6e7;padding: 12px; color: #869BA6}
+#table-clientes tr th{padding: 12px;}
+#table-clientes tbody tr:hover { -webkit-box-shadow: 0px 0px 22px 8px rgba(0, 0, 0, 0.05); box-shadow: 0px 0px 22px 8px rgba(0, 0, 0, 0.05);}
+#table-clientes tbody tr:hover i.idit-icon {display: flex;}
+
+#table-clientes tbody{border: 1px solid #e5e6e7;}
+#table-clientes tr th {text-transform: uppercase;}
+#table-clientes tr th.clientes-checkbox {width: 57px;cursor: pointer;}
+#table-clientes tr th.clientes-status {cursor: pointer; width: 75px;text-align: center;}
+#table-clientes tr th.clientes-web {cursor: pointer;}
+#table-clientes tr th.clientes-nombre {cursor: pointer;}
+#table-clientes tr th.clientes-seo {cursor: pointer;width: 145px;text-align: center;}
+#table-clientes tr th.clientes-activo {width: 145px;cursor: pointer;text-align: center;}
+#table-clientes tr th.clientes-more  /*More*/{width: 80px;}
+
+
+#table-clientes tr td.clientes-checkbox {    width: 57px;text-align: center;}
+#table-clientes tr td.clientes-status {cursor: pointer; width: 75px;text-align: center;}
+#table-clientes tr td.clientes-web {font-size: 14.5px;color: #253238;font-weight: 500;}
+#table-clientes tr td.clientes-nombre {cursor: pointer;}
+#table-clientes tr td.clientes-seo{cursor: pointer;width: 145px;text-align: center;}
+#table-clientes tr td.clientes-activo{width: 145px;text-align: center;}
+#table-clientes tr td.clientes-more:hover {color: #1090f7;}
+
+
+/*MICRONICHOS*/
+
+.container-micronichos{
+  background: white;
+  box-shadow: 0px 0px 39px -9px #939393b5;
+  padding: 40px 30px;
+  padding-top: 20px;
+  border-radius: 15px;
+  margin-top: 30px;
+  margin-bottom: 35px;
+}

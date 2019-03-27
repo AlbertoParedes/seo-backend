@@ -29,7 +29,7 @@ class ListaFiltros extends Component {
         filtros[id_parent].todos.checked=all
       }
 
-      this.props.updateFiltros(filtros)
+      //this.props.updateFiltros(filtros)
     }
 
 

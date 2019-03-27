@@ -1,27 +1,52 @@
 import { combineReducers } from 'redux';
 
-import Clientes from './reducer-clientes';
-import Empleado from './reducer-empleado';
-import Empleados from './reducer-empleados';
+import Clientes from './Global/reducer-clientes';
+import Empleado from './Global/reducer-empleado';
+import Empleados from './Global/reducer-empleados';
+import ClienteSeleccionado from './Global/reducer-cliente-seleccionado'
+import PanelHome from './Global/reducer-panel-home'
+import ItemsClientes from './Global/reducer-items-clientes'
 
-import ClienteSeleccionado from './reducer-cliente-seleccionado'
+/*Panel clientes*/
+import PanelClientes from './clientes/reducer-panel-clientes'
+import FiltroClientesLista from './clientes/reducer-filtro-clientes-lista'
+import ItemsClientesLista from './clientes/reducer-items-clientes-lista'
+import ClientesListaEdit from './clientes/reducer-clientes-lista-edit'
+/*--------------*/
 
-import PanelHome from './reducer-panel-home'
-import ItemsClientes from './reducer-items-clientes'
 
+
+
+/*Panel linkbuilding*/
+import Linbuilding from './linkbuilding/reducer-linkbuilding'
+/*--------------*/
+
+
+//Tracking -------------------------------------------------
 import ItemsTrackingKeywords from './tracking/reducer-items-tracking-keywords'
-
 import FiltroTrackingLista from './tracking/reducer-filtro-tracking-lista'
 import FiltroTrackingKeywords from './tracking/reducer-filtro-tracking-keywords'
 import PanelTracking from './tracking/reducer-panel-tracking'
 import KeywordTrackingSelected from './tracking/reducer-keyword-tracking-selected'
 import TrackingKeywordEdit from './tracking/reducer-tracking-keyword-edit'
 import TrackingClientesEdit from './tracking/reducer-tracking-clientes-edit'
+/*--------------------------------------------------------*/
 
 const allReducers = combineReducers({
   clientes : Clientes,
   empleado: Empleado,
   empleados: Empleados,
+
+  /*Panel clientes*/
+  panel_clientes: PanelClientes,
+  filtros_clientes_lista: FiltroClientesLista,
+  items_clientes_lista: ItemsClientesLista,
+  clientes_lista_edit: ClientesListaEdit,
+  /*--------------*/
+
+  /*Panel linkbuilding*/
+  linkbuilding:Linbuilding,
+  /*--------------*/
 
   cliente_seleccionado:ClienteSeleccionado,
 

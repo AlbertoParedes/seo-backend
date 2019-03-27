@@ -36,7 +36,6 @@ class HeaderTracking extends Component {
     else if(nextProps.searchByKeywords !== this.props.searchByKeywords){ return true; }
 
 
-    else if(nextProps.panel !== this.props.panel){ return true; }
     else if(nextProps.cliente_seleccionado !== this.props.cliente_seleccionado){ return true; }
     else if(nextProps.panel_tracking !== this.props.panel_tracking){return true}
     return false;
@@ -86,7 +85,7 @@ class HeaderTracking extends Component {
         </div>
 
         <p className='title-header'>
-          <span>Clientes</span>
+          <span>Tracking</span>
           {this.props.cliente_seleccionado? <i className="material-icons align-center color-gris">chevron_right</i> :null}
           {this.props.cliente_seleccionado? <span>{this.props.cliente_seleccionado.dominio}</span> :null}
 

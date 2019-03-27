@@ -145,6 +145,13 @@ function limpiarString(text){
   return text.trim()
 }
 
+function getFecha(){
+  var d = new Date();
+  var month = d.getMonth() + 1;
+  var mes = month> 10 ?'0'+month:month
+  return mes;
+}
+
 function isEmpty(obj) { for(var key in obj) { if(obj.hasOwnProperty(key)) return false; } return true;}
 module.exports = {
   deleteEspacios,
@@ -166,5 +173,6 @@ module.exports = {
   getDominio,
   cleanWeb,
   limpiarString,
-  cleanProtocolo
+  cleanProtocolo,
+  getFecha
 };

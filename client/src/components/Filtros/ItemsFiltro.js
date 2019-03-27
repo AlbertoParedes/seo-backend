@@ -6,6 +6,15 @@ class ItemsFiltro extends Component {
   updateItem = (id_parent,id_child,value)=>{
     var filtros = dotProp.set(this.props.filtros, `${id_parent}.items.${id_child}.checked`, value);
 
+    if(filtros[id_parent].required && filtros[id_parent].type==='radiobutton'){
+      Object.entries(filtros[id_parent].items).forEach(([k,o])=>{
+        if(id_child!==k && value ===false){
+          o.checked=true;
+        }
+
+      })
+    }
+
     var encontrado = Object.entries(filtros[id_parent].items).some(([k,o])=>{ return o.checked })
     if(!encontrado && filtros[id_parent].todos && filtros[id_parent].type==='radiobutton'){
       filtros[id_parent].todos.checked=true;
