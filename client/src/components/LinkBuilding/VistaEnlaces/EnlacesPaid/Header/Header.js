@@ -2,10 +2,11 @@ import React, { Component } from 'react'
 import EmpleadoMenu from '../../../../Global/EmpleadoMenu'
 import FiltroEnlaces from './FiltroEnlaces/Filtros'
 import InfoItems from './InfoItems'
+import ListaOpciones from '../../../../Global/ListaOpciones';
 import search from '../../../../Global/Imagenes/search.svg';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setPanelMediosPaidLinkbuilding } from '../../../../../redux/actions';
+import { setPanelEnlacesPaidLinkbuilding, setSearchTableEnlacesPaidLB, setSearchByTableEnlacesPaidLB  } from '../../../../../redux/actions';
 import functions from '../../../../Global/functions'
 
 class Header extends Component{
@@ -13,10 +14,6 @@ class Header extends Component{
   constructor(props){
     super(props)
     this.state={
-      searchOpciones:{
-        'web':{valor:'web'},
-        'nombre':{valor:'nombre'}
-      },
     }
   }
 
@@ -24,6 +21,8 @@ class Header extends Component{
 
     if(nextProps.search !== this.props.search){ return true; }
     else if(nextProps.searchBy !== this.props.searchBy){ return true; }
+    else if(nextProps.panel !== this.props.panel){ return true; }
+    else if(nextProps.cliente_seleccionado !== this.props.cliente_seleccionado){ return true; }
 
     return false;
   }
@@ -32,9 +31,6 @@ class Header extends Component{
     return(
       <div className='container-header-panels pr'>
 
-        {/*Div para mensajes sobre los clientes*/}
-        <div id="lb-clientes-mensaje" className='toast'></div>
-
         {/*Barra superior con el input para buscar los clientes y el empleado*/}
         <div className='top-bar-panel'>
           <div className='container-search-panel pr'>
@@ -42,10 +38,10 @@ class Header extends Component{
             {/*Input para buscar a los clientes*/}
             <div>
               <img className='icon-search-panel' src={search} alt=''/>
-              <input placeholder='Buscar clientes por' value={this.props.search} onChange={(e)=>this.props.changeSearch(e.target.value)} />
-              {/*this.props.search.trim()===''?
-                <ListaOpciones opciones={this.state.searchOpciones} opcion_selected={this.props.searchBy} changeOpcion={(id)=>this.props.changeSearchBy(id)}/>:null
-              */}
+              <input placeholder='Buscar clientes por' value={this.props.search} onChange={(e)=>this.props.setSearchTableEnlacesPaidLB(e.target.value)} />
+              {this.props.search.trim()===''?
+                <ListaOpciones opciones={this.props.lista_search_by} opcion_selected={this.props.searchBy} changeOpcion={(id)=>this.props.setSearchByTableEnlacesPaidLB(id)}/>:null
+              }
             </div>
 
           </div>
@@ -57,7 +53,7 @@ class Header extends Component{
           <i className="material-icons align-center color-gris">chevron_right</i>
           <span>Enlaces de pago</span>
           {this.props.cliente_seleccionado?<i className="material-icons align-center color-gris">chevron_right</i>:null}
-          {this.props.cliente_seleccionado?<span>{functions.cleanProtocolo(this.props.cliente_seleccionado.web)}</span>:null}
+          {this.props.cliente_seleccionado?<span className='block-with-text'>{functions.cleanProtocolo(this.props.cliente_seleccionado.web)}</span>:null}
         </p>
 
 
@@ -75,6 +71,12 @@ class Header extends Component{
 
 }
 
-function mapStateToProps(state){return{ cliente_seleccionado: state.cliente_seleccionado, panel:state.linkbuilding.enlaces.tipos.paid.panel}}
-function matchDispatchToProps(dispatch){ return bindActionCreators({ setPanelMediosPaidLinkbuilding }, dispatch) }
+function mapStateToProps(state){return{
+  cliente_seleccionado: state.cliente_seleccionado,
+  panel: state.linkbuilding.enlaces.tipos.paid.panel,
+  search:state.linkbuilding.enlaces.tipos.paid.paneles.lista.search,
+  searchBy:state.linkbuilding.enlaces.tipos.paid.paneles.lista.searchBy,
+  lista_search_by:state.linkbuilding.enlaces.tipos.paid.paneles.lista.lista_search_by,
+}}
+function matchDispatchToProps(dispatch){ return bindActionCreators({ setPanelEnlacesPaidLinkbuilding, setSearchTableEnlacesPaidLB, setSearchByTableEnlacesPaidLB }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(Header);

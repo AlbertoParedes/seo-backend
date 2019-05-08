@@ -28,7 +28,7 @@ class ItemMedioFree extends Component {
 
 
     return(
-      <tr data-id={this.props.medio.id_medio}>
+      <tr data-id={this.props.medio.id_medio} className={`${this.props.medio_seleccionado && this.props.medio_seleccionado.id_medio===this.props.medio.id_medio?'active-row-table':''}`}>
 
         {/*this.props.clientes_edit && this.props.clientes_edit.activo?
 
@@ -40,7 +40,7 @@ class ItemMedioFree extends Component {
         */}
 
         <td className='lb-medios-free-status'>
-          <div className={`status-point ${!this.props.medio.eliminado?'good-status':'wrong-status'}      `} ></div>
+          <div className={`status-point ${this.props.medio.activo?'good-status':'warning-status'} ${!this.props.medio.eliminado?'':'wrong-status'}      `} ></div>
         </td>
 
         <td className='lb-medios-free-web block-with-text'>
@@ -55,10 +55,11 @@ class ItemMedioFree extends Component {
         </td>
 
 
-
+        {/*
         <td  className='lb-medios-free-tematicas'>
           <span> </span>
         </td>
+        */}
         <td  className='lb-medios-free-descripcion block-with-text'>
           <span>{this.props.medio.descripcion}</span>
         </td>
@@ -68,7 +69,7 @@ class ItemMedioFree extends Component {
         </td>
 
 
-        <td  className='lb-medios-free-requiere'>
+        <td  className='lb-medios-free-requiere block-with-text'>
           <span>{requiere}</span>
         </td>
 

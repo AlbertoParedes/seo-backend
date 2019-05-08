@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import functions from '../../../../../Global/functions'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setSortTableClientesPaidLB, setItemsLoadTableClientesPaidLB, setInfoTableClientesPaidLB,setEnlacesFree, setInfoTableEnlacesFreeLB } from '../../../../../../redux/actions';
+import { setSortTableClientesFreeLB, setItemsLoadTableClientesFreeLB, setInfoTableClientesFreeLB,setEnlacesFree, setInfoTableEnlacesFreeLB } from '../../../../../../redux/actions';
 import ItemEnlaceFree from './ItemEnlaceFree'
 import ItemCliente from './ItemCliente'
 import $ from 'jquery'
@@ -31,20 +31,28 @@ class PanelLista extends Component{
       cliente_seleccionado: this.props.cliente_seleccionado,
       enlaces:{},
       enlaces_ordenados:[],
-      fecha:this.props.fecha
+      fecha:this.props.fecha,
+
+
+      empleado: this.props.empleado
     }
   }
 
-  componentWillMount = () => { this.ordenarClientes(); this.getEnlaces()}
+  componentDidMount = () => {
+    this.scrollToCliente()
+  }
+
+  componentWillMount = () => { this.ordenarClientes(); this.getEnlaces();this.seleccionarCliente()}
 
   componentWillReceiveProps = newProps => {
-
+    //console.log('traza1');
     if(this.state.clientes!==newProps.clientes ||
        this.state.sortBy!==newProps.sortBy ||
        this.state.des!==newProps.des ||
        this.state.filtros!==newProps.filtros ||
        this.state.search!==newProps.search ||
-       this.state.searchBy!==newProps.searchBy
+       this.state.searchBy!==newProps.searchBy ||
+       this.state.fecha!==newProps.fecha
      ){
 
       this.setState({
@@ -53,23 +61,68 @@ class PanelLista extends Component{
         des:newProps.des,
         filtros:newProps.filtros,
         search:newProps.search,
-        searchBy:newProps.searchBy
+        searchBy:newProps.searchBy,
+        fecha:newProps.fecha
       }, () => { this.ordenarClientes() })
 
     }else if(this.state.items!==newProps.items){this.setState({items:newProps.items})}
 
     if(this.props.visibility!==newProps.visibility && newProps.visibility){this.scrollToCliente()}
 
+    if(this.state.empleado!==newProps.empleado ){this.setState({empleado:newProps.empleado})}
+
     if(this.state.cliente_seleccionado!==newProps.cliente_seleccionado ){
+      //console.log('traza2');
       if(!this.state.cliente_seleccionado){
         this.setState({cliente_seleccionado:newProps.cliente_seleccionado },()=>this.getEnlaces())
       }else{
-        if(this.props.cliente_seleccionado.id_cliente!==newProps.cliente_seleccionado.id_cliente){
+        if(this.state.cliente_seleccionado.id_cliente!==newProps.cliente_seleccionado.id_cliente){
           this.setState({cliente_seleccionado:newProps.cliente_seleccionado },()=>this.getEnlaces())
+        }else{
+
+          //habrá que cambiar solo el cliente seleccionado si cambia de empleado editandolo
+          if(this.state.cliente_seleccionado.servicios.linkbuilding.free.editando_por !== newProps.cliente_seleccionado.servicios.linkbuilding.free.editando_por ||
+             this.state.cliente_seleccionado.servicios.linkbuilding.paid.editando_por !== newProps.cliente_seleccionado.servicios.linkbuilding.paid.editando_por){
+            this.setState({cliente_seleccionado:newProps.cliente_seleccionado }, ()=>{this.seleccionarCliente()})
+          }
+
         }
       }
     }else if(newProps.cliente_seleccionado && this.state.fecha!==newProps.fecha){
-      this.setState({cliente_seleccionado:newProps.cliente_seleccionado, fecha:newProps.fecha },()=>this.getEnlaces())
+      //console.log('traza3');
+      this.setState({cliente_seleccionado:newProps.cliente_seleccionado, fecha:newProps.fecha },()=>this.getEnlaces(), this.ordenarClientes())
+    }else if(this.state.fecha!==newProps.fecha){
+      //console.log('traza4');
+      this.setState({fecha:newProps.fecha },()=>this.ordenarClientes())
+    }
+
+
+
+  }
+
+  seleccionarCliente = () => {
+    if(this.props.cliente_seleccionado){
+      try { if(this.state.cliente_seleccionado.servicios.linkbuilding.free.editando_por.id_empleado===this.state.empleado.id_empleado){return null}} catch (e) { }
+      var multiPath = {}
+      if(!this.state.cliente_seleccionado.servicios.linkbuilding.free.editando_por){
+        multiPath[`Empleados/${this.state.empleado.id_empleado}/session/cliente_seleccionado`]=this.state.cliente_seleccionado.id_cliente
+        multiPath[`Empleados/${this.props.empleado.id_empleado}/session/subpanel`]='linkbuilding_free'
+        multiPath[`Clientes/${this.state.cliente_seleccionado.id_cliente}/servicios/linkbuilding/free/editando_por`]={ id_empleado: this.state.empleado.id_empleado, nombre: this.state.empleado.nombre+' '+this.state.empleado.apellidos, subpanel:'linkbuilding_free'}
+      }else{
+        multiPath[`Empleados/${this.state.empleado.id_empleado}/session/cliente_seleccionado`]=this.state.cliente_seleccionado.id_cliente
+      }
+      try {
+        if(this.props.cliente_seleccionado.servicios.linkbuilding.paid.editando_por.id_empleado===this.props.empleado.id_empleado){
+            multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/paid/editando_por`]=null
+            multiPath[`Empleados/${this.props.empleado.id_empleado}/session/subpanel`]='linkbuilding_free'
+        }
+      } catch (e) {}
+      try {
+        if(this.state.empleado.session.cliente_seleccionado && this.state.empleado.session.cliente_seleccionado!==this.state.cliente_seleccionado.id_cliente){
+          multiPath[`Clientes/${this.state.empleado.session.cliente_seleccionado}/servicios/linkbuilding/free/editando_por`]=null
+        }
+      } catch (e) { }
+      if(Object.keys(multiPath).length>0){ db.update(multiPath) }
     }
   }
 
@@ -84,7 +137,6 @@ class PanelLista extends Component{
         });
         //console.log(multiPath);
         //db.update(multiPath)
-        console.log(enlaces);
         this.props.setEnlacesFree(enlaces);
         this.setState({enlaces}, ()=>{
           this.ordernarEnlaces();
@@ -99,6 +151,7 @@ class PanelLista extends Component{
   }
 
   ordenarClientes = () => {
+
 
     var clientes_ordenados = Object.entries(this.state.clientes)
 
@@ -116,8 +169,12 @@ class PanelLista extends Component{
       item=item[1];
       var empleado = false;
       try {
-        if(item.empleados && item.servicios.linkbuilding.free.home.mensualidades[this.props.fecha].empleados){ empleado = Object.entries(item.servicios.linkbuilding.free.home.mensualidades[this.props.fecha].empleados).some(([k,e])=>{return filtros.empleados.items[k].checked})}
-      } catch (e) { }
+        if(item.empleados && item.servicios.linkbuilding.free.home.mensualidades[this.state.fecha].empleados){
+          empleado = Object.entries(item.servicios.linkbuilding.free.home.mensualidades[this.state.fecha].empleados).some(([k,e])=>{
+            return filtros.empleados.items[k].checked
+          })
+        }
+      } catch (e) {   }
 
       if(
           ( (filtros.empleados.todos && filtros.empleados.todos.checked) || empleado ) &&
@@ -129,7 +186,6 @@ class PanelLista extends Component{
       }
       return false;
     })
-
     clientes_ordenados.sort((a, b) =>{ a=a[1]; b=b[1]
         if (a['dominio'].toLowerCase() > b['dominio'].toLowerCase()) { return 1; }
         if (a['dominio'].toLowerCase() < b['dominio'].toLowerCase()) { return -1; }
@@ -137,19 +193,22 @@ class PanelLista extends Component{
     });
 
     if(this.state.des){  clientes_ordenados.reverse(); }
-    this.setState({clientes_ordenados},()=>{ this.changeContadorClientes(); })
+
+
+    this.setState({clientes_ordenados},()=>{ this.changeContadorClientes() })
 
   }
 
   scrollToCliente = () => {
     setTimeout(function(){
       try {
-        $('#container-clientes_tracking').animate({scrollTop:  $("#table-clientes-tracking").scrollTop() - $("#table-clientes-tracking").offset().top + $("#table-clientes-tracking").find(`.active-row-table`).offset().top - 100}, 0);
+        $('#container-clientes-lg').animate({scrollTop:  $("#container-clientes-lg").scrollTop() - $("#container-clientes-lg").offset().top + $("#container-clientes-lg").find(`.active-row-table`).offset().top - 100}, 0);
       } catch (e) { }
     }, 0);
   }
 
   changeContadorClientes = () => {
+
     var clientes_eliminados = 0,
         clientes_parados=0,
         clientes_disponibles=0,
@@ -166,7 +225,7 @@ class PanelLista extends Component{
         clientes_parados++
       }else{
 
-        var mes = cliente.servicios.linkbuilding.free.home.mensualidades[this.props.fecha]?cliente.servicios.linkbuilding.free.home.mensualidades[this.props.fecha]:false
+        var mes = cliente.servicios.linkbuilding.free.home.mensualidades[this.state.fecha]?cliente.servicios.linkbuilding.free.home.mensualidades[this.state.fecha]:false
         var follows = mes?mes.follows:0
         var nofollows = mes?mes.nofollows:0
 
@@ -185,7 +244,7 @@ class PanelLista extends Component{
         //si existen empleados asignados a este cliente sumaremos sus follows y sus follows que se han terminado
         if(mes && mes.empleados){
 
-          var empleados_filtro = this.props.filtros.empleados.items
+          var empleados_filtro = this.state.filtros.empleados.items
           Object.entries(mes.empleados).forEach(([k,c])=>{
             //enlaces totales hechos sin tener encuenta a los empleados
             if(c.enlaces_follows){ follows_done_all = follows_done_all + Object.entries(c.enlaces_follows).filter(([k2,e])=>{return e===true}).length }
@@ -204,7 +263,7 @@ class PanelLista extends Component{
             }
           })
 
-          if(this.props.filtros.empleados.todos.checked){
+          if(this.state.filtros.empleados.todos.checked){
             follows_empleados=follows;
             follows_done_empleados=follows_done_all
 
@@ -236,12 +295,7 @@ class PanelLista extends Component{
         }
       }
     })
-    /*console.log('Eliminados', clientes_eliminados, 'Parados', clientes_parados);
-    console.log('follows_total',follows_total,'follows_total_done',follows_total_done)
-    console.log('nofollows_total',nofollows_total,'nofollows_total_done',nofollows_total_done)
-    console.log('Clientes',clientes_disponibles, 'Clientes finalizados', clientes_finalizados);
-    */
-    var frase = `${follows_total_done} de ${follows_total} enlaces, ${clientes_finalizados} de ${clientes_disponibles} clientes${clientes_eliminados>0?', '+clientes_eliminados+' clientes eliminados':''}${clientes_parados>0?', '+clientes_parados+' clientes parados':''}`
+    var frase = `${this.state.fecha} de ${follows_total_done} de ${follows_total} enlaces, ${clientes_finalizados} de ${clientes_disponibles} clientes${clientes_eliminados>0?', '+clientes_eliminados+' clientes eliminados':''}${clientes_parados>0?', '+clientes_parados+' clientes parados':''}`
     this.props.setInfoTableEnlacesFreeLB({
       enlaces:{follows_total_done,follows_total},
       clientes:{clientes_finalizados, clientes_disponibles},
@@ -252,21 +306,24 @@ class PanelLista extends Component{
   changeSort = (id) =>{
     var des = false;
     if(this.state.sortBy===id){ des = this.state.des?false:true;}
-    this.props.setSortTableClientesPaidLB({sortBy:id,des})
+    this.props.setSortTableClientesFreeLB({sortBy:id,des})
   }
 
 
   render(){
 
+    var bloqueado = false;
+    try { if(this.state.cliente_seleccionado.servicios.linkbuilding.free.editando_por.id_empleado!==this.state.empleado.id_empleado){bloqueado=true} } catch (e) { }
+
     return(
       <div className='panel-medios-gratuitos pr'>
         <div className='categotias-barra'>
           {/*<div className='container-items-barra-lateral'>*/}
-          <div className='container-items-barra-lateral-scroll scroll-bar-exterior'>
+          <div id='container-clientes-lg' className='container-items-barra-lateral-scroll scroll-bar-exterior'>
           {this.state.clientes_ordenados.map((c,k)=>{
             var cliente = c[1]
             return(
-              <div key={k} data-id={k} className='container-item-lista-categoria'>
+              <div key={k} data-id={k} className='container-item-lista-categoria '>
                 <ItemCliente cliente={cliente} />
               </div>
             )
@@ -278,44 +335,56 @@ class PanelLista extends Component{
           <div className='categorias-panel min-panel-enlaces-free'>
             {this.props.cliente_seleccionado?
                 <div>
+
+                {!this.props.cliente_seleccionado.activo || this.props.cliente_seleccionado.eliminado?
+                  <div className='div_info_panel_linkbuilding'>{this.props.cliente_seleccionado.eliminado?'Este cliente está eliminado':'Este cliente está desactivado'}</div>
+                :null}
+
+                {this.props.cliente_seleccionado.activo && !this.props.cliente_seleccionado.eliminado && !this.props.cliente_seleccionado.servicios.linkbuilding.free.activo?
+                  <div className='div_info_panel_linkbuilding'>Este cliente tiene desactivado los enlaces gratuitos</div>
+                :null}
+
+                {
+                  this.state.enlaces_ordenados.length>0?
+
                   <table id='table-enlaces-free-linbuilding'>
                     <thead>
                       <tr>
 
-                        <th onClick={()=>this.changeSort('status')} className='lb-enlaces-free-status' >
-                          <div className='div-container-status'><div className="lb-enla-status-clientes-point punto-status"></div> {this.state.sortBy==='status' ? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}</div>
+                      <th onClick={()=>this.changeSort('status')} className='lb-enlaces-free-status' >
+                        <div className='div-container-status'><div className="lb-enla-status-clientes-point punto-status"></div> {this.state.sortBy==='status' ? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}</div>
 
-                        </th>
+                      </th>
 
-                        <th onClick={()=>this.changeSort('empleado')} className='lb-enlaces-free-empleado' >
-                          <span>Empleado</span> {this.state.sortBy==='empleado'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                        </th>
+                      <th onClick={()=>this.changeSort('empleado')} className='lb-enlaces-free-empleado' >
+                        <span>Empleado</span> {this.state.sortBy==='empleado'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                      </th>
 
-                        <th  onClick={()=>this.changeSort('destino')} className='lb-enlaces-free-destino'>
-                          <span>Destino</span> {this.state.sortBy==='destino'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                        </th>
+                      <th  onClick={()=>this.changeSort('destino')} className='lb-enlaces-free-destino'>
+                        <span>Destino</span> {this.state.sortBy==='destino'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                      </th>
 
-                        <th  onClick={()=>this.changeSort('categoria')} className='lb-enlaces-free-categoria'>
-                          <span>Categoría</span> {this.state.sortBy==='categoria'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                        </th>
+                      <th  onClick={()=>this.changeSort('categoria')} className='lb-enlaces-free-categoria'>
+                        <span>Categoría</span> {this.state.sortBy==='categoria'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                      </th>
 
-                        <th  onClick={()=>this.changeSort('medio')} className='lb-enlaces-free-medio'>
-                          <span>Medio</span> {this.state.sortBy==='medio'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                        </th>
+                      <th  onClick={()=>this.changeSort('medio')} className='lb-enlaces-free-medio'>
+                        <span>Medio</span> {this.state.sortBy==='medio'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                      </th>
 
-                        <th  onClick={()=>this.changeSort('anchor')} className='lb-enlaces-free-anchor'>
-                          <span>Anchor</span> {this.state.sortBy==='anchor'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                        </th>
+                      <th  onClick={()=>this.changeSort('anchor')} className='lb-enlaces-free-anchor'>
+                        <span>Anchor</span> {this.state.sortBy==='anchor'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                      </th>
 
-                        <th className='lb-enlaces-free-enlace'>
-                          <span>Enlace</span>
-                        </th>
+                      <th className='lb-enlaces-free-enlace'>
+                        <span>Enlace</span>
+                      </th>
 
-                        <th  onClick={()=>this.changeSort('tipo')} className='lb-enlaces-free-tipo'>
-                          <span>Tipo</span> {this.state.sortBy==='tipo'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                        </th>
+                      <th  onClick={()=>this.changeSort('tipo')} className='lb-enlaces-free-tipo'>
+                        <span>Tipo</span> {this.state.sortBy==='tipo'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                      </th>
 
-                        <th className='lb-enlaces-free-more'></th>
+                      <th className='lb-enlaces-free-more'></th>
 
                       </tr>
                     </thead>
@@ -326,7 +395,7 @@ class PanelLista extends Component{
                         const k = item[0], enlace = item[1];
                         if (i < 200 ) {
                             result.push(
-                              <ItemEnlaceFree key={k} enlace={enlace} />
+                              <ItemEnlaceFree key={k} enlace={enlace} bloqueado={bloqueado}/>
                             );
                         }
                         return result;
@@ -335,8 +404,23 @@ class PanelLista extends Component{
                     }
                     </tbody>
                   </table>
+
+                  :
+
+                  <div className='div_info_panel_linkbuilding'> No existen enlaces este mes</div>
+
+                }
+
                 </div>
-              :null
+              :
+
+              <div className='div_info_panel_linkbuilding'>
+                {!this.props.cliente_seleccionado?'Selecciona un cliente':''}
+                {this.props.cliente_seleccionado && this.props.cliente_seleccionado.eliminado?'Este cliente está eliminado':''}
+                {this.props.cliente_seleccionado && !this.props.cliente_seleccionado.eliminado && !this.props.cliente_seleccionado.activo?'Este cliente está desactivado':''}
+                {this.props.cliente_seleccionado && !this.props.cliente_seleccionado.eliminado && this.props.cliente_seleccionado.activo && !this.props.cliente_seleccionado.servicios.linkbuilding.paid.activo?'Este cliente tiene desactivado los enlaces gratuitos':''}
+              </div>
+
             }
 
 
@@ -360,8 +444,10 @@ function mapStateToProps(state){return{
   des:state.linkbuilding.enlaces.tipos.free.paneles.lista.des,
   items:state.linkbuilding.enlaces.tipos.free.paneles.lista.items_loaded,
 
+  empleado:state.empleado,
+
   cliente_seleccionado: state.cliente_seleccionado,
   fecha:state.linkbuilding.enlaces.fecha
 }}
-function matchDispatchToProps(dispatch){ return bindActionCreators({ setSortTableClientesPaidLB, setItemsLoadTableClientesPaidLB, setInfoTableClientesPaidLB, setEnlacesFree, setInfoTableEnlacesFreeLB }, dispatch) }
+function matchDispatchToProps(dispatch){ return bindActionCreators({ setSortTableClientesFreeLB, setItemsLoadTableClientesFreeLB, setInfoTableClientesFreeLB, setEnlacesFree, setInfoTableEnlacesFreeLB }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(PanelLista);

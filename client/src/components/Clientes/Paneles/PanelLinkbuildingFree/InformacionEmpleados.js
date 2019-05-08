@@ -58,7 +58,7 @@ class InformacionEmpleados extends Component {
       }
     })
     if(num==='' || ( total_follows_asignado<=(+this.state.follows) && (+num)>=0 ) ){
-      var empleados = dotProp.set(this.state.empleados, `${id_empleado}.follows`, num);
+      var empleados = dotProp.set(this.state.empleados, `${id_empleado}.follows`, num.toString().trim()===''?'':(+num));
       if(empleados==this.state.empleados){//erreglar este apartado
       }
       this.setState({empleados})
@@ -78,7 +78,7 @@ class InformacionEmpleados extends Component {
       }
     })
     if(num==='' || ( total_follows_asignado<=(+this.state.nofollows) && (+num)>=0 ) ){
-      var empleados = dotProp.set(this.state.empleados, `${id_empleado}.nofollows`, num);
+      var empleados = dotProp.set(this.state.empleados, `${id_empleado}.nofollows`, num.toString().trim()===''?'':(+num));
       if(empleados==this.state.empleados){//erreglar este apartado
       }
       this.setState({empleados})
@@ -87,17 +87,32 @@ class InformacionEmpleados extends Component {
     }
   }
 
-  undoData = () => { this.setState(this.props) }
+  undoData = () => {
+    this.setState({
+      empleados:this.props.empleados,
+      all_empleados:this.all_empleados,
+      follows:this.props.follows,
+      nofollows:this.props.nofollows,
+      show_empleados: false,
+      fecha : new Date().getFullYear() + '-' + ( (new Date().getMonth()+1)<10?'0'+(new Date().getMonth()+1):(new Date().getMonth()+1) ),
+      empleados_eliminados:{}
+    })
+  }
 
   saveData = () => {
 
-    var empleados = this.state.empleados, multiPath={}, error=false
+    var empleados = this.state.empleados, multiPath={}, error=false;
+    var totalFollows = 0, totalNoFollows=0;
 
     Object.entries(empleados).forEach(([k,e])=>{
-      if(e.follows==='' || e.nofollows===''){
-        console.log('Error');
+      if((+e.follows)<0 || e.follows.toString().includes('.') || e.follows.toString()==='' || (+e.nofollows)<0 || e.nofollows.toString().includes('.') || e.nofollows.toString()===''){
+        console.log('Existen errores en los campos');
         error=true
       }else{
+
+        totalFollows += e.follows?(+e.follows):0
+        totalNoFollows += e.nofollows?(+e.nofollows):0
+
         empleados[k].follows=(+e.follows);
         empleados[k].nofollows=(+e.nofollows);
 
@@ -106,6 +121,12 @@ class InformacionEmpleados extends Component {
 
       }
     })
+
+    if(Object.keys(empleados).length>0 && ((+totalFollows)!==this.props.follows || (+totalNoFollows)!==this.props.nofollows) && Object.keys(this.props.empleados).length!==Object.keys(this.state.empleados_eliminados).length){
+      console.log('Existen errores en la suma de los enlaces');
+      return false
+    }
+
     if(!error){
       multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/empleados/linkbuilding_free`]=empleados
 
@@ -113,7 +134,13 @@ class InformacionEmpleados extends Component {
 
         try {
           if(this.props.cliente_seleccionado.servicios.linkbuilding.free.home.mensualidades[this.state.fecha].empleados[k]){
-            multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/free/home/mensualidades/${this.state.fecha}/empleados/${k}/eliminado`]=true
+            if(this.props.cliente_seleccionado.servicios.linkbuilding.free.home.mensualidades[this.state.fecha].empleados[k].enlaces_follows ||
+              this.props.cliente_seleccionado.servicios.linkbuilding.free.home.mensualidades[this.state.fecha].empleados[k].enlaces_nofollows){
+                multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/free/home/mensualidades/${this.state.fecha}/empleados/${k}/eliminado`]=true
+
+            }else{
+              multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/free/home/mensualidades/${this.state.fecha}/empleados/${k}`]=null
+            }
           }
         } catch (e) {}
 
@@ -139,6 +166,7 @@ class InformacionEmpleados extends Component {
       var multiPath = {}
       multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/free/home/mensualidades/${this.state.fecha}/empleados/${id}/follows`]=0
       multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/free/home/mensualidades/${this.state.fecha}/empleados/${id}/nofollows`]=0
+      multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/free/home/mensualidades/${this.state.fecha}/empleados/${id}/eliminado`]=null
       multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/empleados/linkbuilding_free/${id}`]={
         follows:0,
         nofollows:0,
@@ -164,15 +192,35 @@ class InformacionEmpleados extends Component {
 
   render() {
 
+    var privilegio = false
+    try {
+      privilegio = this.props.empleado.privilegios.linkbuilding_free.edit.empleados;
+    } catch (e) {}
+
     var edited = false;
-    if(this.props.empleados!==this.state.empleados){
+    if(JSON.stringify(this.props.empleados)!==JSON.stringify(this.state.empleados)){
       edited = true;
     }
+    console.log(this.props.empleados, this.state.empleados);
+
+    var totalFollows = 0, totalNoFollows=0;
+    try {
+      Object.entries(this.state.empleados).forEach(([k,e])=>{
+        totalFollows += e.follows?(+e.follows):0
+        totalNoFollows += e.nofollows?(+e.nofollows):0
+      })
+    } catch (e) {
+
+    }
+    totalFollows = (+totalFollows)
+    totalNoFollows = (+totalNoFollows)
+    console.log(totalFollows, totalNoFollows);
 
     return(
       <div className='sub-container-informacion'>
 
-        {edited? <UpdateStateInputs saveData={()=>this.saveData()} undoData={()=>this.undoData()}/>
+        {privilegio?
+          edited? <UpdateStateInputs saveData={()=>this.saveData()} undoData={()=>this.undoData()}/>
         :
           <div className='settings-panels'>
             <div className='div-save-icon pr' onClick={()=>this.openEmpleados()}>
@@ -183,14 +231,14 @@ class InformacionEmpleados extends Component {
 
             </div>
           </div>
-        }
+        :null}
 
 
-        <p className='title-informacion-alumno'>2. Empleados</p>
+        <p className='title-informacion-alumno'>3. Empleados</p>
 
         <div className='ei-parent'>
 
-        {this.state.empleados?
+        {this.state.empleados && Object.keys(this.state.empleados).length>0?
           Object.entries(this.state.empleados).map(([k,e])=>{
             return(
               <EmpleadoItem key={k}
@@ -201,11 +249,15 @@ class InformacionEmpleados extends Component {
                 changeFollows={(num)=>this.changeFollows(num,k)}
                 changeNoFollows={(num)=>this.changeNoFollows(num,k)}
                 deleteEmpleado = {()=>this.deleteEmpleado(k)}
+                errorFollows = {(+this.props.follows)===(+totalFollows)?false:true}
+                errorNofollows = {(+this.props.nofollows)===(+totalNoFollows)?false:true}
+                privilegio={privilegio}
                 />
             )
 
           })
-        :null
+        :
+        <div className="div_info_panel_linkbuilding">No hay empleados asignados</div>
         }
 
         </div>

@@ -8,7 +8,8 @@ var config = {
   databaseURL: "https://yoseo-42d1a.firebaseio.com",
   projectId: "yoseo-42d1a",
   storageBucket: "yoseo-42d1a.appspot.com",
-  messagingSenderId: "193725080406"
+  messagingSenderId: "193725080406",
+  appId: "1:193725080406:web:cac3df42bdc89dbc"
 
 };*/
 

@@ -22,6 +22,13 @@ class SimpleInput extends Component {
       }
     }
 
+    changeInt = (text) => {
+      if(functions.isNumber(text) && !text.includes('.') && !text.includes(',')){
+
+        this.props.changeValue(text.trim())
+      }
+    }
+
     changeEmail = (text) => {
       if(functions.isEmail(text)){
         this.props.changeValue(text)
@@ -45,6 +52,10 @@ class SimpleInput extends Component {
 
             {this.props.type && this.props.type==='float'?
               <input className={` ${this.state._class_input?this.state._class_input:''}`} value={this.state.text?this.state.text:''} onChange={e=>this.changeFloat(e.target.value)}/>:null
+            }
+
+            {this.props.type && this.props.type==='int'?
+              <input className={` ${this.state._class_input?this.state._class_input:''}`} value={this.state.text?this.state.text:''} onChange={e=>this.changeInt(e.target.value)}/>:null
             }
 
             {this.props.type && this.props.type==='email'?

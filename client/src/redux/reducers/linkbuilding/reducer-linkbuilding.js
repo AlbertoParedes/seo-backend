@@ -50,17 +50,24 @@ var linkbuilding = {
     tipos:{
       free:{
         medios:{},
+        categoria_seleccionada:null,
+        medio_seleccionado:null,
         paneles:{
           lista:{
             filtros:{},
-            sortBy:'dominio',
-            des:false
+            sortBy:'web',
+            des:false,
+            search:'',
+            searchBy:'web',
+            items_loaded:50,
+            lista_search_by:{
+              'web':{valor:'web'},
+              'nombre':{valor:'nombre'}
+            },
           }
         },
         panel:'',
-        categoria_seleccionada:null,
-        medio_seleccionado:null,
-        items_info:''
+        items_info:'0 de 0 medios',
       },
 
       paid:{
@@ -81,7 +88,8 @@ var linkbuilding = {
           }
         },
         panel:'',
-        items_info:'0 de 0 medios'
+        items_info:'0 de 0 medios',
+        plataformas:{}
       }
     },
 
@@ -119,11 +127,21 @@ var linkbuilding = {
           lista:{
             filtros:{},
             sortBy:'dominio',
-            des:false
+            des:false,
+            search:'',
+            searchBy:'web',
+            items_loaded:50,
+            lista_search_by:{
+              'web':{valor:'web'},
+              'nombre':{valor:'nombre'}
+            },
           }
         },
         panel:'',
-        items_info:''
+        items_info:{
+          clientes:{clientes_finalizados:0, clientes_disponibles:0},
+          clientes_eliminados:0,clientes_parados:0
+        },
       }
     },
 
@@ -214,7 +232,22 @@ export default function (state=linkbuilding, action){
 
     case "LB_PANEL_MEDIOS_FREE_ITEMS_INFO":
       return dotProp.set(state, `medios.tipos.free.items_info`, action.items_info);
+    case 'LB_SORTBY_DES_MEDIOS_LISTA_FREE':
+      var newProps = dotProp.set(state, `medios.tipos.free.paneles.lista.sortBy`, action.data.sortBy);
+      newProps.medios.tipos.free.paneles.lista.des=action.data.des
+      return newProps
 
+    case "LB_SEARCH_DES_MEDIOS_LISTA_FREE":
+      return dotProp.set(state, `medios.tipos.free.paneles.lista.search`, action.text);
+
+    case "LB_SEARCHBY_DES_MEDIOS_LISTA_FREE":
+      return dotProp.set(state, `medios.tipos.free.paneles.lista.searchBy`, action.text);
+
+    case "LB_ITEMS_LOADED_DES_MEDIOS_LISTA_FREE":
+      return dotProp.set(state, `medios.tipos.free.paneles.lista.items_loaded`, action.items);
+
+    case "LB_INFO_MEDIOS_FREE":
+      return dotProp.set(state, `medios.tipos.free.items_info`, action.items_info);
 
 
 
@@ -246,6 +279,9 @@ export default function (state=linkbuilding, action){
     case "LB_INFO_MEDIOS_PAID":
       return dotProp.set(state, `medios.tipos.paid.items_info`, action.items_info);
 
+    case "LB_PLATAFORMAS_MEDIOS_PAID":
+      return dotProp.set(state, `medios.tipos.paid.plataformas`, action.plataformas);
+
 
 
 
@@ -274,6 +310,37 @@ export default function (state=linkbuilding, action){
       return dotProp.set(state, `enlaces.tipos.free.items_info`, action.items_info);
 
 
+    //Enlaces de pago--------------------------------
+
+    case "LB_FILTROS_ENLACES_PAID_LISTA":
+      return dotProp.set(state, `enlaces.tipos.paid.paneles.lista.filtros`, action.filtros);
+
+    case "LB_PANEL_ENLACES_PAID":
+      return dotProp.set(state, `enlaces.tipos.paid.panel`, action.panel);
+
+    case 'LB_SORTBY_DES_ENLACES_LISTA_PAID':
+      var newProps = dotProp.set(state, `enlaces.tipos.paid.paneles.lista.sortBy`, action.data.sortBy);
+      newProps.enlaces.tipos.paid.paneles.lista.des=action.data.des
+      return newProps
+
+    case "LB_SEARCH_DES_ENLACES_LISTA_PAID":
+      return dotProp.set(state, `enlaces.tipos.paid.paneles.lista.search`, action.text);
+
+    case "LB_SEARCHBY_DES_ENLACES_LISTA_PAID":
+      return dotProp.set(state, `enlaces.tipos.paid.paneles.lista.searchBy`, action.text);
+
+    case "LB_ITEMS_LOADED_DES_ENLACES_LISTA_PAID":
+      return dotProp.set(state, `enlaces.tipos.paid.paneles.lista.items_loaded`, action.items);
+
+    case "LB_INFO_ENLACES_PAID":
+      return dotProp.set(state, `enlaces.tipos.paid.items_info`, action.items_info);
+    case "SET_ENLACES_PAID":
+      return dotProp.set(state, `enlaces.tipos.paid.enlaces`, action.enlaces);
+      //-----------------------------------------------
+
+
+
+
 
 
 
@@ -288,18 +355,27 @@ export default function (state=linkbuilding, action){
 
 
     case "FILTROS-FREE-PAID":
-      var newFilros =  dotProp.set(state, `clientes.tipos.free.paneles.lista.filtros.type.items.free.checked`, action.newType.items.free.checked);
-      newFilros.clientes.tipos.free.paneles.lista.filtros.type.items.paid.checked=action.newType.items.paid.checked;
+      var newClientes =  dotProp.set(state.clientes.tipos, `free.paneles.lista.filtros.type.items.free.checked`, action.newType.items.free.checked);
+      newClientes.free.paneles.lista.filtros.type.items.paid.checked=action.newType.items.paid.checked;
+      newClientes.paid.paneles.lista.filtros.type.items.free.checked=action.newType.items.free.checked;
+      newClientes.paid.paneles.lista.filtros.type.items.paid.checked=action.newType.items.paid.checked;
 
-      newFilros.clientes.tipos.paid.paneles.lista.filtros.type.items.free.checked=action.newType.items.free.checked;
-      newFilros.clientes.tipos.paid.paneles.lista.filtros.type.items.paid.checked=action.newType.items.paid.checked;
 
-      newFilros.medios.tipos.free.paneles.lista.filtros.type.items.free.checked=action.newType.items.free.checked;
-      newFilros.medios.tipos.free.paneles.lista.filtros.type.items.paid.checked=action.newType.items.paid.checked;
+      var newMedios =  dotProp.set(state.medios.tipos, `free.paneles.lista.filtros.type.items.free.checked`, action.newType.items.free.checked);
+      newMedios.free.paneles.lista.filtros.type.items.paid.checked=action.newType.items.paid.checked;
+      newMedios.paid.paneles.lista.filtros.type.items.free.checked=action.newType.items.free.checked;
+      newMedios.paid.paneles.lista.filtros.type.items.paid.checked=action.newType.items.paid.checked;
 
-      newFilros.medios.tipos.paid.paneles.lista.filtros.type.items.free.checked=action.newType.items.free.checked;
-      newFilros.medios.tipos.paid.paneles.lista.filtros.type.items.paid.checked=action.newType.items.paid.checked;
+      var newEnlaces =  dotProp.set(state.enlaces.tipos, `free.paneles.lista.filtros.type.items.free.checked`, action.newType.items.free.checked);
+      newEnlaces.free.paneles.lista.filtros.type.items.paid.checked=action.newType.items.paid.checked;
+      newEnlaces.paid.paneles.lista.filtros.type.items.free.checked=action.newType.items.free.checked;
+      newEnlaces.paid.paneles.lista.filtros.type.items.paid.checked=action.newType.items.paid.checked;
 
+
+
+      var newFilros =  dotProp.set(state, `clientes.tipos`, newClientes);
+      newFilros.medios.tipos = newMedios
+      newFilros.enlaces.tipos = newEnlaces
 
       return newFilros
 

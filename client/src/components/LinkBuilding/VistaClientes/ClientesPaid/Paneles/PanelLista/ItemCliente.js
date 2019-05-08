@@ -37,10 +37,36 @@ class ItemCliente extends Component {
     return true;
   }
 
+
   seleccionarCliente = () => {
-    this.props.setClienteSeleccionado(this.props.cliente)
-    this.props.setPanelClientesPaidLinkbuilding('info')
+
+    if(this.props.cliente_seleccionado!==this.props.cliente){
+
+      var multiPath = {}
+      try {
+        if(this.props.cliente_seleccionado.servicios.linkbuilding.free.editando_por.id_empleado===this.props.empleado.id_empleado){
+          multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/free/editando_por`]=null
+        }
+      } catch (e) {}
+      try {
+        if(this.props.cliente_seleccionado.servicios.linkbuilding.paid.editando_por.id_empleado===this.props.empleado.id_empleado){
+          multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/paid/editando_por`]=null
+        }
+      } catch (e) {}
+      multiPath[`Empleados/${this.props.empleado.id_empleado}/session/cliente_seleccionado`]=this.props.cliente.id_cliente
+      if(Object.keys(multiPath).length>0){ db.update(multiPath) }
+
+      this.props.setClienteSeleccionado(this.props.cliente)
+      this.props.setPanelClientesPaidLinkbuilding('info')
+
+
+
+    }else{
+      this.props.setPanelClientesPaidLinkbuilding('info')
+    }
+
   }
+
 
   /*openAlumnos = () => {
     if(this.props.n_alumnos>0){
@@ -67,7 +93,7 @@ class ItemCliente extends Component {
         */}
 
         <td className='lb-clientes-paid-status'>
-          <div className={`status-point ${this.props.cliente.servicios.linkbuilding.paid.activo?'good-status':'warning-status'} ${this.props.cliente.eliminado?'wrong-status':''}     `} ></div>
+          <div className={`status-point ${this.props.cliente.activo && this.props.cliente.servicios.linkbuilding.paid.activo?'good-status':'warning-status'} ${this.props.cliente.eliminado?'wrong-status':''}     `} ></div>
         </td>
 
         <td className='lb-clientes-paid-web'>
@@ -75,28 +101,28 @@ class ItemCliente extends Component {
         </td>
 
         <td  className='lb-clientes-paid-inver-mens'>
-          <span> {this.props.cliente.servicios.linkbuilding.paid.inversion_mensual.toFixed(2)} €</span>
+          <span> {functions.getDecimcals(this.props.cliente.servicios.linkbuilding.paid.inversion_mensual)} €</span>
         </td>
 
         <td  className='lb-clientes-paid-beneficio'>
-          <span> {this.props.cliente.servicios.linkbuilding.paid.beneficio} %</span>
+          <span> {functions.getDecimcals(this.props.cliente.servicios.linkbuilding.paid.beneficio)} %</span>
         </td>
 
         <td  className='lb-clientes-paid-perdida'>
-          <span> {this.props.cliente.servicios.linkbuilding.paid.porcentaje_perdida} %</span>
+          <span> {functions.getDecimcals(this.props.cliente.servicios.linkbuilding.paid.porcentaje_perdida)} %</span>
         </td>
 
         <td  className='lb-clientes-paid-bote'>
-          <span> {this.props.cliente.servicios.linkbuilding.paid.bote.toFixed(2)} €</span>
+          <span> {functions.getDecimcals(this.props.cliente.servicios.linkbuilding.paid.bote)} €</span>
         </td>
 
         <td className='lb-clientes-paid-micronichos'>
           <div className='align-center' >
-            <Switch class_div={'switch-table'} callbackSwitch={this.callbackSwitch} json={{id:'activo' }} valor={this.props.cliente.servicios.linkbuilding.paid.micronichos.activo}/>
+            <Switch class_div={'switch-table'} callbackSwitch={this.callbackSwitch} json={{id:'activo' }} valor={this.props.cliente.servicios.linkbuilding.paid.micronichos?this.props.cliente.servicios.linkbuilding.paid.micronichos.activo:false}/>
           </div>
         </td>
 
-        <td onClick={()=>{this.seleccionarCliente()}} className='cli-more'>
+        <td onClick={()=>{this.seleccionarCliente()}} className='lb-clientes-paid-more'>
           <i className="material-icons align-center">chevron_right</i>
         </td>
       </tr>
@@ -105,6 +131,6 @@ class ItemCliente extends Component {
   }
 }
 
-function mapStateToProps(state){return{ cliente_seleccionado: state.cliente_seleccionado }}
+function mapStateToProps(state){return{ cliente_seleccionado: state.cliente_seleccionado, empleado:state.empleado, }}
 function matchDispatchToProps(dispatch){ return bindActionCreators({  setClienteSeleccionado, setPanelClientesPaidLinkbuilding }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(ItemCliente);

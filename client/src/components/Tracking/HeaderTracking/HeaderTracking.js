@@ -1,124 +1,92 @@
-import React, { Component } from 'react';
-import search from '../../Global/Imagenes/search.svg';
+import React, { Component } from 'react'
 import EmpleadoMenu from '../../Global/EmpleadoMenu'
 import ListaOpciones from '../../Global/ListaOpciones'
 import InfoItems from './InfoItems'
-import InfoItemsKeywords from './InfoItemsKeywords'
 import FiltrosClientes from './FiltroClientes/Filtros'
-import FiltrosKeywords from './FiltroKeywords/Filtros'
-import $ from 'jquery';
-
-import { bindActionCreators } from 'redux';
+import search from '../../Global/Imagenes/search.svg';
 import { connect } from 'react-redux';
-import { setPanelTracking } from '../../../redux/actions';
+import { bindActionCreators } from 'redux';
+import { setPanelTracking , setSearchTableClientesTracking, setSearchByTableClientesTracking } from '../../../redux/actions';
 
-class HeaderTracking extends Component {
-
+class HeaderTracking extends Component{
 
   constructor(props){
-      super(props);
-      this.state={
-        searchOpciones:{
-          'web':{valor:'web'}
-        },
-
-        searchOpcionesKeywords:{
-          'keyword':{valor:'keyword'}
-        },
-      }
+    super(props)
+    this.state={
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     if(nextProps.search !== this.props.search){ return true; }
     else if(nextProps.searchBy !== this.props.searchBy){ return true; }
-
-    if(nextProps.searchKeywords !== this.props.searchKeywords){ return true; }
-    else if(nextProps.searchByKeywords !== this.props.searchByKeywords){ return true; }
-
-
+    else if(nextProps.panel !== this.props.panel){ return true; }
     else if(nextProps.cliente_seleccionado !== this.props.cliente_seleccionado){ return true; }
-    else if(nextProps.panel_tracking !== this.props.panel_tracking){return true}
+    else if(nextProps.keyword !== this.props.keyword){ return true; }
     return false;
   }
 
+  changePanel = (panel) => {
 
-  mensajeInformativo = (text) =>{var element = $(`#tracking-mensaje`); if(!$(element).attr('class').includes('show')){ $(element).text(text).addClass('show'); setTimeout( function(){ $(element).removeClass('show'); }, 3500 );}}
+    if(panel==='info' || panel==='keywords' || panel==='resultados'){
+      if(!this.props.cliente_seleccionado){
+        console.log('Selecciona un cliente');
+        return null
+      }
+    }
 
-  render() {
+    if(panel==='resultados' && !this.props.keyword){
+        console.log('Selecciona una keyword');
+        return null
+      this.props.setPanelTracking(panel)
+    }else if(panel==='resultados' && this.props.keyword && !this.props.keyword.results.new.id_date){
+        console.log('Esta keyword no tiene resultados');
+        return null
+    }
 
+    this.props.setPanelTracking(panel)
+
+  }
+
+  render(){
     return(
       <div className='container-header-panels pr'>
 
-        <div id="tracking-mensaje" className='toast'></div>
-
+        {/*Barra superior con el input para buscar los clientes y el empleado*/}
         <div className='top-bar-panel'>
-          {/*BUSQUEDA DE COLEGIOS */}
           <div className='container-search-panel pr'>
 
-
-            {this.props.panel_tracking==='lista'?
-              <div>
-                <img className='icon-search-panel' src={search} alt=''/>
-                <input placeholder='Buscar clientes por' value={this.props.search} onChange={(e)=>this.props.changeSearch(e.target.value)} />
-                {this.props.search.trim()===''?
-                  <ListaOpciones opciones={this.state.searchOpciones} opcion_selected={this.props.searchBy} changeOpcion={(id)=>this.props.changeSearchBy(id)}/>
-                :null}
-              </div>
-            :null}
-
-            {this.props.panel_tracking==='keywords' || this.props.panel_tracking==='keyword'?
-              <div>
-                <img className='icon-search-panel' src={search} alt=''/>
-                <input placeholder='Buscar keyword por' value={this.props.searchKeywords} onChange={(e)=>this.props.changeSearchKeywords(e.target.value)} />
-                {this.props.searchKeywords.trim()===''?
-                  <ListaOpciones opciones={this.state.searchOpcionesKeywords} opcion_selected={this.props.searchByKeywords} changeOpcion={(id)=>this.props.changeSearchByKeywords(id)}/>
-                :null}
-              </div>
-            :null}
-
-
-
-
+            {/*Input para buscar a los clientes*/}
+            <div>
+              <img className='icon-search-panel' src={search} alt=''/>
+              <input placeholder='Buscar clientes por' value={this.props.search} onChange={(e)=>this.props.setSearchTableClientesTracking(e.target.value)} />
+              {this.props.search.trim()===''?
+                <ListaOpciones opciones={this.props.lista_search_by} opcion_selected={this.props.searchBy} changeOpcion={(id)=>this.props.setSearchByTableClientesTracking(id)}/>:null
+              }
+            </div>
 
           </div>
           <EmpleadoMenu />
         </div>
 
+        {/**/}
         <p className='title-header'>
           <span>Tracking</span>
           {this.props.cliente_seleccionado? <i className="material-icons align-center color-gris">chevron_right</i> :null}
           {this.props.cliente_seleccionado? <span>{this.props.cliente_seleccionado.dominio}</span> :null}
-
           {this.props.keyword? <i className="material-icons align-center color-gris">chevron_right</i> :null}
           {this.props.keyword? <span>{this.props.keyword.keyword}</span> :null}
         </p>
 
-        {this.props.panel_tracking==='lista'?<InfoItems/>:null}
-        {this.props.panel_tracking==='keywords' || this.props.panel_tracking==='keyword'?<InfoItemsKeywords/>:null}
-
-
-        {this.props.panel_tracking==='lista'?<FiltrosClientes/>:null}
-        {this.props.panel_tracking==='keywords' || this.props.panel_tracking==='keyword'?<FiltrosKeywords/>:null}
-
+        <InfoItems/>
+        <FiltrosClientes/>
 
         <div className='barra-opciones-alumnos'>
-          <div onClick={()=>{this.props.setPanelTracking('lista')}} className={`${this.props.panel_tracking==='lista'?'active-option':''}`} >Listado</div>
-          <div
-            onClick={
-              this.props.cliente_seleccionado?
-                ()=>{this.props.setPanelTracking('keywords')}
-              :
-                ()=>this.mensajeInformativo('Selecciona un cliente')
-            }
-            className={`${this.props.panel_tracking==='keywords'?'active-option':''} ${!this.props.cliente_seleccionado?'disable-opciones-alumno':''}`} >Keywords</div>
 
-          <div
-            onClick={
-              this.props.keyword ?
-                ()=>{this.props.setPanelTracking('keyword')}
-              :
-                ()=>this.mensajeInformativo('Selecciona una keyword')}
-                className={`${this.props.panel_tracking==='keyword'?'active-option':''} ${!this.props.keyword?'disable-opciones-alumno':''}`} >Resultados</div>
+          <div onClick={()=>{this.changePanel('lista')}} className={`${this.props.panel==='lista'?'active-option':''}`} >Listado</div>
+          <div onClick={()=>{this.changePanel('info')}} className={`${this.props.panel==='info'?'active-option':''} ${!this.props.cliente_seleccionado?'disable-opciones-alumno':''}`} >Información</div>
+
+          <div onClick={()=>{this.changePanel('keywords')}} className={`${this.props.panel==='keywords'?'active-option':''} ${!this.props.cliente_seleccionado?'disable-opciones-alumno':''}`} >Keywords</div>
+          <div onClick={()=>{this.changePanel('resultados')}} className={`${this.props.panel==='resultados'?'active-option':''} ${!this.props.keyword || !this.props.keyword.results.new.id_date?'disable-opciones-alumno':''}`} >Resultados</div>
 
         </div>
 
@@ -128,6 +96,13 @@ class HeaderTracking extends Component {
 
 }
 
-function mapStateToProps(state){return{ cliente_seleccionado: state.cliente_seleccionado,keyword: state.keyword_tracking_selected, panel_tracking:state.panel_tracking, items_clientes:state.items_clientes }}
-function matchDispatchToProps(dispatch){ return bindActionCreators({ setPanelTracking }, dispatch) }
+function mapStateToProps(state){return{
+  cliente_seleccionado: state.cliente_seleccionado,
+  panel: state.tracking.panel,
+  search:state.tracking.paneles.lista.search,
+  searchBy:state.tracking.paneles.lista.searchBy,
+  lista_search_by:state.tracking.paneles.lista.lista_search_by,
+  keyword: state.tracking.keyword_tracking_selected
+}}
+function matchDispatchToProps(dispatch){ return bindActionCreators({ setPanelTracking , setSearchTableClientesTracking, setSearchByTableClientesTracking}, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(HeaderTracking);

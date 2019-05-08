@@ -62,7 +62,7 @@ class Header extends Component{
         <p className='title-header'>
           <span>LinkBuilding</span> <i className="material-icons align-center color-gris">chevron_right</i> <span>Clientes de pago</span>
           {this.props.cliente_seleccionado? <i className="material-icons align-center color-gris">chevron_right</i> :null}
-          {this.props.cliente_seleccionado? <span>{this.props.cliente_seleccionado.dominio}</span> :null}
+          {this.props.cliente_seleccionado? <span className='block-with-text'>{this.props.cliente_seleccionado.dominio}</span> :null}
         </p>
 
         <InfoItems/>

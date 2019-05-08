@@ -16,6 +16,12 @@ class Switch extends Component {
   }
 
   updateChekbox = (x) => {
+
+    if(this.props.type && this.props.type==='block'){
+      console.log('No tienes suficientes permisos');
+      return null
+    }
+
     if(this.props.callbackSwitch){
       var json = this.state.json;
       json['valor'] = this.state.valor?false:true;

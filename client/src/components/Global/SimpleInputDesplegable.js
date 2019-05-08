@@ -16,12 +16,21 @@ class SimpleInputDesplegable extends Component {
       if(this.state.text!==newProps.text){this.setState({text:newProps.text})}
     }
 
+    openList = () => {
+
+      if(this.props.type && this.props.type ==='block'){
+        return null
+      }
+
+      this.setState({show_lista:true})
+      
+    }
 
     render() {
       return (
         <div className={`container-simple-input ${this.state._class?this.state._class:''}`}>
           <div className='title-input'>{this.state.title}:</div>
-          <div className={`container-input pr ${this.state.show_lista?'activate-container-selec':''}`} onClick={()=>this.setState({show_lista:true})}>
+          <div className={`container-input pr ${this.state.show_lista?'activate-container-selec':''}`} onClick={()=>{this.openList()}}>
             <div className={`text-seleccionable ${this.props._class_input?this.props._class_input:''}`}>{this.state.text?this.state.text:''}</div>
             <div className='arrow-seleccionable-input'><i className={`material-icons arrow-down-select ${this.state.show_lista?'arrow-top-select':''}`}>arrow_drop_down</i></div>
             {/*si no hay tipo por defecto esperaremos un array*/}

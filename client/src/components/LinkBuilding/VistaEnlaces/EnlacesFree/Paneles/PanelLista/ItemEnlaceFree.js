@@ -25,7 +25,16 @@ class ItemEnlaceFree extends Component {
       };
   }
 
-
+  componentWillReceiveProps = (newProps) => {
+    if(newProps.bloqueado){
+      this.setState({
+        show_categorias:false,
+        show_medios:false,
+        show_enlace:false,
+        show_destinos:false
+      })
+    }
+  }
 
   clickLink = (e) => {
     e.preventDefault();
@@ -45,6 +54,15 @@ class ItemEnlaceFree extends Component {
     console.log(multiPath);
   }
   openCategorias = (editable, done_by) =>{
+    if(this.props.bloqueado){
+      console.log(`Este cliente lo esta editando otro empleado`);
+      return false;
+    }
+    if(this.props.enlace.id_medio){
+      console.log('Para cambiar categoria debes eliminar el medio seleccionado');
+      return false;
+    }
+
     if(!editable){
       console.log(`Permiso exclusivo para los Super Administradores${done_by?' y '+done_by:''}`);
       return false;
@@ -53,6 +71,14 @@ class ItemEnlaceFree extends Component {
   }
   //Medio----------
   openMedios = (editable, done_by) => {
+    if(this.props.bloqueado){
+      console.log(`Este cliente lo esta editando otro empleado`);
+      return false;
+    }
+    if(this.props.enlace.enlace){
+      console.log('Para cambiar el medio debes borrar el enlace');
+      return false;
+    }
 
     if(!editable){
       console.log(`Permiso exclusivo para los Super Administradores${done_by?' y '+done_by:''}`);
@@ -152,6 +178,11 @@ class ItemEnlaceFree extends Component {
   //Destinos---------
   openDestinos = (editable, done_by) => {
 
+    if(this.props.bloqueado){
+      console.log(`Este cliente lo esta editando otro empleado`);
+      return false;
+    }
+
     if(!editable){
       console.log(`Permiso exclusivo para los Super Administradores${done_by?' y '+done_by:''}`);
       return false;
@@ -195,7 +226,10 @@ class ItemEnlaceFree extends Component {
   }
   //Anchors
   openAnchors = (editable, done_by) => {
-
+    if(this.props.bloqueado){
+      console.log(`Este cliente lo esta editando otro empleado`);
+      return false;
+    }
     if(!editable){
       console.log(`Permiso exclusivo para los Super Administradores${done_by?' y '+done_by:''}`);
       return false;
@@ -233,7 +267,10 @@ class ItemEnlaceFree extends Component {
   //------------------
   //Enlace ---------
   openEnlace = (editable, done_by) =>{
-
+    if(this.props.bloqueado){
+      console.log(`Este cliente lo esta editando otro empleado`);
+      return false;
+    }
     if(!editable){
       console.log(`Permiso exclusivo para los Super Administradores${done_by?' y '+done_by:''}`);
       return false;
@@ -344,6 +381,7 @@ class ItemEnlaceFree extends Component {
     var status = this.getStatus()
 
     var empleado=''
+
     if(this.props.empleados){
       if(this.props.enlace.done_by){
         empleado = this.props.empleados[this.props.enlace.done_by].nombre

@@ -1,10 +1,13 @@
 import React,{Component} from 'react'
-import SimpleInput from '../../../Global/SimpleInput'
 import data from '../../../Global/Data/Data'
-import SimpleInputDesplegable from '../../../Global/SimpleInputDesplegable'
-import Switch from '../../../Global/Switch'
-import SimpleTextArea from '../../../Global/SimpleTextArea'
 import EmpleadoItem from '../../../Global/EmpleadoItem'
+import functions from '../../../Global/functions'
+import { connect } from 'react-redux';
+import InformacionTracking from './InformacionTracking'
+import InformacionEmpleados from './InformacionEmpleados'
+import InformacionAdicional from './InformacionAdicional'
+import $ from 'jquery'
+
 
 class PanelTracking extends Component {
 
@@ -15,15 +18,36 @@ class PanelTracking extends Component {
     }
   }
 
+  componentDidMount = () => { this.scrollToCliente() }
+  scrollToCliente = () => { setTimeout(function(){ try { $('#container-clientes').animate({scrollTop:0}, 0); } catch (e) { } }, 0); }
+
   render(){
     return(
       <div className='container-informacion'>
 
-        <InformacionCliente />
+        <InformacionTracking
+          id_cliente={this.props.cliente_seleccionado.id_cliente}
+          empleados={this.props.cliente_seleccionado.empleados && this.props.cliente_seleccionado.empleados.tracking ? this.props.cliente_seleccionado.empleados.tracking: false}
+          empleado={this.props.empleado}
+          status={this.props.cliente_seleccionado.servicios.tracking.activo?'Activado':'Desactivado'}
+          keywords={this.props.cliente_seleccionado.servicios.tracking.keywords?this.props.cliente_seleccionado.servicios.tracking.keywords:{}}
+          dominio_a_buscar={this.props.cliente_seleccionado.servicios.tracking.dominio_a_buscar?this.props.cliente_seleccionado.servicios.tracking.dominio_a_buscar:''}
+        />
 
-        <InformacionEmpleados />
+        <InformacionEmpleados
+          empleados={this.props.cliente_seleccionado.empleados && this.props.cliente_seleccionado.empleados.tracking ? this.props.cliente_seleccionado.empleados.tracking: false}
+          all_empleados={this.props.all_empleados}
+          empleado={this.props.empleado}
+          cliente_seleccionado={this.props.cliente_seleccionado}
+          empleados_disponibles={this.props.empleados_disponibles}
+        />
 
-        <InformacionAdicional />
+        <InformacionAdicional
+          id_cliente={this.props.cliente_seleccionado.id_cliente}
+          empleados={this.props.cliente_seleccionado.empleados && this.props.cliente_seleccionado.empleados.tracking ? this.props.cliente_seleccionado.empleados.tracking: false}
+          empleado={this.props.empleado}
+          comentarios={this.props.cliente_seleccionado.servicios.tracking.comentarios?this.props.cliente_seleccionado.servicios.tracking.comentarios:''}
+        />
 
 
       </div>
@@ -32,38 +56,10 @@ class PanelTracking extends Component {
 
 }
 
-export default PanelTracking
+function mapStateToProps(state){return{ cliente_seleccionado:state.cliente_seleccionado, empleado:state.empleado, all_empleados:state.empleados, empleados_disponibles:state.tracking.paneles.lista.filtros.empleados.items }}
+export default connect(mapStateToProps)(PanelTracking);
 
-
-class InformacionCliente extends Component {
-  constructor(props){
-    super(props);
-    this.state={
-
-    }
-  }
-
-  render() {
-    return(
-      <div className='sub-container-informacion'>
-
-        <p className='title-informacion-alumno'>1. Información del cliente</p>
-
-        {/*Estado*/}
-        <SimpleInputDesplegable _class='div_text_mitad' lista={data.estados_act_des} title='Estado'  text={'Activo'} changeValor={(status)=>this.setState({status})}/>
-
-        {/*Dominio y Keywords*/}
-        <div className='col-2-input'>
-          <SimpleInput title='Dominio a buscar'  text={'arteneo.com/es'} changeValor={(dominio)=>this.setState({dominio})}/>
-          <SimpleInput title='Keywords'  text={'2'} changeValor={(keywords)=>this.setState({keywords})}/>
-        </div>
-
-
-      </div>
-    )
-  }
-}
-
+/*
 class InformacionEmpleados extends Component {
   constructor(props){
     super(props);
@@ -80,7 +76,7 @@ class InformacionEmpleados extends Component {
 
         <div className='ei-parent'>
 
-          <EmpleadoItem />
+
 
 
         </div>
@@ -105,7 +101,6 @@ class InformacionAdicional extends Component {
 
         <p className='title-informacion-alumno'>3. Información adicional</p>
 
-        {/*COMENTARIOS*/}
         <SimpleTextArea _class='pdd-top-10' title='Comentarios'  text={''} changeValue={comentario=>{this.setState({comentario})}}/>
 
 
@@ -113,3 +108,4 @@ class InformacionAdicional extends Component {
     )
   }
 }
+*/

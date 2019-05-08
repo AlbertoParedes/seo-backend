@@ -32,17 +32,27 @@ class ItemCliente extends Component {
   }
 
   seleccionarCliente = () => {
+
     if(this.props.cliente_seleccionado!==this.props.cliente){
+
+      var multiPath = {}
+      try {
+        if(this.props.cliente_seleccionado.servicios.linkbuilding.free.editando_por.id_empleado===this.props.empleado.id_empleado){
+          multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/free/editando_por`]=null
+        }
+      } catch (e) {}
+      try {
+        if(this.props.cliente_seleccionado.servicios.linkbuilding.paid.editando_por.id_empleado===this.props.empleado.id_empleado){
+          multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/paid/editando_por`]=null
+        }
+      } catch (e) {}
+      multiPath[`Empleados/${this.props.empleado.id_empleado}/session/cliente_seleccionado`]=this.props.cliente.id_cliente
+      if(Object.keys(multiPath).length>0){ db.update(multiPath) }
+
       this.props.setClienteSeleccionado(this.props.cliente)
       this.props.setPanelClientes('info')
 
-      if(
-        ( this.props.empleado.clientes && this.props.empleado.clientes.tracking && this.props.empleado.clientes.tracking[this.props.cliente.id_cliente] )
-        ||
-        (this.props.empleado.privilegios && this.props.empleado.privilegios.tracking && this.props.empleado.privilegios.tracking.edit.edit_keywords)
-      ){
-        console.log('tienes permiso');
-      }
+
 
     }else{
       this.props.setPanelClientes('info')
@@ -118,11 +128,11 @@ class ItemCliente extends Component {
         </td>
 
         <td  className='clientes-nombre'>
-          <span> {this.props.cliente.nombre?this.props.cliente.nombre:'-'}</span>
+          <span>{this.props.cliente.id_cliente/*this.props.cliente.nombre?this.props.cliente.nombre:'-'*/}</span>
         </td>
 
         <td  className='clientes-seo'>
-          <span> {this.props.cliente.seo?this.props.cliente.seo:'-'}</span>
+          <span>{this.props.cliente.seo?this.props.cliente.seo:'-'}</span>
         </td>
 
 

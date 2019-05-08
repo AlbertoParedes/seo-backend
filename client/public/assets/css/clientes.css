@@ -42,7 +42,7 @@
 
 #table-clientes tr th.clientes-status {
   cursor: pointer;
-  width: 75px;
+  width: 92px;
   text-align: center; }
 
 #table-clientes tr th.clientes-web {
@@ -89,6 +89,9 @@
 #table-clientes tr td.clientes-activo {
   width: 145px;
   text-align: center; }
+
+#table-clientes tr td.clientes-more {
+  cursor: pointer; }
 
 #table-clientes tr td.clientes-more:hover {
   color: #1090f7; }

@@ -38,8 +38,32 @@ class ItemCliente extends Component {
   }
 
   seleccionarCliente = () => {
-    this.props.setClienteSeleccionado(this.props.cliente)
-    this.props.setPanelClientesFreeLinkbuilding('info')
+
+    if(this.props.cliente_seleccionado!==this.props.cliente){
+
+      var multiPath = {}
+      try {
+        if(this.props.cliente_seleccionado.servicios.linkbuilding.free.editando_por.id_empleado===this.props.empleado.id_empleado){
+          multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/free/editando_por`]=null
+        }
+      } catch (e) {}
+      try {
+        if(this.props.cliente_seleccionado.servicios.linkbuilding.paid.editando_por.id_empleado===this.props.empleado.id_empleado){
+          multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/paid/editando_por`]=null
+        }
+      } catch (e) {}
+      multiPath[`Empleados/${this.props.empleado.id_empleado}/session/cliente_seleccionado`]=this.props.cliente.id_cliente
+      if(Object.keys(multiPath).length>0){ db.update(multiPath) }
+
+      this.props.setClienteSeleccionado(this.props.cliente)
+      this.props.setPanelClientesFreeLinkbuilding('info')
+
+
+
+    }else{
+      this.props.setPanelClientesFreeLinkbuilding('info')
+    }
+
   }
 
   /*openAlumnos = () => {
@@ -53,7 +77,7 @@ class ItemCliente extends Component {
 
 
   render() {
-    var seo = '';
+    var seo = this.props.cliente.seo;
     if(this.props.cliente.seo==='lite')seo='Lite';
     else if(this.props.cliente.seo==='pro')seo='Pro';
     else if(this.props.cliente.seo==='premium')seo='Premium';
@@ -71,7 +95,7 @@ class ItemCliente extends Component {
         */}
 
         <td className='lb-clientes-status'>
-          <div className={`status-point ${this.props.cliente.servicios.linkbuilding.free.activo?'good-status':'warning-status'} ${this.props.cliente.eliminado?'wrong-status':''}     `} ></div>
+          <div className={`status-point ${this.props.cliente.servicios.linkbuilding.free.activo && this.props.cliente.activo?'good-status':'warning-status'} ${this.props.cliente.eliminado?'wrong-status':''}     `} ></div>
         </td>
 
         <td className='lb-clientes-web'>
@@ -96,7 +120,7 @@ class ItemCliente extends Component {
           </div>
         </td>
 
-        <td onClick={()=>{this.seleccionarCliente()}} className='cli-more'>
+        <td onClick={()=>{this.seleccionarCliente()}} className='lb-clientes-more'>
           <i className="material-icons align-center">chevron_right</i>
         </td>
       </tr>

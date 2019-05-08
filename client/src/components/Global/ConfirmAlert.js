@@ -33,6 +33,9 @@ class ConfirmAlert extends Component {
               {this.props.text_1?<span>{this.props.text_1}</span>:null}
               {this.props.bold_1?<span className='bold-confirm'>{this.props.bold_1}</span>:null}
               {this.props.text_2?<span>{this.props.text_2}</span>:null}
+              {this.props.bold_2?<span className='bold-confirm'>{this.props.bold_2}</span>:null}
+              {this.props.text_3?<span>{this.props.text_3}</span>:null}
+
             </div>
           </div>
           <div className='container-bottom-btns-confirm'>

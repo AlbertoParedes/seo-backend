@@ -5,8 +5,14 @@ import SimpleInputDesplegable from '../../../Global/SimpleInputDesplegable'
 import EmpleadoItem from '../../../Global/EmpleadoItem'
 import Switch from '../../../Global/Switch'
 import SimpleTextArea from '../../../Global/SimpleTextArea'
-
-
+import InformacionLinkbuilding from './InformacionLinkbuilding'
+import functions from '../../../Global/functions'
+import { connect } from 'react-redux';
+import InformacionEmpleados from './InformacionEmpleados'
+import Estrategia from './Estrategia'
+import Micronichos from './Micronichos'
+import InformacionAdicional from './InformacionAdicional'
+import $ from 'jquery'
 
 
 class PanelLinkbuildingPaid extends Component {
@@ -18,19 +24,68 @@ class PanelLinkbuildingPaid extends Component {
     }
   }
 
+  componentDidMount = () => { this.scrollToCliente() }
+  scrollToCliente = () => { setTimeout(function(){ try { $('#container-clientes').animate({scrollTop:0}, 0); } catch (e) { } }, 0); }
+
   render(){
+
+    var micronichos = {}
+    try {
+       micronichos = this.props.cliente_seleccionado.servicios.linkbuilding.paid.micronichos.webs
+       delete micronichos.home
+    } catch (e) {}
+
+
     return(
       <div className='container-informacion'>
 
-        <InformacionLinkbuilding />
+        <InformacionLinkbuilding
+          cliente_seleccionado={this.props.cliente_seleccionado}
+          id_cliente={this.props.cliente_seleccionado.id_cliente}
+          empleado={this.props.empleado}
+          status={this.props.cliente_seleccionado.servicios.linkbuilding.paid.activo?'Activado':'Desactivado'}
+          bote={this.props.cliente_seleccionado.servicios.linkbuilding.paid.bote?functions.getDecimcals(this.props.cliente_seleccionado.servicios.linkbuilding.paid.bote).toString():'0'}
+          beneficio={this.props.cliente_seleccionado.servicios.linkbuilding.paid.beneficio?functions.getDecimcals(this.props.cliente_seleccionado.servicios.linkbuilding.paid.beneficio).toString():'0'}
+          inversion_mensual={this.props.cliente_seleccionado.servicios.linkbuilding.paid.inversion_mensual?functions.getDecimcals(this.props.cliente_seleccionado.servicios.linkbuilding.paid.inversion_mensual).toString():'0'}
+          porcentaje_perdida={this.props.cliente_seleccionado.servicios.linkbuilding.paid.porcentaje_perdida?this.props.cliente_seleccionado.servicios.linkbuilding.paid.porcentaje_perdida.toString():'0'}
+        />
 
-        <Estrategia />
+        <Estrategia
+          id_cliente={this.props.cliente_seleccionado.id_cliente}
+          empleado={this.props.empleado}
+          anchors={this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.anchors?this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.anchors:{}}
+          destinos={this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.destinos?this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.destinos:{}}
+          micronichos={this.props.cliente_seleccionado.servicios.linkbuilding.paid.micronichos.activo?this.props.cliente_seleccionado.servicios.linkbuilding.paid.micronichos.activo:false}
+        />
 
-        <Micronichos />
+        <InformacionEmpleados
+          empleados={this.props.cliente_seleccionado.empleados && this.props.cliente_seleccionado.empleados.linkbuilding_paid ? this.props.cliente_seleccionado.empleados.linkbuilding_paid: false}
+          all_empleados={this.props.all_empleados}
+          empleado={this.props.empleado}
+          cliente_seleccionado={this.props.cliente_seleccionado}
+          empleados_disponibles={this.props.empleados_disponibles}
+        />
 
-        <InformacionEmpleados />
+        <InformacionAdicional
+          id_cliente={this.props.cliente_seleccionado.id_cliente}
+          empleado={this.props.empleado}
+          comentarios={this.props.cliente_seleccionado.servicios.linkbuilding.paid.comentarios?this.props.cliente_seleccionado.servicios.linkbuilding.paid.comentarios:''}
+        />
 
-        <InformacionAdicional />
+        {this.props.cliente_seleccionado.servicios.linkbuilding.paid.micronichos.activo?
+          <Micronichos
+            id_cliente={this.props.cliente_seleccionado.id_cliente}
+            empleado={this.props.empleado}
+            web_cliente = {this.props.cliente_seleccionado.web?this.props.cliente_seleccionado.web:''}
+            status={this.props.cliente_seleccionado.servicios.linkbuilding.paid.micronichos.activo?this.props.cliente_seleccionado.servicios.linkbuilding.paid.micronichos.activo:false}
+            micronichos={micronichos?micronichos:{}}
+          />
+          :null}
+
+
+
+
+
 
 
       </div>
@@ -39,182 +94,5 @@ class PanelLinkbuildingPaid extends Component {
 
 }
 
-export default PanelLinkbuildingPaid
-
-
-class InformacionLinkbuilding extends Component {
-  constructor(props){
-    super(props);
-    this.state={
-
-    }
-  }
-
-  render() {
-    return(
-      <div className='sub-container-informacion'>
-
-        <p className='title-informacion-alumno'>1. Información del linkbuilding</p>
-
-        {/*BOTE*/}
-
-        <SimpleInputDesplegable _class='div_text_mitad' lista={data.estados_act_des} title='Estado'  text={'Activo'} changeValor={(status)=>this.setState({status})}/>
-
-        {/*Estado y seo*/}
-        <div className='col-2-input'>
-          <SimpleInput type='block'  _class_input='dni-input' title='Bote'  text={'500 €'}/>
-          <SimpleInput title='Inversión mensual'  text={'400 €'} changeValue={inversion_mensual=>{this.setState({inversion_mensual})}} />
-        </div>
-
-        {/*INVERSION MENSUAL Y BENEFICIO*/}
-        <div className='col-2-input'>
-          <SimpleInput title='Beneficio'  text={'40 %'} changeValue={beneficio=>{this.setState({beneficio})}} />
-          <SimpleInput  title='Porcentaje de pérdida' text={'15 %'} changeValor={(perdida)=>this.setState({perdida})}/>
-        </div>
-
-      </div>
-    )
-  }
-}
-
-class Estrategia extends Component {
-  constructor(props){
-    super(props);
-    this.state={
-
-    }
-  }
-
-  render() {
-    return(
-      <div className='sub-container-informacion'>
-
-        <p className='title-informacion-alumno'>2. Estrategia</p>
-
-        {/*KEYWORDS Y DESTINOS*/}
-        <div className='col-2-input'>
-          <SimpleInput title='Keywords'  text={'4'} changeValue={keywords=>{this.setState({keywords})}} />
-          <SimpleInput  title='Destinos' text={'5'} changeValor={(destinos)=>this.setState({destinos})}/>
-        </div>
-
-        <div className='display_flex container-simple-input pdd-top-40'>
-          <div className="title-input align-center mg-right-10 pdd-v-0">Micronichos</div>
-          <span className='options-switch'>NO</span>
-          <Switch class_div='switch-table' valor={true}/>
-          <span className='options-switch'>SI</span>
-        </div>
-
-      </div>
-    )
-  }
-}
-
-class Micronichos extends Component {
-  constructor(props){
-    super(props);
-    this.state={
-
-    }
-  }
-
-  render() {
-    return(
-      <div className='sub-container-informacion'>
-
-        <p className='title-informacion-alumno'>3. Micronichos</p>
-
-        <ItemMicronicho />
-
-        <ItemMicronicho />
-
-        <ItemMicronicho />
-
-        <ItemMicronicho />
-
-      </div>
-    )
-  }
-}
-
-class ItemMicronicho extends Component {
-  constructor(props){
-    super(props);
-    this.state={
-
-    }
-  }
-
-  render() {
-    return(
-
-      <div className='container-micronichos'>
-        {/*URL*/}
-        <SimpleInput title='Web'  text={'http://prueba.com'} changeValue={url=>{this.setState({url})}} />
-
-        {/*PRESUPUESTO y CANTIDAD*/}
-        <div className='col-2-input'>
-          <SimpleInput title='Presupuesto'  text={'Compartido'} changeValue={presupuesto=>{this.setState({presupuesto})}} />
-          <SimpleInput  title='Cantidad' text={'300 €'} changeValor={(cantidad)=>this.setState({cantidad})}/>
-        </div>
-
-        {/*KEYWORDS Y DESTINOS*/}
-        <div className='col-2-input'>
-          <SimpleInput title='Keywords'  text={'4'} changeValue={keywords=>{this.setState({keywords})}} />
-          <SimpleInput  title='Destinos' text={'5'} changeValor={(destinos)=>this.setState({destinos})}/>
-        </div>
-
-      </div>
-
-    )
-  }
-}
-
-
-class InformacionEmpleados extends Component {
-  constructor(props){
-    super(props);
-    this.state={
-
-    }
-  }
-
-  render() {
-    return(
-      <div className='sub-container-informacion'>
-
-        <p className='title-informacion-alumno'>3. Empleados</p>
-
-        <div className='ei-parent'>
-
-          <EmpleadoItem />
-          <EmpleadoItem />
-
-
-        </div>
-
-      </div>
-    )
-  }
-}
-
-class InformacionAdicional extends Component {
-  constructor(props){
-    super(props);
-    this.state={
-
-    }
-  }
-
-  render() {
-    return(
-      <div className='sub-container-informacion'>
-
-        <p className='title-informacion-alumno'>4. Información adicional</p>
-
-        {/*COMENTARIOS*/}
-        <SimpleTextArea _class='pdd-top-10' title='Comentarios'  text={''} changeValue={comentario=>{this.setState({comentario})}}/>
-
-      </div>
-    )
-  }
-}
+function mapStateToProps(state){return{ cliente_seleccionado:state.cliente_seleccionado, empleado:state.empleado, all_empleados:state.empleados, empleados_disponibles:state.linkbuilding.enlaces.tipos.paid.paneles.lista.filtros.empleados.items }}
+export default connect(mapStateToProps)(PanelLinkbuildingPaid);

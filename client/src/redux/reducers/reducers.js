@@ -20,17 +20,9 @@ import ClientesListaEdit from './clientes/reducer-clientes-lista-edit'
 /*Panel linkbuilding*/
 import Linbuilding from './linkbuilding/reducer-linkbuilding'
 /*--------------*/
-
-
-//Tracking -------------------------------------------------
-import ItemsTrackingKeywords from './tracking/reducer-items-tracking-keywords'
-import FiltroTrackingLista from './tracking/reducer-filtro-tracking-lista'
-import FiltroTrackingKeywords from './tracking/reducer-filtro-tracking-keywords'
-import PanelTracking from './tracking/reducer-panel-tracking'
-import KeywordTrackingSelected from './tracking/reducer-keyword-tracking-selected'
-import TrackingKeywordEdit from './tracking/reducer-tracking-keyword-edit'
-import TrackingClientesEdit from './tracking/reducer-tracking-clientes-edit'
-/*--------------------------------------------------------*/
+/*Panel linkbuilding*/
+import Tracking from './tracking/reducer-tracking'
+/*--------------*/
 
 const allReducers = combineReducers({
   clientes : Clientes,
@@ -47,20 +39,15 @@ const allReducers = combineReducers({
   /*Panel linkbuilding*/
   linkbuilding:Linbuilding,
   /*--------------*/
+  /*Panel linkbuilding*/
+  tracking:Tracking,
+  /*--------------*/
 
   cliente_seleccionado:ClienteSeleccionado,
 
   items_clientes: ItemsClientes,
   panel_home:PanelHome,
 
-  panel_tracking:PanelTracking,
-  filtros_tracking_lista: FiltroTrackingLista,
-  filtros_tracking_keywords: FiltroTrackingKeywords,
-  keyword_tracking_selected: KeywordTrackingSelected,
-
-  tracking_keywords_edit: TrackingKeywordEdit,
-  tracking_clientes_edit: TrackingClientesEdit,
-  items_tracking_keywords: ItemsTrackingKeywords,
 });
 
 export default allReducers;

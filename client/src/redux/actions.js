@@ -19,75 +19,6 @@ export const setEmpleado = (empleado) => {
   }
 }
 
-export const setFiltrosTrackingLista = (filtros_tracking_lista) => {
-  return {
-    type: "FILTROS_TRACKING_LISTA",
-    filtros_tracking_lista
-  }
-}
-export const setFiltrosTrackingKeywords = (filtros_tracking_keywords) => {
-  return {
-    type: "FILTROS_TRACKING_KEYWORDS",
-    filtros_tracking_keywords
-  }
-}
-
-export const setClienteSeleccionado = (cliente_seleccionado) => {
-  return {
-    type: "CLIENTE_SELECCIONADO",
-    cliente_seleccionado
-  }
-}
-
-export const setPanelTracking = (panel_tracking) => {
-  return {
-    type: "PANEL_TRACKING",
-    panel_tracking
-  }
-}
-
-export const setItemsClientes = (items_clientes) => {
-  return {
-    type: "ITEMS_CLIENTES",
-    items_clientes
-  }
-}
-export const setItemsTrackingKeywords = (items_tracking_keywords) => {
-  return {
-    type: "ITEMS_TRACKING_KEYWORDS",
-    items_tracking_keywords
-  }
-}
-
-export const setPanelHome = (panel_home) => {
-  return {
-    type: "PANEL_HOME",
-    panel_home
-  }
-}
-
-export const setKeywordTrackingSelected = (keyword_tracking_selected) => {
-  return {
-    type: "KEYWORD_TRACKING_SELECTED",
-    keyword_tracking_selected
-  }
-}
-
-export const setEditKeywordsTracking = (tracking_keywords_edit) => {
-  return {
-    type: "TRACKING_KEYWORDS_EDIT",
-    tracking_keywords_edit
-  }
-}
-export const setEditClientesTracking = (tracking_clientes_edit) => {
-  return {
-    type: "TRACKING_CLIENTES_EDIT",
-    tracking_clientes_edit
-  }
-}
-
-
-
 
 
 
@@ -130,7 +61,9 @@ export const setFiltrosClientesPaidListaLinkbuilding = filtros =>{
   return { type: 'LB_FILTROS_CLIENTES_PAID_LISTA', filtros }
 }
 
-
+export const setSortTableMediosFreeLB = data =>{
+  return { type: 'LB_SORTBY_DES_MEDIOS_LISTA_FREE', data }
+}
 export const setFiltrosMediosFreeListaLinkbuilding = filtros =>{
   return { type: 'LB_FILTROS_MEDIOS_FREE_LISTA', filtros }
 }
@@ -184,6 +117,19 @@ export const setInfoTableClientesPaidLB = items_info =>{
   return { type: 'LB_INFO_CLIENTES_PAID', items_info }
 }
 
+export const setSearchTableMediosFreeLB = text =>{
+  return { type: 'LB_SEARCH_DES_MEDIOS_LISTA_FREE', text }
+}
+export const setSearchByTableMediosFreeLB = text =>{
+  return { type: 'LB_SEARCHBY_DES_MEDIOS_LISTA_FREE', text }
+}
+export const setItemsLoadTableMediosFreeLB = items =>{
+  return { type: 'LB_ITEMS_LOADED_DES_MEDIOS_LISTA_FREE', items }
+}
+export const setInfoTableMediosFreeLB = items_info =>{
+  return { type: 'LB_INFO_MEDIOS_FREE', items_info }
+}
+
 
 
 
@@ -223,6 +169,9 @@ export const setItemsLoadTableMediosPaidLB = items =>{
 export const setInfoTableMediosPaidLB = items_info =>{
   return { type: 'LB_INFO_MEDIOS_PAID', items_info }
 }
+export const setPlataformas = plataformas =>{
+  return { type: 'LB_PLATAFORMAS_MEDIOS_PAID', plataformas }
+}
 
 
 
@@ -230,6 +179,7 @@ export const setInfoTableMediosPaidLB = items_info =>{
 
 
 
+//Enlaces gratuitos--------------------------------
 export const setFiltrosEnlacesFreeListaLinkbuilding = filtros =>{
   return { type: 'LB_FILTROS_ENLACES_FREE_LISTA', filtros }
 }
@@ -251,7 +201,34 @@ export const setItemsLoadTableEnlacesFreeLB = items =>{
 export const setInfoTableEnlacesFreeLB = items_info =>{
   return { type: 'LB_INFO_ENLACES_FREE', items_info }
 }
+//-----------------------------------------------
 
+//Enlaces de pago--------------------------------
+export const setFiltrosEnlacesPaidListaLinkbuilding = filtros =>{
+  return { type: 'LB_FILTROS_ENLACES_PAID_LISTA', filtros }
+}
+export const setPanelEnlacesPaidLinkbuilding = panel =>{
+  return { type: 'LB_PANEL_ENLACES_PAID', panel }
+}
+export const setSortTableEnlacesPaidLB = data =>{
+  return { type: 'LB_SORTBY_DES_ENLACES_LISTA_PAID', data }
+}
+export const setSearchTableEnlacesPaidLB = text =>{
+  return { type: 'LB_SEARCH_DES_ENLACES_LISTA_PAID', text }
+}
+export const setSearchByTableEnlacesPaidLB = text =>{
+  return { type: 'LB_SEARCHBY_DES_ENLACES_LISTA_PAID', text }
+}
+export const setItemsLoadTableEnlacesPaidLB = items =>{
+  return { type: 'LB_ITEMS_LOADED_DES_ENLACES_LISTA_PAID', items }
+}
+export const setInfoTableEnlacesPaidLB = items_info =>{
+  return { type: 'LB_INFO_ENLACES_PAID', items_info }
+}
+export const setEnlacesPaid = enlaces =>{
+  return {type:'SET_ENLACES_PAID', enlaces}
+}
+//-----------------------------------------------
 
 
 
@@ -276,3 +253,68 @@ export const setEnlacesFree = enlaces =>{
 
 
 /*--------------*/
+
+
+/* Tracking */
+
+export const setPanelTracking = panel_tracking =>{
+  return {type:'PANEL_TRACKING', panel_tracking}
+}
+export const setSearchTableClientesTracking = text =>{
+  return {type:'TRACKING_SEARCH_CLIENTES', text}
+}
+export const setSearchByTableClientesTracking = text =>{
+  return {type:'TRACKING_SEARCH_BY_CLIENTES', text}
+}
+export const setFiltrosTracking = (filtros) => {
+  return { type: "FILTROS_TRACKING_CLIENTES", filtros }
+}
+export const setItemsTracking = (item) => {
+  return { type: "ITEMS_TRACKING_CLIENTES", item }
+}
+export const setSearchTableKeywordsTracking = text =>{
+  return {type:'TRACKING_SEARCH_KEYWORDS', text}
+}
+export const setSearchByTableKeywordsTracking = text =>{
+  return {type:'TRACKING_SEARCH_BY_KEYWORDS', text}
+}
+
+export const setItemsTrackingKeywords = (items_tracking_keywords) => {
+  return { type: "ITEMS_TRACKING_KEYWORDS", items_tracking_keywords }
+}
+export const setEditKeywordsTracking = (tracking_keywords_edit) => {
+  return { type: "TRACKING_KEYWORDS_EDIT", tracking_keywords_edit }
+}
+export const setFiltrosTrackingKeywords = (filtros_tracking_keywords) => {
+  return { type: "FILTROS_TRACKING_KEYWORDS", filtros_tracking_keywords }
+}
+export const setKeywordTrackingSelected = (keyword_tracking_selected) => {
+  return { type: "KEYWORD_TRACKING_SELECTED", keyword_tracking_selected }
+}
+
+
+
+
+
+export const setClienteSeleccionado = (cliente_seleccionado) => {
+  return {
+    type: "CLIENTE_SELECCIONADO",
+    cliente_seleccionado
+  }
+}
+
+
+export const setItemsClientes = (items_clientes) => {
+  return {
+    type: "ITEMS_CLIENTES",
+    items_clientes
+  }
+}
+
+
+export const setPanelHome = (panel_home) => {
+  return {
+    type: "PANEL_HOME",
+    panel_home
+  }
+}

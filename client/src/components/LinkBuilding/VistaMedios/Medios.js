@@ -4,6 +4,9 @@ import HeaderPaid from './MediosPaid/Header/Header'
 import PanelListaFree from './MediosFree/Paneles/PanelLista/PanelLista'
 import PanelListaPaid from './MediosPaid/Paneles/PanelLista/PanelLista'
 import PanelInfoFree from './MediosFree/Paneles/PanelInfo/PanelInfo'
+
+import PanelInfoPaid from './MediosPaid/Paneles/PanelInfo/PanelInfo'
+import PanelEnlacesPaid from './MediosPaid/Paneles/PanelEnlaces/PanelEnlaces'
 import { connect } from 'react-redux';
 
 class Medios extends Component{
@@ -40,13 +43,9 @@ class Medios extends Component{
 
         <div className='sub-container-panels'>
 
-          {this.props.panel_paid==='lista'?
-
-            <PanelListaPaid visibility={this.props.panel_paid==='lista'?true:false}/>:
-
-            null
-
-          }
+          {this.props.panel_paid==='lista'?<PanelListaPaid visibility={this.props.panel_paid==='lista'?true:false}/>:null}
+          {this.props.panel_paid==='info'?<div className="container-table"><PanelInfoPaid /></div>:null}
+          {this.props.panel_paid==='enlaces'?<div className="container-table"><PanelEnlacesPaid /></div>:null}
 
 
         </div>
@@ -58,6 +57,7 @@ class Medios extends Component{
   }
 
   render(){
+    console.log(this.props.filtros_free);
     return(
 
       this.props.filtros_free.type.items.free.checked ?

@@ -26,7 +26,6 @@ class ListaVistas extends Component {
 
 
   render() {
-    console.log(this.props.vistas);
     return (
       <div className='pop-up-lista-filtros container-vistas' onClick={e=>e.stopPropagation()} ref={node=>this.node=node}>
         <div className='container-list-filter'>

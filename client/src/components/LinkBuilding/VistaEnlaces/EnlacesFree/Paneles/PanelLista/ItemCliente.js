@@ -2,6 +2,8 @@ import React,{Component} from 'react'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setClienteSeleccionado } from '../../../../../../redux/actions';
+import firebase from '../../../../../../firebase/Firebase';
+const db = firebase.database().ref();
 
 class ItemCliente extends Component {
   constructor(props){
@@ -11,8 +13,40 @@ class ItemCliente extends Component {
     }
   }
 
+  seleccionarCliente = () => {
+
+    try { if(this.props.cliente.id_cliente===this.props.empleado.session.cliente_seleccionado){this.props.setClienteSeleccionado(this.props.cliente);return null} } catch (e) { }
+    var multiPath = {}
+    if(!this.props.cliente.servicios.linkbuilding.free.editando_por){
+      multiPath[`Empleados/${this.props.empleado.id_empleado}/session/cliente_seleccionado`]=this.props.cliente.id_cliente
+      multiPath[`Empleados/${this.props.empleado.id_empleado}/session/subpanel`]='linkbuilding_free'
+      multiPath[`Clientes/${this.props.cliente.id_cliente}/servicios/linkbuilding/free/editando_por`]={ id_empleado: this.props.empleado.id_empleado, nombre: this.props.empleado.nombre+' '+this.props.empleado.apellidos, subpanel:'linkbuilding_free'}
+    }else{
+      multiPath[`Empleados/${this.props.empleado.id_empleado}/session/cliente_seleccionado`]=this.props.cliente.id_cliente
+    }
+
+    try {
+      if(this.props.cliente_seleccionado.servicios.linkbuilding.paid.editando_por.id_empleado===this.props.empleado.id_empleado){
+          multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/paid/editando_por`]=null
+          multiPath[`Empleados/${this.props.empleado.id_empleado}/session/subpanel`]='linkbuilding_free'
+      }
+    } catch (e) {}
+
+    try {
+      if(this.props.empleado.session.cliente_seleccionado && this.props.empleado.session.cliente_seleccionado!==this.props.cliente.id_cliente){
+        multiPath[`Clientes/${this.props.empleado.session.cliente_seleccionado}/servicios/linkbuilding/free/editando_por`]=null
+      }
+    } catch (e) { }
+    if(Object.keys(multiPath).length>0){ db.update(multiPath)}
+    this.props.setClienteSeleccionado(this.props.cliente)
+  }
+
   render(){
-    var mes = this.props.cliente.servicios.linkbuilding.free.home.mensualidades[this.props.fecha]?this.props.cliente.servicios.linkbuilding.free.home.mensualidades[this.props.fecha]:false
+    var mes = false;
+    var enlaces_restante = 0;
+    try {
+      mes = this.props.cliente.servicios.linkbuilding.free.home.mensualidades[this.props.fecha]?this.props.cliente.servicios.linkbuilding.free.home.mensualidades[this.props.fecha]:false
+    } catch (e) {}
     var follows = mes?mes.follows:0
     var nofollows = mes?mes.nofollows:0
     var follows_done_all = 0
@@ -30,14 +64,19 @@ class ItemCliente extends Component {
         }
       })
       if(this.props.filtros.empleados.todos.checked){ follows_empleados=follows; follows_done_empleados=follows_done_all}
+
+      enlaces_restante = follows_empleados - follows_done_empleados;
+    }else{
+      //si no tiene empelados asignados habrá que que restarle el total
+      enlaces_restante = follows - follows_done_empleados;
     }
 
-    var enlaces_restante = follows_empleados - follows_done_empleados;
-    var pausado = !this.props.cliente.servicios.linkbuilding.free.activo;
+
+    var pausado = !this.props.cliente.activo || !this.props.cliente.servicios.linkbuilding.free.activo ;
     var eliminado = this.props.cliente.eliminado
 
     return(
-      <div className={`item-lista-categoria ${this.props.cliente_seleccionado && this.props.cliente_seleccionado.id_cliente===this.props.cliente.id_cliente?'active-row-table':''} `} onClick={()=>this.props.setClienteSeleccionado(this.props.cliente)}>
+      <div className={`item-lista-categoria ${this.props.cliente_seleccionado && this.props.cliente_seleccionado.id_cliente===this.props.cliente.id_cliente?'active-row-table':''} `} onClick={()=>{this.seleccionarCliente()} }>
 
 
         <div className='container-clientes-div-enlaces'>
@@ -45,9 +84,8 @@ class ItemCliente extends Component {
           <div className='lb-enla-status-clientes'>
             {enlaces_restante>0?<div className='lb-enla-follows-clientes-number'>{enlaces_restante}</div>:null}
             {enlaces_restante===0?
-              <i className="material-icons color-favorito"> done </i>
+              <i className={`material-icons color-favorito size-bote-disponible ${follows===0?'opacity_0':''}`}> done </i>
             :null}
-
           </div>
 
           <div className='lb-enla-info-clientes block-with-text'>
@@ -94,7 +132,8 @@ class ItemCliente extends Component {
 function mapStateToProps(state){return{
   cliente_seleccionado: state.cliente_seleccionado,
   filtros:state.linkbuilding.enlaces.tipos.free.paneles.lista.filtros,
-  fecha:state.linkbuilding.enlaces.fecha
+  fecha:state.linkbuilding.enlaces.fecha,
+  empleado:state.empleado
 }}
 function matchDispatchToProps(dispatch){ return bindActionCreators({ setClienteSeleccionado }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(ItemCliente);

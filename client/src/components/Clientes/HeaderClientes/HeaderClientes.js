@@ -32,6 +32,16 @@ class HeaderClientes extends Component{
     return false;
   }
 
+  changePanel = (panel) => {
+
+    if(!this.props.cliente_seleccionado){
+      console.log('Selecciona un cliente');
+      return null
+    }
+
+    this.props.setPanelClientes(panel)
+  }
+
   render(){
     return(
       <div className='container-header-panels pr'>
@@ -67,11 +77,11 @@ class HeaderClientes extends Component{
         <FiltrosClientes/>
 
         <div className='barra-opciones-alumnos'>
-          <div onClick={()=>{this.props.setPanelClientes('lista')}} className={`${this.props.panel_clientes==='lista'?'active-option':''}`} >Listado</div>
-          <div onClick={()=>{this.props.setPanelClientes('info')}} className={`${this.props.panel_clientes==='info'?'active-option':''} ${!this.props.cliente_seleccionado?'disable-opciones-alumno':''}`} >Información</div>
-          <div onClick={()=>{this.props.setPanelClientes('linkbuilding_gratuito')}} className={`pr ${this.props.panel_clientes==='linkbuilding_gratuito'?'active-option':''} ${!this.props.cliente_seleccionado?'disable-opciones-alumno':''}`} >Linkbuilding <span className='subtitlte-tab-menu'>gratuito</span></div>
-          <div onClick={()=>{this.props.setPanelClientes('linkbuilding_pagado')}} className={`pr ${this.props.panel_clientes==='linkbuilding_pagado'?'active-option':''} ${!this.props.cliente_seleccionado?'disable-opciones-alumno':''}`} >Linkbuilding <span className='subtitlte-tab-menu'>de pago</span></div>
-          <div onClick={()=>{this.props.setPanelClientes('tracking')}} className={`${this.props.panel_clientes==='tracking'?'active-option':''} ${!this.props.cliente_seleccionado?'disable-opciones-alumno':''}`} >Tracking</div>
+          <div onClick={()=>{this.changePanel('lista')}} className={`${this.props.panel_clientes==='lista'?'active-option':''}`} >Listado</div>
+          <div onClick={()=>{this.changePanel('info')}} className={`${this.props.panel_clientes==='info'?'active-option':''} ${!this.props.cliente_seleccionado?'disable-opciones-alumno':''}`} >Información</div>
+          <div onClick={()=>{this.changePanel('linkbuilding_gratuito')}} className={`pr ${this.props.panel_clientes==='linkbuilding_gratuito'?'active-option':''} ${!this.props.cliente_seleccionado?'disable-opciones-alumno':''}`} >Linkbuilding <span className='subtitlte-tab-menu'>gratuito</span></div>
+          <div onClick={()=>{this.changePanel('linkbuilding_pagado')}} className={`pr ${this.props.panel_clientes==='linkbuilding_pagado'?'active-option':''} ${!this.props.cliente_seleccionado?'disable-opciones-alumno':''}`} >Linkbuilding <span className='subtitlte-tab-menu'>de pago</span></div>
+          <div onClick={()=>{this.changePanel('tracking')}} className={`${this.props.panel_clientes==='tracking'?'active-option':''} ${!this.props.cliente_seleccionado?'disable-opciones-alumno':''}`} >Tracking</div>
         </div>
 
       </div>

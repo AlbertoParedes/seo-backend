@@ -274,6 +274,44 @@ const data = {
       }
     },
 
+    lb_filtros_enlaces_paid:{
+      lista:{
+        type:{
+          title:'Tipo de enlaces',
+          type:'radiobutton',
+          required:true,
+          items:{
+            'free':{text:'Gratuitos',text_info:'Enlaces Gratuitos',checked:true},
+            'paid':{text:'De pago',text_info:'Enlaces de pago',checked:false},
+          }
+        },
+        status:{
+          title:'Estados de clientes',
+          type:'checkbox',
+          todos:{
+            text:'Todos',
+            checked:false
+          },
+          items:{
+            'activos':{text:'activos',text_info:'Activos',checked:true},
+            'pausados':{text:'Pausados',text_info:'Pausados',checked:false},
+            'eliminados':{text:'Eliminados',text_info:'Eliminados',checked:false},
+          }
+        },
+
+        empleados:{
+          title:'Empleados',
+          type:'checkbox',
+          todos:{
+            text:'Todos',
+            checked:false
+          },
+          items:{}
+        },
+
+      }
+    },
+
   },
 
   vistas:{
@@ -297,9 +335,28 @@ const data = {
   months : ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"],
 
   seo:['Lite','Pro','Premium', 'A medida'],
-  estados : ['Activo', 'Parado', 'Eliminado'],
+  estados : ['Activado', 'Desactivado', 'Eliminado'],
   estados_servicios: ['Activado','Desactivado'],
-  estados_act_des : ['Activo', 'Parado'],
+  estados_act_des : ['Activado', 'Desactivado'],
+
+  idiomas : ['Árabe','Español', 'Inglés'],
+  tipos_de_enlaces: ['Follows','Nofollows', 'Follows y Nofollows'],
+
+  compartir_enlaces: {
+    unico:{texto: 'Único'},
+    compartido_1:{texto: 'Compartido entre 1'},
+    compartido_2:{texto: 'Compartido entre 2'},
+    compartido_3:{texto: 'Compartido entre 3'},
+    compartido_4:{texto: 'Compartido entre 4'},
+  },
+
+  tipos:{
+    our:{texto:'Cliente yoseo'},
+    old:{texto:'Cliente normal'},
+    new:{texto:'Cliente nuevo'},
+    better_links:{texto:'Cliente a mejorar'},
+
+  }
 
 }
 export default data

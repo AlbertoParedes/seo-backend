@@ -1,73 +1,67 @@
 import React, { Component } from 'react';
-import functions from '../../../Global/functions'
-import data from '../../../Global/Data/Data'
 import CargandoData from '../../../Global/CargandoData'
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { setItemsTrackingKeywords, setClienteSeleccionado,setPanelTracking } from '../../../../redux/actions';
+import { bindActionCreators } from 'redux';
+import { setItemsTrackingKeywords, setClienteSeleccionado, setPanelTracking } from '../../../../redux/actions';
+import functions from '../../../Global/functions'
 import $ from 'jquery'
 import ItemKeyword from './ItemKeyword'
-
-import firebase from '../../../../firebase/Firebase';
-const db = firebase.database().ref();
 const ITEMS = 50;
-
 class PanelKeywords extends Component {
 
   constructor(props){
       super(props);
       this.state={
+        items:this.props.items,
+        sortBy:this.props.sortBy,
+        des:this.props.des,
+        searchBy:this.props.searchBy,
+        search:this.props.search,
 
-        items:ITEMS, sortBy:'keyword', des:false,
 
-        searchByKeywords:this.props.searchByKeywords,
-        searchKeywords:this.props.searchKeywords,
-
-        cliente:this.props.cliente,
+        cliente_seleccionado:this.props.cliente_seleccionado,
         keywords:this.props.keywords,
         keywords_ordenadas:[],
+
         filtros:this.props.filtros,
+        clientes:this.props.clientes,
       };
   }
 
   componentWillMount = () => { this.ordenarKeywords()}
-
+  componentDidMount = () => { this.scrollToCliente();}
   componentWillReceiveProps = newProps => {
-    if(this.state.cliente!==newProps.cliente){ this.setState({cliente:newProps.cliente}, ()=> this.ordenarKeywords() ) }
-    if(this.state.keywords!==newProps.keywords){ this.setState({keywords:newProps.keywords}, ()=> this.ordenarKeywords() ) }
-    if(this.state.filtros!==newProps.filtros){ this.setState({filtros:newProps.filtros}, () => { this.ordenarKeywords() }) }
+    if(
+      this.state.search!==newProps.search ||
+      this.props.searchBy!==newProps.searchBy ||
+      this.props.sortBy!==newProps.sortBy ||
+      this.props.des!==newProps.des||
+      this.props.items!==newProps.items ||
+      this.state.filtros!==newProps.filtros ||
+      this.state.keywords!==newProps.keywords ||
+      this.state.cliente_seleccionado!==newProps.cliente_seleccionado
+    ){
+      this.setState({
+        search:newProps.search,
+        searchBy:newProps.searchBy,
+        sortBy: newProps.sortBy,
+        des: newProps.des,
+        items: newProps.items,
+        filtros:newProps.filtros,
+        keywords:newProps.keywords,
+        cliente_seleccionado:newProps.cliente_seleccionado
 
-    if(this.state.searchKeywords!==newProps.searchKeywords || this.state.searchByKeywords!==newProps.searchByKeywords){
-      this.setState({searchKeywords:newProps.searchKeywords, searchByKeywords:newProps.searchByKeywords, items: ITEMS},()=>this.ordenarKeywords())
+      },()=>this.ordenarKeywords())
     }
   }
-
-  handleScroll = () =>{
-    if(this.scroller && this.props.visibility){
-      const limite = 250;
-      var scrollHeight = this.scroller.scrollHeight;
-      var outerHeight = $(this.scroller).outerHeight()
-      var refreshPosition = scrollHeight-outerHeight - limite;
-
-      try {
-        if(this.scroller.scrollTop>=refreshPosition){
-          this.loadMore(ITEMS)
-        }else if(this.scroller.scrollTop===0){
-          //this.setState({items:ITEMS})
-        }
-      } catch (e) { }
-    }
-  }
-  loadMore = (valor) =>{ this.setState({items:this.state.items+valor}, ()=>this.changeContadorKeywords()) }
-
-
-
   ordenarKeywords = () => {
 
     var keywords_ordenadas = Object.entries(this.state.keywords)
 
-    if(this.state.searchKeywords.trim()!==''){
-      keywords_ordenadas = keywords_ordenadas.filter(item=>{return item[1][this.state.searchByKeywords] && functions.limpiarString(item[1][this.state.searchByKeywords]).includes(functions.limpiarString(this.state.searchKeywords)) })
+    if(keywords_ordenadas.length===0){return null}
+
+    if(this.state.search.trim()!==''){
+      keywords_ordenadas = keywords_ordenadas.filter(item=>{return item[1][this.state.searchBy] && functions.limpiarString(item[1][this.state.searchBy]).includes(functions.limpiarString(this.state.search)) })
     }
 
     //filtramos por los filtros seleccionados
@@ -83,6 +77,8 @@ class PanelKeywords extends Component {
     })
 
     keywords_ordenadas.sort((a, b) =>{ a=a[1]; b=b[1]
+
+      console.log(this.state.sortBy);
 
       if(this.state.sortBy==='first_position'){
         var aKeys = 102;
@@ -107,7 +103,6 @@ class PanelKeywords extends Component {
       }
 
       else{
-
         var valA = a[this.state.sortBy]?a[this.state.sortBy].toString().toLowerCase():'~';
         var valB = b[this.state.sortBy]?b[this.state.sortBy].toString().toLowerCase():'~';
         if (valA > valB) { return 1; }
@@ -118,16 +113,66 @@ class PanelKeywords extends Component {
     });
 
     if(this.state.des){  keywords_ordenadas.reverse(); }
+    console.log('hola',keywords_ordenadas);
     this.setState({keywords_ordenadas},()=>{
       this.changeContadorKeywords();
     })
 
   }
 
+
+
+  scrollToCliente = () => {
+    setTimeout(function(){
+      try {
+        $('#container-tracking-keywords').animate({scrollTop:  $("#container-tracking-keywords").scrollTop() - $("#container-tracking-keywords").offset().top + $("#container-tracking-keywords").find(`.active-row-table`).offset().top - 100}, 0);
+      } catch (e) { }
+    }, 0);
+  }
+  handleScroll = () =>{
+    if(this.scroller && this.props.visibility){
+      const limite = 250;
+      var scrollHeight = this.scroller.scrollHeight;
+      var outerHeight = $(this.scroller).outerHeight()
+      var refreshPosition = scrollHeight-outerHeight - limite;
+
+      try {
+        if(this.scroller.scrollTop>=refreshPosition){
+          this.loadMore(ITEMS)
+        }else if(this.scroller.scrollTop===0){
+          //this.setState({items:ITEMS})
+        }
+      } catch (e) { }
+    }
+  }
+
+  //// TODO:
+  loadMore = (valor) =>{ this.setState({items:this.state.items+valor}, ()=>this.changeContadorKeywords()) }
+
   changeContadorKeywords = () => {
-    var showing = this.state.items;
-    if(showing>this.state.keywords_ordenadas.length)showing=this.state.keywords_ordenadas.length
-    this.props.setItemsTrackingKeywords({showing,size:this.state.keywords_ordenadas.length})
+
+    var keywords_eliminadas = 0,
+        keywords_paradas=0,
+        keywords_disponibles=0;
+
+    this.state.keywords_ordenadas.forEach(item=>{
+
+      var keyword = item[1];
+      if(keyword.eliminado){
+        keywords_eliminadas++;
+      }else if(!keyword.activo){
+        keywords_paradas++
+      }else{
+        keywords_disponibles++
+      }
+    })
+    console.log(keywords_disponibles);
+
+    this.props.setItemsTrackingKeywords({
+      keywords:{keywords_disponibles},
+      keywords_eliminadas,keywords_paradas
+    })
+
   }
 
   changeSort = (id) =>{
@@ -136,92 +181,102 @@ class PanelKeywords extends Component {
     this.setState({sortBy:id,des}, ()=>this.ordenarKeywords())
   }
 
-
-
   render() {
+
     return (
+      <div id='container-tracking-keywords' className='container-table min-panel-enlaces-free' ref={scroller => {this.scroller = scroller}} onScroll={this.handleScroll}>
+        <div >
 
-      <div id='container-clientes-tracking-keywords' className={`container-table ${!this.props.visibility?'display_none':''}`} ref={scroller => {this.scroller = scroller}} onScroll={this.handleScroll}>
+          {Object.keys(this.state.keywords).length > 0 ?
+            <div>
+              <table id='table-clientes-tracking-keywords'>
+                <thead>
+                  <tr>
 
-        {Object.keys(this.state.keywords).length > 0 ?
-          <div>
+                    {this.props.tracking_keywords_edit.activo?
 
-            <table id='table-clientes-tracking-keywords'>
-              <thead>
-                <tr>
+                      <th className='key-checkbox' >
+                        <span></span>
+                      </th>
 
-                  {this.props.tracking_keywords_edit.activo?
+                      :null
+                    }
 
-                    <th className='key-checkbox' >
-                      <span></span>
+                    <th onClick={()=>this.changeSort('status')} className='key-status' >
+                      <span>Status</span>
+                      {this.state.sortBy==='status'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
                     </th>
 
-                    :null
-                  }
+                    <th onClick={()=>this.changeSort('keyword')} className='key-keyword' >
+                     <span>Keyword</span>
+                     {this.state.sortBy==='keyword'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                    </th>
 
-                  <th onClick={()=>this.changeSort('keyword')} className='key-keyword' >
-                    <span>Keyword</span>
-                    {this.state.sortBy==='keyword'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                  </th>
+                     <th onClick={()=>this.changeSort('first_position')} className='key-posicion'>
+                       <span>Posición</span>
+                       {this.state.sortBy==='first_position'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                     </th>
 
-                  <th onClick={()=>this.changeSort('first_position')} className='key-posicion'>
-                    <span>Posición</span>
-                    {this.state.sortBy==='first_position'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                  </th>
+                    <th  onClick={()=>this.changeSort('first_url')} className='key-url'>
+                      <span>Url</span>
+                      {this.state.sortBy==='first_url'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                    </th>
 
-                  <th  onClick={()=>this.changeSort('first_url')} className='key-url'>
-                    <span>Url</span>
-                    {this.state.sortBy==='first_url'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                  </th>
+                    <th  onClick={()=>this.changeSort('id_date')} className='key-fecha'>
+                      <span>Fecha</span>
+                      {this.state.sortBy==='id_date'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                    </th>
 
-                  <th  onClick={()=>this.changeSort('id_date')} className='key-fecha'>
-                    <span>Fecha</span>
-                    {this.state.sortBy==='id_date'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                  </th>
 
-                  <th className='key-img'>
-                    <span>Imagen</span>
-                  </th>
+                    <th className='key-img'>
+                      <span>Imagen</span>
+                    </th>
 
-                  <th  onClick={()=>this.changeSort('activo')} className='key-activo'>
-                    <span>Activo</span>
-                    {this.state.sortBy==='activo'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                  </th>
+                    <th className='key-more'></th>
 
-                  <th className='key-more'></th>
+                  </tr>
+                </thead>
+                <tbody>
 
-                </tr>
-              </thead>
-              <tbody>
+                {
+                   this.state.keywords_ordenadas.reduce((result, item, i)=>{
+                    const k = item[0], keyword = item[1];
+                    if (i < this.state.items ) {
+                        result.push(
+                          <ItemKeyword key={k} keyword={keyword} />
+                        );
+                    }
+                    return result;
+                  }, [])
 
-              {
-                 this.state.keywords_ordenadas.reduce((result, item, i)=>{
-                  const k = item[0], keyword = item[1];
-                  if (i < this.state.items ) {
-                      result.push(
-                        <ItemKeyword key={k} keyword={keyword} />
-                      );
-                  }
-                  return result;
-                }, [])
+                }
+                </tbody>
+              </table>
+            </div>
+          :
+            <div className="div_info_panel_linkbuilding">No existen keywords para este cliente</div>
+          }
 
-              }
-              </tbody>
-            </table>
-          </div>
-
-        :
-          <div className={`${!this.props.visibility?'display_none':''}`} >
-
-            <div className='no-data'>No existen keywords para este cliente</div>
-
-          </div>
-        }
+        </div>
       </div>
     )
   }
 }
 
-function mapStateToProps(state){return{cliente:state.cliente_seleccionado ,filtros: state.filtros_tracking_keywords, tracking_keywords_edit: state.tracking_keywords_edit }}
+function mapStateToProps(state){return{
+
+  cliente_seleccionado: state.cliente_seleccionado,
+  keywords: state.cliente_seleccionado.servicios.tracking.keywords ? state.cliente_seleccionado.servicios.tracking.keywords : {} ,
+
+  tracking_keywords_edit: state.tracking.tracking_keywords_edit,
+  filtros:state.tracking.paneles.keywords.filtros,
+  search:state.tracking.paneles.keywords.search,
+  searchBy:state.tracking.paneles.keywords.searchBy,
+  sortBy:state.tracking.paneles.keywords.sortBy,
+  des:state.tracking.paneles.keywords.des,
+  items:state.tracking.paneles.keywords.items_loaded,
+  empleado:state.empleado
+
+}}
 function matchDispatchToProps(dispatch){ return bindActionCreators({ setItemsTrackingKeywords, setClienteSeleccionado, setPanelTracking }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(PanelKeywords);

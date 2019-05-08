@@ -2,6 +2,7 @@ import React, {Component} from 'react'
 import HeaderFree from './EnlacesFree/Header/Header'
 import HeaderPaid from './EnlacesPaid/Header/Header'
 import PanelListaFree from './EnlacesFree/Paneles/PanelLista/PanelLista'
+import PanelListaPaid from './EnlacesPaid/Paneles/PanelLista/PanelLista'
 import PanelInfoFree from './EnlacesFree/Paneles/PanelInfo/PanelInfo'
 import { connect } from 'react-redux';
 
@@ -30,22 +31,17 @@ class Enlaces extends Component{
   }
 
   enlacesPaid = () => {
-    return false;
-    /*
+
+
     return(
       <div className={`${!this.props.visibility?'display_none':'panel-clientes'}`} >
 
         <HeaderPaid />
 
-        <div className='sub-container-panels'>
+        <div className={`sub-container-panels ${this.props.panel_paid==='lista'?'reset-padding':''}`}>
 
-          {this.props.panel_paid==='lista'?
+          {this.props.panel_paid==='lista'?<PanelListaPaid visibility={this.props.panel_paid==='lista'?true:false} />:null}
 
-            <PanelListaPaid visibility={this.props.panel_paid==='lista'?true:false}/>:
-
-            null
-
-          }
 
 
         </div>
@@ -54,7 +50,7 @@ class Enlaces extends Component{
 
       </div>
     )
-    */
+
   }
 
   render(){

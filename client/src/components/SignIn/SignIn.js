@@ -11,7 +11,7 @@ class SignIn extends Component {
       password: '',
       user:null,
       error: ''
-    }; 
+    };
   }
   componentWillMount(){
 
@@ -20,11 +20,13 @@ class SignIn extends Component {
   enterKey = event => {if(event.key === 'Enter'){this.signIn()}}
 
   signIn = () => {
+
     this.setState({error:''})
     var { username, password } = this.state;
     var user = null;
     //buscamos el email asociado al username del empleado
     db.child('Empleados').orderByChild('username').equalTo(username).once("value", snapshot => {
+
       snapshot.forEach( data => {
         if(data.val().password===password){
           user=data.val();
@@ -42,13 +44,57 @@ class SignIn extends Component {
       }
       else this.setState({error:'El usuario o la contraseña son incorrectos'})
     })
+    .catch (err=>{
+      console.log(err);
+    })
   }
 
+/*  arreglar = () => {
+
+    var multiPath = {}
+    db.child('Resultados').once("value", snapshot => {
+
+      snapshot.forEach( data => {
+
+        var id_cliente = data.key;
+        var keywords = data.val()
+
+
+        Object.entries(keywords).forEach(([k,e])=>{
+
+          var id_keyword = k
+
+          Object.entries(e.dates).forEach(([k2,e2])=>{
+
+            var fecha = k2.split('-')
+            if(fecha[2].length===1){
+
+              var newDay = '0'+fecha[2];
+              var newFecha = fecha[0]+'-'+fecha[1]+'-0'+fecha[2];
+              var obj = e2;
+              obj.id_date = newFecha;
+              multiPath[`Resultados/${id_cliente}/${id_keyword}/dates/${k2}`]=null
+
+            }
+
+          })
+
+
+        })
+
+      })
+
+      console.log(multiPath);
+      db.update(multiPath)
+
+    })
+
+  }
+*/
   render() {
     //if(!this.props.empleado)return null;
     return (
       <div>
-
 
         <div className="containerApp contLogin">
             <h1 className="is">Iniciar sesión</h1>

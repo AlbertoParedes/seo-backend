@@ -1,22 +1,20 @@
 import React, { Component } from 'react'
 import EmpleadoMenu from '../../../../Global/EmpleadoMenu'
 import InfoItems from './InfoItems'
+import ListaOpciones from '../../../../Global/ListaOpciones';
 import FiltroMedios from './FiltroMedios/Filtros'
 import search from '../../../../Global/Imagenes/search.svg';
 import functions from '../../../../Global/functions'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setPanelMediosFreeLinkbuilding } from '../../../../../redux/actions';
+import { setPanelMediosFreeLinkbuilding, setSearchTableMediosFreeLB, setSearchByTableMediosFreeLB } from '../../../../../redux/actions';
 
 class Header extends Component{
 
   constructor(props){
     super(props)
     this.state={
-      searchOpciones:{
-        'web':{valor:'web'},
-        'nombre':{valor:'nombre'}
-      },
+
     }
   }
 
@@ -50,14 +48,14 @@ class Header extends Component{
         <div className='top-bar-panel'>
           <div className='container-search-panel pr'>
 
-            {/*Input para buscar a los clientes*/}
-            <div>
-              <img className='icon-search-panel' src={search} alt=''/>
-              <input placeholder='Buscar clientes por' value={this.props.search} onChange={(e)=>this.props.changeSearch(e.target.value)} />
-              {/*this.props.search.trim()===''?
-                <ListaOpciones opciones={this.state.searchOpciones} opcion_selected={this.props.searchBy} changeOpcion={(id)=>this.props.changeSearchBy(id)}/>:null
-              */}
-            </div>
+          {/*Input para buscar a los clientes*/}
+          <div>
+            <img className='icon-search-panel' src={search} alt=''/>
+            <input placeholder='Buscar medios por' value={this.props.search} onChange={(e)=>this.props.setSearchTableMediosFreeLB(e.target.value)} />
+            {this.props.search.trim()===''?
+              <ListaOpciones opciones={this.props.lista_search_by} opcion_selected={this.props.searchBy} changeOpcion={(id)=>this.props.setSearchByTableMediosFreeLB(id)}/>:null
+            }
+          </div>
 
           </div>
           <EmpleadoMenu />
@@ -69,7 +67,7 @@ class Header extends Component{
           <span>Medios gratuitos</span>
 
           {this.props.medio_seleccionado?<i className="material-icons align-center color-gris">chevron_right</i>:null}
-          {this.props.medio_seleccionado?<span>{functions.cleanProtocolo(this.props.medio_seleccionado.web)}</span>:null}
+          {this.props.medio_seleccionado?<span className='block-with-text'>{functions.cleanProtocolo(this.props.medio_seleccionado.web)}</span>:null}
         </p>
 
         <InfoItems/>
@@ -89,6 +87,12 @@ class Header extends Component{
 
 }
 
-function mapStateToProps(state){return{ medio_seleccionado: state.linkbuilding.medios.tipos.free.medio_seleccionado, panel:state.linkbuilding.medios.tipos.free.panel}}
-function matchDispatchToProps(dispatch){ return bindActionCreators({ setPanelMediosFreeLinkbuilding }, dispatch) }
+function mapStateToProps(state){return{
+  medio_seleccionado: state.linkbuilding.medios.tipos.free.medio_seleccionado,
+  panel: state.linkbuilding.medios.tipos.free.panel,
+  search:state.linkbuilding.medios.tipos.free.paneles.lista.search,
+  searchBy:state.linkbuilding.medios.tipos.free.paneles.lista.searchBy,
+  lista_search_by:state.linkbuilding.medios.tipos.free.paneles.lista.lista_search_by,
+}}
+function matchDispatchToProps(dispatch){ return bindActionCreators({ setPanelMediosFreeLinkbuilding, setSearchTableMediosFreeLB, setSearchByTableMediosFreeLB }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(Header);

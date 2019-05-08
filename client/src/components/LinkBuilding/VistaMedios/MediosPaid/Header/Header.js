@@ -60,7 +60,7 @@ class Header extends Component{
         <p className='title-header'>
           <span>LinkBuilding</span> <i className="material-icons align-center color-gris">chevron_right</i> <span>Medios de pago</span>
           {this.props.medio_seleccionado? <i className="material-icons align-center color-gris">chevron_right</i> :null}
-          {this.props.medio_seleccionado? <span>{functions.cleanProtocolo(this.props.medio_seleccionado.web)}</span> :null}
+          {this.props.medio_seleccionado? <span className='block-with-text'>{functions.cleanProtocolo(this.props.medio_seleccionado.web)}</span> :null}
         </p>
 
         <InfoItems/>
@@ -71,7 +71,7 @@ class Header extends Component{
           <div onClick={()=>{this.setPanel('lista')}} className={`${this.props.panel==='lista'?'active-option':''}`} >Listado</div>
           <div onClick={()=>{this.setPanel('info')}} className={`${this.props.panel==='info'?'active-option':''} ${!this.props.medio_seleccionado?'disable-opciones-alumno':''}`} >Información</div>
           <div onClick={()=>{this.setPanel('enlaces')}} className={`${this.props.panel==='enlaces'?'active-option':''} ${!this.props.medio_seleccionado?'disable-opciones-alumno':''}`} >Enlaces</div>
-          <div onClick={()=>{this.setPanel('clientes')}} className={`${this.props.panel==='clientes'?'active-option':''} ${!this.props.medio_seleccionado?'disable-opciones-alumno':''}`} >Clientes</div>
+          {/*<div onClick={()=>{this.setPanel('clientes')}} className={`${this.props.panel==='clientes'?'active-option':''} ${!this.props.medio_seleccionado?'disable-opciones-alumno':''}`} >Clientes</div>*/}
 
         </div>
 

@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import { setSortTableClientesFreeLB, setItemsLoadTableClientesFreeLB, setInfoTableClientesFreeLB } from '../../../../../../redux/actions';
 import ItemCliente from './ItemCliente'
 import $ from 'jquery'
+import firebase from '../../../../../../firebase/Firebase';
+const db = firebase.database().ref();
 
 const ITEMS = 50;
 
@@ -31,6 +33,12 @@ class PanelLista extends Component {
   }
 
   componentWillMount = () => { this.ordenarClientes();}
+
+  componentDidMount = () => {
+    var multiPath = {}
+    multiPath[`Empleados/${this.props.empleado.id_empleado}/session/subpanel`]='linkbuilding_free'
+    if(Object.keys(multiPath).length>0){ db.update(multiPath) }
+  }
 
   componentWillReceiveProps = newProps => {
 
@@ -79,7 +87,7 @@ class PanelLista extends Component {
       item=item[1];
 
       if(
-          ( (filtros.status.todos && filtros.status.todos.checked) || (filtros.status.items.activos.checked && item.servicios.linkbuilding.free.activo && !item.eliminado) || (filtros.status.items.pausados.checked && !item.servicios.linkbuilding.free.activo && !item.eliminado) || (filtros.status.items.eliminados.checked && item.eliminado)       )
+          ( (filtros.status.todos && filtros.status.todos.checked) || (filtros.status.items.activos.checked && item.activo && item.servicios.linkbuilding.free.activo && !item.eliminado) || (filtros.status.items.pausados.checked && item.activo && !item.servicios.linkbuilding.free.activo && !item.eliminado) || (filtros.status.items.eliminados.checked && item.eliminado)       )
         ){
         return true
       }
@@ -102,8 +110,8 @@ class PanelLista extends Component {
         if (aKeys > bKeys) { return 1; }
         if (aKeys < bKeys) { return -1; }
       }else if(this.state.sortBy==='status'){
-        var aKeys=a.servicios.linkbuilding.free.activo?1:2,
-        bKeys=b.servicios.linkbuilding.free.activo?1:2
+        var aKeys=a.activo && a.servicios.linkbuilding.free.activo?1:2,
+        bKeys=b.activo && b.servicios.linkbuilding.free.activo?1:2
         if(a.eliminado)aKeys=3
         if(b.eliminado)bKeys=3
         if (aKeys > bKeys) { return 1; }
@@ -162,7 +170,7 @@ class PanelLista extends Component {
 
   render() {
     return (
-      <div id='container-clientes' className='container-table' ref={scroller => {this.scroller = scroller}} onScroll={this.handleScroll}>
+      <div id='container-clientes' className='container-table min-panel-medios-free' ref={scroller => {this.scroller = scroller}} onScroll={this.handleScroll}>
         <div id='container-clientes-linkbuilding' className={` ${!this.props.visibility?'display_none':''}`}>
 
           {Object.keys(this.props.clientes).length > 0 ?
@@ -240,7 +248,8 @@ function mapStateToProps(state){return{
   searchBy:state.linkbuilding.clientes.tipos.free.paneles.lista.searchBy,
   sortBy:state.linkbuilding.clientes.tipos.free.paneles.lista.sortBy,
   des:state.linkbuilding.clientes.tipos.free.paneles.lista.des,
-  items:state.linkbuilding.clientes.tipos.free.paneles.lista.items_loaded
+  items:state.linkbuilding.clientes.tipos.free.paneles.lista.items_loaded,
+  empleado:state.empleado
 }}
 function matchDispatchToProps(dispatch){ return bindActionCreators({ setSortTableClientesFreeLB, setItemsLoadTableClientesFreeLB, setInfoTableClientesFreeLB }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(PanelLista);

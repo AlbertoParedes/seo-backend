@@ -22,6 +22,7 @@ class PanelLista extends Component {
   }
 
   componentWillMount = () => { this.ordenarClientes();}
+  componentDidMount = () => { this.scrollToCliente();}
   componentWillReceiveProps = newProps => {
     if(this.state.filtros!==newProps.filtros){ this.setState({filtros:newProps.filtros}, () => { this.ordenarClientes() }) }
     if(this.props.visibility!==newProps.visibility && newProps.visibility){this.scrollToCliente()}
@@ -32,6 +33,7 @@ class PanelLista extends Component {
   }
 
   ordenarClientes = () => {
+    console.log('oredenar clientes');
 
     var clientes_ordenados = Object.entries(this.state.clientes)
     //tambien filtraremos por la busqueda que se desea
@@ -42,7 +44,8 @@ class PanelLista extends Component {
 
     //filtramos por los filtros seleccionados
     const filtros = this.state.filtros;
-    if(filtros.empleados){
+    console.log(filtros);
+    //if(filtros.empleados){
       clientes_ordenados = clientes_ordenados.filter( (item)=>{
         item=item[1];
         //var empleado = false;
@@ -50,13 +53,13 @@ class PanelLista extends Component {
 
         if(
             //( (filtros.empleados.todos && filtros.empleados.todos.checked) || empleado ) &&
-            ( (filtros.status.todos && filtros.status.todos.checked) || (filtros.status.items.activos.checked && item.tracking.activo && !item.eliminado) || (filtros.status.items.pausados.checked && !item.tracking.activo && !item.eliminado) || (filtros.status.items.eliminados.checked && item.eliminado)       )
+            ( (filtros.status.todos && filtros.status.todos.checked) || (filtros.status.items.activos.checked && item.activo && !item.eliminado) || (filtros.status.items.pausados.checked && !item.activo && !item.eliminado) || (filtros.status.items.eliminados.checked && item.eliminado)       )
           ){
           return true
         }
         return false;
       })
-    }
+    //}
 
 
 
@@ -64,6 +67,13 @@ class PanelLista extends Component {
       if(this.state.sortBy==='activo'){
         var aKeys=a.activo
         var bKeys=b.activo
+        if (aKeys > bKeys) { return 1; }
+        if (aKeys < bKeys) { return -1; }
+      }else if(this.state.sortBy==='status'){
+        var aKeys=a.activo?1:2,
+        bKeys=b.activo?1:2
+        if(a.eliminado)aKeys=3
+        if(b.eliminado)bKeys=3
         if (aKeys > bKeys) { return 1; }
         if (aKeys < bKeys) { return -1; }
       }
@@ -80,15 +90,13 @@ class PanelLista extends Component {
     })
 
   }
-
   scrollToCliente = () => {
     setTimeout(function(){
       try {
-        $('#container-clientes').animate({scrollTop:  $("#table-clientes").scrollTop() - $("#table-clientes").offset().top + $("#table-clientes").find(`.active-row-table`).offset().top - 100}, 0);
+        $('#container-clientes').animate({scrollTop:  $("#container-clientes").scrollTop() - $("#container-clientes").offset().top + $("#container-clientes").find(`.active-row-table`).offset().top - 100}, 0);
       } catch (e) { }
     }, 0);
   }
-  mensajeInformativo = (text) =>{var element = $(`#clientes-mensaje`); if(!$(element).attr('class').includes('show')){ $(element).text(text).addClass('show'); setTimeout( function(){ $(element).removeClass('show'); }, 3500 );}}
   handleScroll = () =>{
     if(this.scroller && this.props.visibility){
       const limite = 250;
@@ -119,71 +127,73 @@ class PanelLista extends Component {
   render() {
     return (
 
-      <div id='container-clientes' className={`${!this.props.visibility?'display_none':''}`} ref={scroller => {this.scroller = scroller}} onScroll={this.handleScroll}>
+      <div id='container-clientes' className='container-table min-panel-medios-free' ref={scroller => {this.scroller = scroller}} onScroll={this.handleScroll}>
+        <div className={`${!this.props.visibility?'display_none':''}`} >
 
-        {Object.keys(this.props.clientes).length > 0 ?
-          <div>
-            <table id='table-clientes'>
-              <thead>
-                <tr>
+          {Object.keys(this.props.clientes).length > 0 ?
+            <div>
+              <table id='table-clientes'>
+                <thead>
+                  <tr>
 
-                  {this.props.clientes_edit && this.props.clientes_edit.activo?
-                    <th className='clientes-checkbox' >
-                      <span></span>
+                    {this.props.clientes_edit && this.props.clientes_edit.activo?
+                      <th className='clientes-checkbox' >
+                        <span></span>
+                      </th>
+                      :null
+                    }
+
+                    <th onClick={()=>this.changeSort('status')} className='clientes-status' >
+                      <span>Status</span>
+                      {this.state.sortBy==='status'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
                     </th>
-                    :null
-                  }
 
-                  <th onClick={()=>this.changeSort('status')} className='clientes-status' >
-                    <span>Status</span>
-                    {this.state.sortBy==='status'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                  </th>
+                    <th onClick={()=>this.changeSort('dominio')} className='clientes-web' >
+                      <span>Web</span>
+                      {this.state.sortBy==='dominio'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                    </th>
 
-                  <th onClick={()=>this.changeSort('dominio')} className='clientes-web' >
-                    <span>Web</span>
-                    {this.state.sortBy==='dominio'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                  </th>
+                    <th  onClick={()=>this.changeSort('nombre')} className='clientes-nombre'>
+                      <span>Nombre</span>
+                      {this.state.sortBy==='nombre'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                    </th>
 
-                  <th  onClick={()=>this.changeSort('nombre')} className='clientes-nombre'>
-                    <span>Nombre</span>
-                    {this.state.sortBy==='nombre'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                  </th>
+                    <th  onClick={()=>this.changeSort('seo')} className='clientes-seo'>
+                      <span>Seo</span>
+                      {this.state.sortBy==='seo'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                    </th>
 
-                  <th  onClick={()=>this.changeSort('seo')} className='clientes-seo'>
-                    <span>Seo</span>
-                    {this.state.sortBy==='seo'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                  </th>
+                    <th  onClick={()=>this.changeSort('activo')} className='clientes-activo'>
+                      <span>Activo</span>
+                      {this.state.sortBy==='activo'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
+                    </th>
 
-                  <th  onClick={()=>this.changeSort('activo')} className='clientes-activo'>
-                    <span>Activo</span>
-                    {this.state.sortBy==='activo'? <i className={`material-icons sort-arrow ${this.state.des?'des-arrow':''}`}>arrow_downward</i> :null}
-                  </th>
+                    <th className='clientes-more'></th>
 
-                  <th className='clientes-more'></th>
+                  </tr>
+                </thead>
+                <tbody>
 
-                </tr>
-              </thead>
-              <tbody>
+                {
+                   this.state.clientes_ordenados.reduce((result, item, i)=>{
+                    const k = item[0], cliente = item[1];
+                    if (i < this.state.items ) {
+                        result.push(
+                          <ItemCliente key={k} cliente={cliente} />
+                        );
+                    }
+                    return result;
+                  }, [])
 
-              {
-                 this.state.clientes_ordenados.reduce((result, item, i)=>{
-                  const k = item[0], cliente = item[1];
-                  if (i < this.state.items ) {
-                      result.push(
-                        <ItemCliente key={k} cliente={cliente} />
-                      );
-                  }
-                  return result;
-                }, [])
+                }
+                </tbody>
+              </table>
+            </div>
+          :
+            <div className={`${!this.props.visibility?'display_none':''}`} > <CargandoData /> </div>
+          }
 
-              }
-              </tbody>
-            </table>
-          </div>
-        :
-          <div className={`${!this.props.visibility?'display_none':''}`} > <CargandoData /> </div>
-        }
-
+        </div>
       </div>
     )
   }

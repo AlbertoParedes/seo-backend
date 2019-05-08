@@ -39,8 +39,17 @@ class ItemMedio extends Component {
     this.props.setMedioSeleccionadoPaid(this.props.medio)
     this.props.setPanelMediosPaidLinkbuilding('info')
   }
+  seleccionarEnlaces = () => {
+    this.props.setMedioSeleccionadoPaid(this.props.medio)
+    this.props.setPanelMediosPaidLinkbuilding('enlaces')
+  }
 
   render() {
+
+    var enlaces_disponibles = {}
+    if(this.props.medio.enlaces){
+      enlaces_disponibles = Object.entries(this.props.medio.enlaces).filter(([k,e])=>{return !e.id_cliente})
+    }
 
     return(
       <tr data-id={this.props.medio.id_medio} className={`${this.props.medio_seleccionado && this.props.medio_seleccionado.id_medio===this.props.medio.id_medio?'active-row-table':''}`}>
@@ -71,9 +80,11 @@ class ItemMedio extends Component {
           <span>{this.props.medio.ur}</span>
         </td>
 
+        {/*
         <td  className='lb-medios-paid-tematicas'>
           <span>-</span>
         </td>
+        */}
 
         <td  className='lb-medios-paid-descripcion block-with-text'>
           <span>{this.props.medio.descripcion}</span>
@@ -83,8 +94,8 @@ class ItemMedio extends Component {
           <span>No</span>
         </td>
 
-        <td  className='lb-medios-paid-enlaces'>
-          <span>0</span>
+        <td onClick={()=>{this.seleccionarEnlaces()}} className='lb-medios-paid-enlaces'>
+          <span>{Object.keys(enlaces_disponibles).length}</span>
         </td>
 
 

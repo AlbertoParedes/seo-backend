@@ -7,8 +7,9 @@ import data from '../../../../../Global/Data/Data';
 import functions from '../../../../../Global/functions';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setVistaLinkBuilding, setFiltrosEnlacesFreeListaLinkbuilding, setFechaEnlaces } from '../../../../../../redux/actions';
+import { setVistaLinkBuilding, setFiltrosEnlacesFreeListaLinkbuilding, setFechaEnlaces, setFiltrosFreePaid } from '../../../../../../redux/actions';
 import PopUpLista from '../../../../../Global/Popups/ListaOpciones'
+import dotProp from 'dot-prop-immutable';
 
 import firebase from '../../../../../../firebase/Firebase';
 const db = firebase.database().ref();
@@ -35,13 +36,15 @@ class Filtros extends Component{
   }
 
   changeFiltros = (filtros) => {
-    /*if(this.props.filtros_free.type!==filtros.type){
-      var filtros_paid = dotProp.set(this.props.filtros_paid, `type`, filtros.type);
-      filtros_paid.type=filtros.type;
-      this.props.setFiltrosMediosPaidListaLinkbuilding(filtros_paid)
+
+
+    if(this.props.filtros.type!==filtros.type){
+      this.props.setFiltrosFreePaid(filtros.type)
+    }else{
+      this.props.setFiltrosEnlacesFreeListaLinkbuilding(filtros)
     }
-*/
-    this.props.setFiltrosEnlacesFreeListaLinkbuilding(filtros)
+
+    //this.props.setFiltrosEnlacesFreeListaLinkbuilding(filtros)
 
   }
 
@@ -62,6 +65,13 @@ class Filtros extends Component{
   }
 
   selectOpcionNewEnlace = (id) =>{
+
+    if(this.props.cliente_seleccionado.eliminado || !this.props.cliente_seleccionado.activo || !this.props.cliente_seleccionado.servicios.linkbuilding.free.activo){
+      console.log('No se pueden crear enlaces a clientes eliminados o desactivados');
+      return null
+    }
+
+
     if(id==='follows'){
 
       var num_follows = Object.entries(this.props.enlaces).filter(([k,e])=>e.tipo==='follow');
@@ -95,10 +105,7 @@ class Filtros extends Component{
 
   changeMediosUsados = () => {
     var medios_usados = {};
-    console.log(this.props.cliente_seleccionado);
-    console.log(this.props.medios);
     Object.entries(this.props.cliente_seleccionado.servicios.linkbuilding.free.home.medios_usados_follow).forEach(([k,m])=>{
-      console.log(m);
       medios_usados[k]={
         valor:this.props.medios[m.categoria].medios[k].web
       }
@@ -110,11 +117,65 @@ class Filtros extends Component{
     console.log(id);
   }
 
+
+  unlockCliente = () => {
+
+    try { if(this.props.cliente_seleccionado.servicios.linkbuilding.free.editando_por.id_empleado===this.props.empleado.id_empleado){return null}} catch (e) { }
+
+    var multiPath = {}
+    multiPath[`Empleados/${this.props.empleado.id_empleado}/session/cliente_seleccionado`]=this.props.cliente_seleccionado.id_cliente
+    multiPath[`Empleados/${this.props.empleado.id_empleado}/session/subpanel`]='linkbuilding_free'
+    multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/free/editando_por`]={ id_empleado: this.props.empleado.id_empleado, nombre: this.props.empleado.nombre+' '+this.props.empleado.apellidos, subpanel:'linkbuilding_free'}
+
+    try {
+      if(this.props.cliente_seleccionado.servicios.linkbuilding.paid.editando_por.id_empleado===this.props.empleado.id_empleado){
+          multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/paid/editando_por`]=null
+      }
+    } catch (e) {}
+
+    try {
+      if(this.props.empleado.session.cliente_seleccionado && this.props.empleado.session.cliente_seleccionado !== this.props.cliente_seleccionado.id_cliente){
+        multiPath[`Clientes/${this.props.empleado.session.cliente_seleccionado}/servicios/linkbuilding/free/editando_por`]=null
+        multiPath[`Empleados/${this.props.empleado.id_empleado}/session/subpanel`]='linkbuilding_free'
+      }
+    } catch (e) { }
+    console.log(multiPath);
+    if(Object.keys(multiPath).length>0){
+      db.update(multiPath)
+      .then(()=>{console.log('Ok');})
+      .catch(err=>{console.log(err);})
+    }
+
+  }
+
+  changeVista = (vistas) => {
+    var multiPath = {}
+    var vistaDisponible = Object.entries(vistas.items).find(([k,v])=>{return v.checked})
+    if(vistaDisponible){
+      multiPath[`Empleados/${this.props.empleado.id_empleado}/session/vista`]=vistaDisponible[0]
+      db.update(multiPath)
+    }
+    this.props.setVistaLinkBuilding(vistas)
+  }
+
+
   render(){
-    console.log('fecha',this.props.fecha);
+
+
+    var blocked = false;
+    var nombreEmpleado = ''
+    try {
+      if(this.props.cliente_seleccionado.servicios.linkbuilding.free.editando_por.id_empleado!==this.props.empleado.id_empleado /*&& this.props.empleado.session.linkbuilding.editando_a!==this.props.cliente_seleccionado.id_cliente*/){
+        blocked = true;
+        nombreEmpleado = this.props.cliente_seleccionado.servicios.linkbuilding.free.editando_por.nombre
+      }
+    } catch (e) {}
+
+
+
     return(
       <div className='pr'>
-        <ItemsFiltro filtros={this.props.filtros_free} updateFiltros={(filtros=>this.changeFiltros(filtros))}/>
+        <ItemsFiltro filtros={this.props.filtros} updateFiltros={(filtros=>this.changeFiltros(filtros))}/>
         <div className='opciones-alumnos'>
           <div className='deg-opt'></div>
 
@@ -123,52 +184,65 @@ class Filtros extends Component{
             <Fecha setFecha={fecha=>this.props.setFechaEnlaces(fecha)} clss={'input-fecha-enlaces'} id={'date-enlaces-free'} position={'fecha_enlaces_position'} month={this.props.fecha.split('-')[1]} year={this.props.fecha.split('-')[0]}/>
           </div>
 
-          <div className='btn-options pr' onClick={()=>this.setState({show_vistas:this.state.show_vistas?false:true})}>
-            <i className="material-icons"> visibility </i> <span>Vistas</span>
-            {this.state.show_vistas?
-                <ListaVistas vistas={this.props.vistas} updateVistas={(vistas=>this.props.setVistaLinkBuilding(vistas))} close={()=>this.setState({show_vistas:false})}/>:null
-            }
-          </div>
-
-
           <div className='btn-options pr' onClick={()=>this.setState({show_filtros:this.state.show_filtros?false:true})}>
             <i className="material-icons"> filter_list </i> <span>Filtros</span>
             {this.state.show_filtros?
-                <ListaFiltros filtros={this.props.filtros_free} updateFiltros={(filtros=>this.changeFiltros(filtros))} close={()=>this.setState({show_filtros:false})}/>:null
+                <ListaFiltros filtros={this.props.filtros} updateFiltros={(filtros=>this.changeFiltros(filtros))} close={()=>this.setState({show_filtros:false})}/>:null
+            }
+          </div>
+
+          <div className='btn-options pr' onClick={()=>this.setState({show_vistas:this.state.show_vistas?false:true})}>
+            <i className="material-icons"> visibility </i> <span>Vistas</span>
+            {this.state.show_vistas?
+                <ListaVistas vistas={this.props.vistas} updateVistas={(vistas)=>this.changeVista(vistas)} close={()=>this.setState({show_vistas:false})}/>:null
             }
           </div>
 
           {/*Items barra*/}
-          <div className={`item-container-icon-top-bar pr ${this.state.show_new_enlaces?'color-azul':''}`} >
-            <i onClick={()=>this.setState({show_new_enlaces:true})} className="material-icons hover-azul middle-item">add</i>
 
-            {this.state.show_new_enlaces?
-              <PopUpLista selectOpcion={(id)=>this.selectOpcionNewEnlace(id)} opciones={this.state.new_enlaces} _class='opciones-search-show position-add-enlaces' close={()=>this.setState({show_new_enlaces:false})}/>:null
-            }
+          {this.props.cliente_seleccionado?
+            <div className={`item-container-icon-top-bar pr ${this.state.show_medios?' color-azul':''}`} >
+              <i onClick={()=>this.changeMediosUsados()} className="material-icons hover-azul middle-item">account_balance</i>
+              {this.state.show_medios ?
+                <PopUpLista
+                  selectOpcion={(id)=>{this.goLink(id)}}
+                  opciones={this.state.medios_usados} title='Medios usados'
+                  _class='rigth-popup-medios-usados' _class_div='max-width' _class_container='size-medios-popup scroll-bar-exterior'
+                  close={()=>this.setState({show_medios:false})}
+                  tag='a' buscar={true}/>
+              :null}
+            </div>
+            :null
+          }
 
-          </div>
+          {this.props.cliente_seleccionado?
+            <div className={`item-container-icon-top-bar pr ${this.state.show_new_enlaces?'color-azul':''}`} >
+              <i onClick={()=>this.setState({show_new_enlaces:true})} className="material-icons hover-azul middle-item">add</i>
+              {this.state.show_new_enlaces?
+                <PopUpLista selectOpcion={(id)=>this.selectOpcionNewEnlace(id)} opciones={this.state.new_enlaces} _class='opciones-search-show position-add-enlaces' close={()=>this.setState({show_new_enlaces:false})}/>:null
+              }
+            </div>
+            :null
+          }
 
 
 
+          {/*
           <div className={`item-container-icon-top-bar pr ${this.state.show_new_cliente?' color-azul':''}`} >
             <i onClick={()=>this.changeEdit()} className="material-icons hover-azul middle-item">save_alt</i>
           </div>
+          */}
 
-          <div className={`item-container-icon-top-bar pr ${this.state.show_medios?' color-azul':''}`} >
-            <i onClick={()=>this.changeMediosUsados()} className="material-icons hover-azul middle-item">account_balance</i>
-            {this.state.show_medios ?
-              <PopUpLista
-                selectOpcion={(id)=>{this.goLink(id)}}
-                opciones={this.state.medios_usados} title='Medios usados'
-                _class='rigth-popup-medios-usados' _class_div='max-width' _class_container='size-medios-popup scroll-bar-exterior'
-                close={()=>this.setState({show_medios:false})}
-                tag='a' buscar={true}/>
-            :null}
-          </div>
 
-          <div className={`item-container-icon-top-bar pr ${this.state.show_new_cliente?'middle-item color-azul':''}`} >
-            <i onClick={()=>this.changeEdit()} className="material-icons hover-azul">edit</i>
-          </div>
+
+          {blocked && this.props.cliente_seleccionado?
+            <div className={`item-container-icon-top-bar pr ${this.state.show_new_cliente?'middle-item color-azul':''}`} >
+              <i onClick={()=>this.unlockCliente()} className="material-icons lock-cliente" data-lock='lock' data-open-lock='lock_open'></i>
+              <PopUpLista selectOpcion={()=>{var click = null;}} hover={true} opciones={{cliente:{valor:'Editando por '+nombreEmpleado}}} _class='opciones-search-show position-add-enlaces-lock' close={()=>{var click=null;}}/>
+            </div>
+            :null
+          }
+
 
 
         </div>
@@ -182,12 +256,11 @@ class Filtros extends Component{
 function mapStateToProps(state){return{
   vistas : state.linkbuilding.vistas,
   fecha:state.linkbuilding.enlaces.fecha ,
-  filtros_free: state.linkbuilding.enlaces.tipos.free.paneles.lista.filtros,
-  filtros_paid: state.linkbuilding.enlaces.tipos.paid.paneles.lista.filtros,
+  filtros: state.linkbuilding.enlaces.tipos.free.paneles.lista.filtros,
   enlaces:state.linkbuilding.enlaces.tipos.free.enlaces,
   cliente_seleccionado: state.cliente_seleccionado,
   empleado:state.empleado,
   medios: state.linkbuilding.medios.tipos.free.medios
 }}
-function  matchDispatchToProps(dispatch){ return bindActionCreators({ setVistaLinkBuilding, setFiltrosEnlacesFreeListaLinkbuilding, setFechaEnlaces }, dispatch) }
+function  matchDispatchToProps(dispatch){ return bindActionCreators({ setVistaLinkBuilding, setFiltrosEnlacesFreeListaLinkbuilding, setFechaEnlaces, setFiltrosFreePaid }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(Filtros);

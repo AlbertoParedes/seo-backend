@@ -14,10 +14,6 @@ class Header extends Component{
   constructor(props){
     super(props)
     this.state={
-      searchOpciones:{
-        'web':{valor:'web'},
-        'nombre':{valor:'nombre'}
-      },
     }
   }
 
@@ -57,7 +53,7 @@ class Header extends Component{
           <i className="material-icons align-center color-gris">chevron_right</i>
           <span>Enlaces gratuitos</span>
           {this.props.cliente_seleccionado?<i className="material-icons align-center color-gris">chevron_right</i>:null}
-          {this.props.cliente_seleccionado?<span>{functions.cleanProtocolo(this.props.cliente_seleccionado.web)}</span>:null}
+          {this.props.cliente_seleccionado?<span className='block-with-text'>{functions.cleanProtocolo(this.props.cliente_seleccionado.web)}</span>:null}
         </p>
 
 

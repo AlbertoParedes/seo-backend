@@ -6,7 +6,8 @@ import { connect } from 'react-redux';
 import { setSortTableMediosPaidLB, setItemsLoadTableMediosPaidLB, setInfoTableMediosPaidLB } from '../../../../../../redux/actions';
 import ItemMedio from './ItemMedio'
 import $ from 'jquery'
-
+import firebase from '../../../../../../firebase/Firebase';
+const db = firebase.database().ref();
 
 const ITEMS = 50;
 
@@ -29,6 +30,12 @@ class PanelLista extends Component {
 
 
       };
+  }
+
+  componentDidMount = () => {
+    var multiPath = {}
+    multiPath[`Empleados/${this.props.empleado.id_empleado}/session/subpanel`]='linkbuilding_paid'
+    if(Object.keys(multiPath).length>0){ db.update(multiPath) }
   }
 
   componentWillMount = () => { this.ordenarMedios();}
@@ -154,7 +161,7 @@ class PanelLista extends Component {
   render() {
     return (
 
-      <div id='container-clientes' className='container-table' ref={scroller => {this.scroller = scroller}} onScroll={this.handleScroll}>
+      <div id='container-clientes' className='container-table min-panel-medios-free' ref={scroller => {this.scroller = scroller}} onScroll={this.handleScroll}>
         <div id='container-medios-paid-linkbuilding' className={` ${!this.props.visibility?'display_none':''}`}>
 
           {Object.keys(this.props.medios).length > 0 ?
@@ -181,10 +188,11 @@ class PanelLista extends Component {
                     </th>
 
 
-
+                    {/*
                     <th className='lb-medios-paid-tematicas'>
                       <span>Temáticas</span>
                     </th>
+                    */}
 
                     <th className='lb-medios-paid-descripcion'>
                       <span>Descripcion</span>
@@ -233,7 +241,7 @@ class PanelLista extends Component {
 
 function mapStateToProps(state){return{
   medios: state.linkbuilding.medios.tipos.paid.medios,
-
+  empleado:state.empleado,
   filtros:state.linkbuilding.medios.tipos.paid.paneles.lista.filtros,
   search:state.linkbuilding.medios.tipos.paid.paneles.lista.search,
   searchBy:state.linkbuilding.medios.tipos.paid.paneles.lista.searchBy,

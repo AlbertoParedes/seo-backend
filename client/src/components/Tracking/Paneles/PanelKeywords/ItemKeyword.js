@@ -1,27 +1,42 @@
 import React, { Component } from 'react';
 import Switch from '../../../Global/Switch'
+import CheckBox from '../../../Global/CheckBox'
+import firebase from '../../../../firebase/Firebase';
 import data from '../../../Global/Data/Data'
+import functions from '../../../Global/functions'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { setClienteSeleccionado, setPanelTracking, setKeywordTrackingSelected, setEditKeywordsTracking } from '../../../../redux/actions';
+import { setPanelTracking, setKeywordTrackingSelected, setEditKeywordsTracking } from '../../../../redux/actions';
 import $ from 'jquery'
-import firebase from '../../../../firebase/Firebase';
-import CheckBox from '../../../Global/CheckBox'
 import dotProp from 'dot-prop-immutable';
-
 const db = firebase.database().ref();
 
 class ItemKeyword extends Component {
 
-  mensajeInformativo = (text) =>{var element = $(`#tracking-mensaje`); if(!$(element).attr('class').includes('show')){ $(element).text(text).addClass('show'); setTimeout( function(){ $(element).removeClass('show'); }, 3500 );}}
+  constructor(props){
+      super(props);
+      this.state={
+      };
+  }
 
   seleccionarKeyword = () => {
     if(this.props.keyword.results.new.id_date){
       this.props.setKeywordTrackingSelected(this.props.keyword)
-      this.props.setPanelTracking('keyword')
+      this.props.setPanelTracking('resultados')
     }else{
-      this.mensajeInformativo('Esta keyword no tiene registros')
+      console.log('Esta keyword no tiene registros');
     }
+  }
+
+  updateCheckBox = (value) => {
+
+    var seleccionados = dotProp.set(this.props.tracking_keywords_edit.seleccionados, `${this.props.keyword.id_keyword}.checked`, value) ;
+    seleccionados[this.props.keyword.id_keyword].id_keyword=this.props.keyword.id_keyword
+    seleccionados[this.props.keyword.id_keyword].id_cliente=this.props.cliente.id_cliente
+    this.props.setEditKeywordsTracking({ activo:this.props.tracking_keywords_edit.activo , seleccionados })
+    console.log(seleccionados);
+    //this.setState({empleados})
+
   }
 
   callbackSwitch = (json) => {
@@ -41,18 +56,9 @@ class ItemKeyword extends Component {
     }
   }
 
-  updateCheckBox = (value) => {
-
-    var seleccionados = dotProp.set(this.props.tracking_keywords_edit.seleccionados, `${this.props.keyword.id_keyword}.checked`, value) ;
-    seleccionados[this.props.keyword.id_keyword].id_keyword=this.props.keyword.id_keyword
-    seleccionados[this.props.keyword.id_keyword].id_cliente=this.props.cliente.id_cliente
-    this.props.setEditKeywordsTracking({ activo:this.props.tracking_keywords_edit.activo , seleccionados })
-    console.log(seleccionados);
-    //this.setState({empleados})
-
-  }
 
   render() {
+
     var posicion = '-';
     if(this.props.keyword.results.new.id_date && !this.props.keyword.results.new.first_position){
       posicion='+100'
@@ -80,8 +86,8 @@ class ItemKeyword extends Component {
       diferencia = 100 - this.props.keyword.results.new.first_position;
     }
 
-    return(
 
+    return(
       <tr data-id={this.props.keyword.id_keyword} className={`${this.props.keyword_selected && this.props.keyword_selected.id_keyword===this.props.keyword.id_keyword?'active-row-table':''}`}>
 
         {this.props.tracking_keywords_edit.activo?
@@ -93,9 +99,13 @@ class ItemKeyword extends Component {
           :null
         }
 
+        <td className='key-status'>
+          <div className={`status-point ${this.props.keyword.activo?'good-status':'warning-status'} ${this.props.keyword.eliminado?'wrong-status':''}     `} ></div>
+        </td>
+
         <td className='key-keyword'>
           <div className='edit-container'>
-            <span className={`${!this.props.keyword.activo?'color_parado':''} ${this.props.keyword.eliminado?'color_eliminado':''}`}> {this.props.keyword.keyword} </span>
+            <span> {this.props.keyword.keyword} </span>
           </div>
         </td>
 
@@ -120,20 +130,12 @@ class ItemKeyword extends Component {
           <span> {date} </span>
         </td>
 
-
-
         <td  className='key-img'>
           {this.props.keyword.results.new.image?
               <a href={this.props.keyword.results.new.image} target='_blank' className='align-center'><i className="material-icons">camera_alt</i></a>
             :
               <span className='align-center'>-</span>
           }
-        </td>
-
-        <td className='key-activo'>
-          <div className='align-center' >
-            <Switch class_div={'switch-table'} callbackSwitch={this.callbackSwitch} json={{id:'activo' }} valor={this.props.keyword.activo}/>
-          </div>
         </td>
 
         <td onClick={()=>{this.seleccionarKeyword()}} className='key-more'>
@@ -145,6 +147,6 @@ class ItemKeyword extends Component {
   }
 }
 
-function mapStateToProps(state){return{ keyword_selected:state.keyword_tracking_selected, cliente: state.cliente_seleccionado, empleado: state.empleado, tracking_keywords_edit: state.tracking_keywords_edit }}
+function mapStateToProps(state){return{ keyword_selected:state.tracking.keyword_tracking_selected, cliente: state.cliente_seleccionado, empleado: state.empleado, tracking_keywords_edit: state.tracking.tracking_keywords_edit }}
 function matchDispatchToProps(dispatch){ return bindActionCreators({setPanelTracking, setKeywordTrackingSelected, setEditKeywordsTracking }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(ItemKeyword);

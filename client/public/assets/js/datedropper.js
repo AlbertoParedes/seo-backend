@@ -1235,9 +1235,22 @@
 				return true;
 		},
 		is_locked = function() {
+
+			//ALBERTO
+			var today = new Date();
+			var dd = today.getDate()
+			var mm = today.getMonth() + 1
+			var yyyy = today.getFullYear();
+			today = mm + '/' + dd + '/' + yyyy;
+			//ALBERTO
+
 			var
 				unix_current = get_unix(get_current_full()),
-				unix_today = get_unix(get_today_full());
+				//unix_today = get_unix(get_today_full());
+				//Alberto
+				unix_today = get_unix(today);
+
+
 
 			if(pickers[picker.id].lock) {
 				if(pickers[picker.id].lock=='from') {

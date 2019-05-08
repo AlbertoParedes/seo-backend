@@ -4,6 +4,7 @@ import ListaFiltros from '../../../Filtros/ListaFiltros'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setFiltrosClientesLista } from '../../../../redux/actions';
+import NuevoCliente from './NuevoCliente'
 
 class Filtros extends Component{
 
@@ -11,7 +12,24 @@ class Filtros extends Component{
     super(props)
     this.state={
       show_filtros:false,
+      show_new_medios:false
     }
+  }
+
+  addNew = () =>{
+
+    try {
+      if(!this.props.empleado.privilegios.info_cliente.edit.add_clientes){
+        console.log('No tienes suficientes permisos');
+        return null
+      }
+    } catch (e) {
+      console.log('No tienes suficientes permisos');
+      return null
+    }
+
+
+    this.setState({show_new_cliente:true})
   }
 
   render(){
@@ -27,6 +45,16 @@ class Filtros extends Component{
             {this.state.show_filtros?
                 <ListaFiltros filtros={this.props.filtros_clientes_lista} updateFiltros={(filtros=>this.props.setFiltrosClientesLista(filtros))} close={()=>this.setState({show_filtros:false})}/>:null
             }
+          </div>
+
+          {/*Items barra*/}
+          <div className={`item-container-icon-top-bar pr ${this.state.show_new_cliente?'color-azul':''}`} >
+            <i onClick={()=>this.addNew()} className="material-icons hover-azul middle-item">add</i>
+
+            {this.state.show_new_cliente?
+              <NuevoCliente close={()=>{this.setState({show_new_cliente:false})}}/>:null
+            }
+
           </div>
 
         </div>

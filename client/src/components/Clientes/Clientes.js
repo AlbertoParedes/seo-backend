@@ -22,7 +22,6 @@ class Clientes extends Component {
   render() {
     return(
       <div className={`${!this.props.visibility?'display_none':'panel-clientes'}`} >
-
         <HeaderClientes
 
           search={this.state.search}
@@ -33,15 +32,19 @@ class Clientes extends Component {
 
         />
 
-        <div className='sub-container-panels'>
+        <div  className='sub-container-panels'>
 
-          <div id='container-clientes' className='container-table' ref={scroller => {this.scroller = scroller}} onScroll={this.handleScroll}>
-
+          {this.props.panel_clientes==='lista'?
             <PanelLista
               visibility={this.props.panel_clientes==='lista'?true:false}
               search={this.state.search}
               searchBy={this.state.searchBy}
             />
+          :null
+          }
+
+
+          <div id='container-clientes' className='container-table' ref={scroller => {this.scroller = scroller}} onScroll={this.handleScroll}>
 
             {this.props.panel_clientes==='info'?<PanelInfo />:null}
             {this.props.panel_clientes==='linkbuilding_gratuito'?<PanelLinkbuildingFree />:null}

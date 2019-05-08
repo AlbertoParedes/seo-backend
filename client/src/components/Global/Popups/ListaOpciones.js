@@ -12,7 +12,8 @@ class ListaOpciones extends Component {
         visible:false,
         search:'',
         search_new:this.props.search_new?this.props.search_new:'',
-        correct_new_item: false
+        correct_new_item: false,
+        show_micronichos:false
       }
     }
 
@@ -63,14 +64,60 @@ class ListaOpciones extends Component {
       }
     }
 
+    openMicronichos = (e) => {
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.setState({show_micronichos:this.state.show_micronichos?false:true})
+
+    }
+
+    clickMicronicho = (e,id_micronicho) => {
+      e.preventDefault();
+      e.stopPropagation();
+      this.setState({show_micronichos:false})
+      this.props.setMicronicho(id_micronicho)
+    }
+
     render() {
+
       return (
         <div className={`container-opt-search ${this.props._class}`}  ref={node=>this.node=node}>
 
-          <div className={`opciones-search-popup ${this.props._class_div?this.props._class_div:''} ${this.state.visible?'opciones-search-show-popup':''}`}>
+          <div className={`opciones-search-popup ${this.props._class_div?this.props._class_div:''} ${this.state.visible && !this.props.hover?'opciones-search-show-popup':''}`}>
             <div className={`${this.props._class_container?this.props._class_container:''}`}>
               {this.props.title?
                 <div className='title-pop-up'>{this.props.title}</div>
+              :null}
+
+              {this.props.micronichos?
+              <div className={`selected_micronicho_usados`} onClick={(e)=>this.openMicronichos(e)}>
+                <div className='item-micronicho-seleccionado'>
+                  <a href={this.props.micronichos[this.props.micronicho_selecionado].web} onClick={(e)=>{this.openMicronichos(e)}}>{functions.cleanProtocolo(this.props.micronichos[this.props.micronicho_selecionado].web)}</a>
+                </div>
+
+                {this.state.show_micronichos?
+
+                  <div className='pop-up-micronichos-lista'>
+                    <li  onClick={(e)=>{this.clickMicronicho(e,'home')}} >
+                      <a href={this.props.micronichos.home.web} className={`${this.props.micronicho_selecionado==='home'?'color-azul':''}`} onClick={(e)=>{this.clickMicronicho(e,'home')}}>{functions.cleanProtocolo(this.props.micronichos.home.web)}</a>
+                    </li>
+                    {Object.entries(this.props.micronichos).map(([k,m])=>{
+                      if(k==='home')return null
+                      return(
+                        <li  key={k} onClick={(e)=>{this.clickMicronicho(e,k)}} >
+                          <a href={m.web} className={`${this.props.micronicho_selecionado===k?'color-azul':''}`} onClick={(e)=>{this.clickMicronicho(e,k)}}>{functions.cleanProtocolo(m.web)}</a>
+                        </li>
+                      )
+
+                    })}
+                  </div>
+
+                  :null
+                }
+
+              </div>
               :null}
 
               {this.props.buscar?
