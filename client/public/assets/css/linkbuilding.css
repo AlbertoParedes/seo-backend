@@ -498,6 +498,11 @@
   width: 113px;
   text-align: center; }
 
+#table-medios-paid-linbuilding tr th.lb-medios-paid-clientes {
+  cursor: pointer;
+  width: 107px;
+  text-align: center; }
+
 #table-medios-paid-linbuilding tr th.lb-medios-paid-more {
   width: 80px;
   cursor: pointer; }
@@ -551,6 +556,11 @@
 #table-medios-paid-linbuilding tr td.lb-medios-paid-requiere {
   cursor: pointer;
   width: 113px;
+  text-align: center; }
+
+#table-medios-paid-linbuilding tr td.lb-medios-paid-clientes {
+  cursor: pointer;
+  width: 107px;
   text-align: center; }
 
 #table-medios-paid-linbuilding tr td.lb-medios-paid-more {

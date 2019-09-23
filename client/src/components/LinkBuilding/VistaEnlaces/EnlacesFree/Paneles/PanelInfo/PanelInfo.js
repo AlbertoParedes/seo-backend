@@ -2,7 +2,6 @@ import React,{Component} from 'react'
 import SimpleInput from '../../../../../Global/SimpleInput'
 import data from '../../../../../Global/Data/Data'
 import SimpleInputDesplegable from '../../../../../Global/SimpleInputDesplegable'
-import Switch from '../../../../../Global/Switch'
 import SimpleTextArea from '../../../../../Global/SimpleTextArea'
 
 

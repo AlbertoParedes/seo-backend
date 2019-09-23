@@ -4,32 +4,31 @@ import ItemsFiltro from '../../../Filtros/ItemsFiltro'
 import NewKeywords from './NewKeywords'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setEditKeywordsTracking, setFiltrosTrackingKeywords } from '../../../../redux/actions';
-import $ from 'jquery'
+import { setEditKeywordsTracking, setFiltrosTrackingKeywords, setPopUpInfo } from '../../../../redux/actions';
 import firebase from '../../../../firebase/Firebase';
-import dotProp from 'dot-prop-immutable';
+import DatePicker from './DatePicker';
 const db = firebase.database().ref();
 
-class Filtros extends Component{
+class Filtros extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props)
-    this.state={
-      show_filtros:false,
+    this.state = {
+      show_filtros: false,
       show_new_cliente: false,
     }
   }
 
   changeEdit = () => {
 
-    if(
-      (this.props.empleado.clientes && this.props.empleado.clientes.tracking && this.props.empleado.clientes.tracking[this.props.cliente.id_cliente] )
+    if (
+      (this.props.empleado.clientes && this.props.empleado.clientes.tracking && this.props.empleado.clientes.tracking[this.props.cliente.id_cliente])
       ||
       (this.props.empleado.privilegios && this.props.empleado.privilegios.tracking && this.props.empleado.privilegios.tracking.edit.edit_keywords)
-    ){
-      this.props.setEditKeywordsTracking({activo: this.props.tracking_keywords_edit.activo?false:true, seleccionados:{}})
-    }else{
-      console.log('No tiene permiso para modificar estas keywords');
+    ) {
+      this.props.setEditKeywordsTracking({ activo: this.props.tracking_keywords_edit.activo ? false : true, seleccionados: {} })
+    } else {
+      this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'No tiene permiso para modificar estas keywords' })
     }
 
 
@@ -37,104 +36,118 @@ class Filtros extends Component{
 
   deleteKeywords = () => {
     var selecionados_limpios = {}
-    if(this.props.tracking_keywords_edit.seleccionados){
+    if (this.props.tracking_keywords_edit.seleccionados) {
       var multiPath = {}
-      Object.entries(this.props.tracking_keywords_edit.seleccionados).forEach(([k,o])=>{
-        if(o.checked && this.props.cliente.id_cliente===o.id_cliente){
+      Object.entries(this.props.tracking_keywords_edit.seleccionados).forEach(([k, o]) => {
+        if (o.checked && this.props.cliente.id_cliente === o.id_cliente) {
 
-          multiPath[`Clientes/${o.id_cliente}/servicios/tracking/keywords/${o.id_keyword}/eliminado`]=true
+          multiPath[`Clientes/${o.id_cliente}/servicios/tracking/keywords/${o.id_keyword}/eliminado`] = true
 
-        }else if(o.checked){
+        } else if (o.checked) {
           selecionados_limpios[k] = o;
         }
 
       })
       var n = Object.keys(multiPath).length;
-      if(n>0){
-        db.update(multiPath)
-        .then(()=>{
-          //quitamos todos los elementos de este cliente seleccionados del array seleccionados
-          this.props.setEditKeywordsTracking({activo: this.props.tracking_keywords_edit.activo, seleccionados:selecionados_limpios})
-          console.log(`Se ${n===1?'ha':'han'} borrado ${n} ${n===1?'keyword':'keywords'} correctamente`)
-        })
-        .catch((err)=>{ console.log(`No se han podido borrar ninguna keyword`) })
-      }else{ console.log('No se ha seleccionado ninguna keyword') }
+      if (n > 0) {
 
-    }else{ console.log('No se ha seleccionado ninguna keyword') }
+        db.update(multiPath)
+          .then(() => {
+            this.props.setEditKeywordsTracking({ activo: this.props.tracking_keywords_edit.activo, seleccionados: selecionados_limpios })
+            this.props.setPopUpInfo({ visibility: true, status: 'done', moment: Date.now(), text: `Se ${n === 1 ? 'ha' : 'han'} borrado ${n} ${n === 1 ? 'keyword' : 'keywords'} correctamente` })
+          })
+          .catch(err => {
+            this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'No se han podido borrar ninguna keyword' })
+          })
+
+
+      } else { this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'No se ha seleccionado ninguna keyword' }) }
+
+    } else { this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'No se ha seleccionado ninguna keyword' }) }
 
   }
   pauseKeywords = () => {
     var selecionados_limpios = {}
-    if(this.props.tracking_keywords_edit.seleccionados){
+    if (this.props.tracking_keywords_edit.seleccionados) {
       var multiPath = {}
-      Object.entries(this.props.tracking_keywords_edit.seleccionados).forEach(([k,o])=>{
-        if(o.checked && this.props.cliente.id_cliente===o.id_cliente){
+      Object.entries(this.props.tracking_keywords_edit.seleccionados).forEach(([k, o]) => {
+        if (o.checked && this.props.cliente.id_cliente === o.id_cliente) {
 
-          multiPath[`Clientes/${o.id_cliente}/servicios/tracking/keywords/${o.id_keyword}/activo`]=false
+          multiPath[`Clientes/${o.id_cliente}/servicios/tracking/keywords/${o.id_keyword}/activo`] = false
 
-        }else if(o.checked){
+        } else if (o.checked) {
           selecionados_limpios[k] = o;
         }
 
       })
       var n = Object.keys(multiPath).length;
-      if(n>0){
-        db.update(multiPath)
-        .then(()=>{
-          //quitamos todos los elementos de este cliente seleccionados del array seleccionados
-          this.props.setEditKeywordsTracking({activo: this.props.tracking_keywords_edit.activo, seleccionados:selecionados_limpios})
-          console.log(`Se ${n===1?'ha':'han'} desactivado ${n} ${n===1?'keyword':'keywords'} correctamente`)
-        })
-        .catch((err)=>{ console.log(`No se han podido desactivar ninguna keyword`) })
-      }else{ console.log('No se ha seleccionado ninguna keyword') }
+      if (n > 0) {
 
-    }else{ console.log('No se ha seleccionado ninguna keyword') }
+        db.update(multiPath)
+          .then(() => {
+            this.props.setEditKeywordsTracking({ activo: this.props.tracking_keywords_edit.activo, seleccionados: selecionados_limpios })
+            this.props.setPopUpInfo({ visibility: true, status: 'done', moment: Date.now(), text: `Se ${n === 1 ? 'ha' : 'han'} desactivado ${n} ${n === 1 ? 'keyword' : 'keywords'} correctamente` })
+          })
+          .catch(err => {
+            this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'No se han podido desactivar ninguna keyword' })
+          })
+
+      } else { this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'No se ha seleccionado ninguna keyword' }) }
+
+    } else { this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'No se ha seleccionado ninguna keyword' }) }
 
   }
   restoreKeywords = () => {
     var selecionados_limpios = {}
-    if(this.props.tracking_keywords_edit.seleccionados){
+    if (this.props.tracking_keywords_edit.seleccionados) {
       var multiPath = {}
-      Object.entries(this.props.tracking_keywords_edit.seleccionados).forEach(([k,o])=>{
-        if(o.checked && this.props.cliente.id_cliente===o.id_cliente){
+      Object.entries(this.props.tracking_keywords_edit.seleccionados).forEach(([k, o]) => {
+        if (o.checked && this.props.cliente.id_cliente === o.id_cliente) {
 
-          multiPath[`Clientes/${o.id_cliente}/servicios/tracking/keywords/${o.id_keyword}/eliminado`]=false
-          multiPath[`Clientes/${o.id_cliente}/servicios/tracking/keywords/${o.id_keyword}/activo`]=true
+          multiPath[`Clientes/${o.id_cliente}/servicios/tracking/keywords/${o.id_keyword}/eliminado`] = false
+          multiPath[`Clientes/${o.id_cliente}/servicios/tracking/keywords/${o.id_keyword}/activo`] = true
 
-        }else if(o.checked){
+        } else if (o.checked) {
           selecionados_limpios[k] = o;
         }
 
       })
-      var n = Object.keys(multiPath).length/2;
-      if(n>0){
-        db.update(multiPath)
-        .then(()=>{
-          //quitamos todos los elementos de este cliente seleccionados del array seleccionados
-          this.props.setEditKeywordsTracking({activo: this.props.tracking_keywords_edit.activo, seleccionados:selecionados_limpios})
-          console.log(`Se ${n===1?'ha':'han'} activado ${n} ${n===1?'keyword':'keywords'} correctamente`)
-        })
-        .catch((err)=>{ console.log(`No se han podido activar ninguna keyword`) })
-      }else{ console.log('No se ha seleccionado ninguna keyword') }
+      var n = Object.keys(multiPath).length / 2;
+      if (n > 0) {
 
-    }else{ console.log('No se ha seleccionado ninguna keyword') }
+        db.update(multiPath)
+          .then(() => {
+            this.props.setEditKeywordsTracking({ activo: this.props.tracking_keywords_edit.activo, seleccionados: selecionados_limpios })
+            this.props.setPopUpInfo({ visibility: true, status: 'done', moment: Date.now(), text: `Se ${n === 1 ? 'ha' : 'han'} activado ${n} ${n === 1 ? 'keyword' : 'keywords'} correctamente` })
+          })
+          .catch(err => {
+            this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'No se han podido activar ninguna keyword' })
+          })
+
+
+
+      } else { this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'No se ha seleccionado ninguna keyword' }) }
+
+    } else { this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'No se ha seleccionado ninguna keyword' }) }
 
   }
 
 
-  render(){
-    return(
+  render() {
+    return (
       <div className='pr'>
-        <ItemsFiltro filtros={this.props.filtros} updateFiltros={(filtros=>this.props.setFiltrosTrackingKeywords(filtros))}/>
+        <ItemsFiltro filtros={this.props.filtros} updateFiltros={(filtros => this.props.setFiltrosTrackingKeywords(filtros))} />
         <div className='opciones-alumnos'>
           <div className='deg-opt'></div>
 
-          <div className='btn-options pr' onClick={()=>this.setState({show_filtros:this.state.show_filtros?false:true})}>
+          <DatePicker />
+
+          <div className='btn-options pr' onClick={() => this.setState({ show_filtros: this.state.show_filtros ? false : true })}>
             <i className="material-icons"> filter_list </i> <span>Filtros</span>
             {
-              this.state.show_filtros?
-                <ListaFiltros filtros={this.props.filtros} updateFiltros={(filtros=>this.props.setFiltrosTrackingKeywords(filtros))} close={()=>this.setState({show_filtros:false})}/>
-              :null
+              this.state.show_filtros ?
+                <ListaFiltros filtros={this.props.filtros} updateFiltros={(filtros => this.props.setFiltrosTrackingKeywords(filtros))} close={() => this.setState({ show_filtros: false })} />
+                : null
             }
 
           </div>
@@ -151,45 +164,47 @@ class Filtros extends Component{
           */}
 
 
-          {this.props.panel==='keywords'?
-            <div className={`item-container-icon-top-bar pr ${this.state.show_new_cliente?'color-azul':''}`} >
-              <i onClick={()=>this.setState({show_new_cliente:true})} className="material-icons hover-azul middle-item">add</i>
 
-              {this.state.show_new_cliente?
-                <NewKeywords close={()=>this.setState({show_new_cliente:false})}/> : null
+
+          {this.props.panel === 'keywords' ?
+            <div className={`item-container-icon-top-bar pr ${this.state.show_new_cliente ? 'color-azul' : ''}`} >
+              <i onClick={() => this.setState({ show_new_cliente: true })} className="material-icons hover-azul middle-item">add</i>
+
+              {this.state.show_new_cliente ?
+                <NewKeywords close={() => this.setState({ show_new_cliente: false })} /> : null
               }
 
             </div>
-          :null}
-          
+            : null}
 
-          {this.props.panel==='keywords'?
-            <div className={`item-container-icon-top-bar pr ${this.props.tracking_keywords_edit.activo?'middle-item color-azul':''}`} >
-              <i onClick={()=>this.changeEdit()} className="material-icons hover-azul">edit</i>
+
+          {this.props.panel === 'keywords' ?
+            <div className={`item-container-icon-top-bar pr ${this.props.tracking_keywords_edit.activo ? 'middle-item color-azul' : ''}`} >
+              <i onClick={() => this.changeEdit()} className="material-icons hover-azul">edit</i>
             </div>
-            :null
+            : null
           }
 
 
-          {this.props.panel==='keywords' && this.props.tracking_keywords_edit.activo?
+          {this.props.panel === 'keywords' && this.props.tracking_keywords_edit.activo ?
             <div className={`item-container-icon-top-bar pr middle-item`} >
-              <i onClick={()=>this.deleteKeywords()} className="material-icons hover-red color_eliminado">delete_forever</i>
+              <i onClick={() => this.deleteKeywords()} className="material-icons hover-red color_eliminado">delete_forever</i>
             </div>
-            :null
+            : null
           }
 
-          {this.props.panel==='keywords' && this.props.tracking_keywords_edit.activo?
+          {this.props.panel === 'keywords' && this.props.tracking_keywords_edit.activo ?
             <div className={`item-container-icon-top-bar pr middle-item`} >
-              <i onClick={()=>this.pauseKeywords()} className="material-icons hover-orange color_parado">pause</i>
+              <i onClick={() => this.pauseKeywords()} className="material-icons hover-orange color_parado">pause</i>
             </div>
-            :null
+            : null
           }
 
-          {this.props.tracking_keywords_edit.activo?
+          {this.props.tracking_keywords_edit.activo ?
             <div className={`item-container-icon-top-bar pr middle-item`} >
-              <i onClick={()=>this.restoreKeywords()} className="material-icons hover-green color_green">restore</i>
+              <i onClick={() => this.restoreKeywords()} className="material-icons hover-green color_green">restore</i>
             </div>
-            :null
+            : null
           }
 
 
@@ -202,6 +217,6 @@ class Filtros extends Component{
 
 }
 
-function mapStateToProps(state){return{panel: state.tracking.panel, filtros:state.tracking.paneles.keywords.filtros, cliente: state.cliente_seleccionado, tracking_keywords_edit: state.tracking.tracking_keywords_edit, empleado:state.empleado }}
-function  matchDispatchToProps(dispatch){ return bindActionCreators({ setEditKeywordsTracking, setFiltrosTrackingKeywords }, dispatch) }
+function mapStateToProps(state) { return { panel: state.tracking.panel, filtros: state.tracking.paneles.keywords.filtros, cliente: state.cliente_seleccionado, tracking_keywords_edit: state.tracking.tracking_keywords_edit, empleado: state.empleado } }
+function matchDispatchToProps(dispatch) { return bindActionCreators({ setEditKeywordsTracking, setFiltrosTrackingKeywords, setPopUpInfo }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(Filtros);

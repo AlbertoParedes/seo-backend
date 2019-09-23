@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import functions from '../../../../../Global/functions'
+import * as functions from '../../../../../Global/functions'
 import CargandoData from '../../../../../Global/CargandoData'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -96,16 +96,17 @@ class PanelLista extends Component {
 
 
     medios_ordenados.sort((a, b) =>{ a=a[1]; b=b[1]
+      var aKeys = false, bKeys= false
       if(this.state.sortBy==='web'){
-        var aKeys=functions.cleanProtocolo(a.web),bKeys=functions.cleanProtocolo(b.web)
+        aKeys=functions.cleanProtocolo(a.web);bKeys=functions.cleanProtocolo(b.web)
         if (aKeys > bKeys) { return 1; }
         if (aKeys < bKeys) { return -1; }
       }else if(this.state.sortBy==='dr' || this.state.sortBy==='ur'){
-        var aKeys=a[this.state.sortBy],bKeys=b[this.state.sortBy]
+        aKeys=a[this.state.sortBy];bKeys=b[this.state.sortBy]
         if (aKeys > bKeys) { return 1; }
         if (aKeys < bKeys) { return -1; }
       }else if(this.state.sortBy==='status'){
-        var aKeys=a.activo?1:2,
+        aKeys=a.activo?1:2;
         bKeys=b.activo?1:2
         if(a.eliminado)aKeys=3
         if(b.eliminado)bKeys=3
@@ -204,6 +205,10 @@ class PanelLista extends Component {
 
                     <th  className='lb-medios-paid-enlaces'>
                       <span>Enlaces</span>
+                    </th>
+
+                    <th className='lb-medios-paid-clientes'>
+                      <span>Clientes</span>
                     </th>
 
                     <th className='lb-medios-paid-more'></th>

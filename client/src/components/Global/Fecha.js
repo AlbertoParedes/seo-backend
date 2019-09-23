@@ -16,6 +16,7 @@ export default class ListaClientes extends Component {
     var m = ("0" + $(x).attr('data-m-sld')).slice(-2);
     var y = $(x).attr('data-y-sld');
     var fecha = y+"-"+m;
+    
     this.props.setFecha(fecha);
   }
   render() {

@@ -1,7 +1,7 @@
 import React,{Component} from 'react'
 import SimpleInput from '../../../../../Global/SimpleInput'
 import data from '../../../../../Global/Data/Data'
-import functions from '../../../../../Global/functions'
+import * as functions from '../../../../../Global/functions'
 import SimpleInputDesplegable from '../../../../../Global/SimpleInputDesplegable'
 import Switch from '../../../../../Global/Switch'
 import SimpleTextArea from '../../../../../Global/SimpleTextArea'

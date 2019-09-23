@@ -9,7 +9,6 @@ class InfoItems extends Component {
   }
 
   render(){
-    console.log(this.props.items_keywords);
     var keywords = this.props.items_keywords.keywords
     var eliminados = this.props.items_keywords.keywords_eliminadas
     var pausados = this.props.items_keywords.keywords_paradas

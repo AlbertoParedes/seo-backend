@@ -3,7 +3,7 @@ import CargandoData from '../../../Global/CargandoData'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setItemsTracking, setClienteSeleccionado, setPanelTracking } from '../../../../redux/actions';
-import functions from '../../../Global/functions'
+import * as functions from '../../../Global/functions'
 import $ from 'jquery'
 import ItemCliente from './ItemCliente'
 const ITEMS = 50;
@@ -33,7 +33,6 @@ class PanelLista extends Component {
   }
 
   ordenarClientes = () => {
-    console.log('oredenar clientes');
 
     var clientes_ordenados = Object.entries(this.state.clientes)
 
@@ -62,24 +61,25 @@ class PanelLista extends Component {
 
 
     clientes_ordenados.sort((a, b) =>{ a=a[1]; b=b[1]
+      var aKeys=false,bKeys=false;
       if(this.state.sortBy==='keywords'){
 
-        var aKeys=a.servicios.tracking.keywords?Object.keys(a.servicios.tracking.keywords).length: 0;
-        var bKeys=b.servicios.tracking.keywords?Object.keys(b.servicios.tracking.keywords).length: 0;
+        aKeys=a.servicios.tracking.keywords?Object.keys(a.servicios.tracking.keywords).length: 0;
+        bKeys=b.servicios.tracking.keywords?Object.keys(b.servicios.tracking.keywords).length: 0;
 
         if (aKeys > bKeys) { return 1; }
         if (aKeys < bKeys) { return -1; }
 
       }else if(this.state.sortBy==='activo'){
 
-        var aKeys=a.servicios.tracking.activo
-        var bKeys=b.servicios.tracking.activo
+        aKeys=a.servicios.tracking.activo
+        bKeys=b.servicios.tracking.activo
 
         if (aKeys > bKeys) { return 1; }
         if (aKeys < bKeys) { return -1; }
 
       }else if(this.state.sortBy==='status'){
-        var aKeys=a.activo && a.servicios.tracking.activo?1:2,
+        aKeys=a.activo && a.servicios.tracking.activo?1:2
         bKeys=b.activo && b.servicios.tracking.activo?1:2
         if(a.eliminado)aKeys=3
         if(b.eliminado)bKeys=3
@@ -88,8 +88,8 @@ class PanelLista extends Component {
       }
       else if(this.state.sortBy==='empleado'){
 
-        var aKeys='~';
-        var bKeys='~'
+        aKeys='~';
+        bKeys='~'
         if(a.empleados && a.empleados.tracking ){
           aKeys=this.getStringEmpleados(a.empleados.tracking)
         }
@@ -110,7 +110,6 @@ class PanelLista extends Component {
     });
 
     if(this.state.des){  clientes_ordenados.reverse(); }
-    console.log(clientes_ordenados.length);
     this.setState({clientes_ordenados},()=>{
       this.changeContadorClientes();
     })

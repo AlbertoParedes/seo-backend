@@ -12,11 +12,12 @@ import PanelClientes from './clientes/reducer-panel-clientes'
 import FiltroClientesLista from './clientes/reducer-filtro-clientes-lista'
 import ItemsClientesLista from './clientes/reducer-items-clientes-lista'
 import ClientesListaEdit from './clientes/reducer-clientes-lista-edit'
+import Clients from './clientes/reducer-clientes'
 /*--------------*/
 
 
 
-
+import Global from './Global/reducer-global'
 /*Panel linkbuilding*/
 import Linbuilding from './linkbuilding/reducer-linkbuilding'
 /*--------------*/
@@ -25,7 +26,8 @@ import Tracking from './tracking/reducer-tracking'
 /*--------------*/
 
 const allReducers = combineReducers({
-  clientes : Clientes,
+  clientes: Clientes,
+  clients: Clients,
   empleado: Empleado,
   empleados: Empleados,
 
@@ -37,16 +39,18 @@ const allReducers = combineReducers({
   /*--------------*/
 
   /*Panel linkbuilding*/
-  linkbuilding:Linbuilding,
+  linkbuilding: Linbuilding,
   /*--------------*/
   /*Panel linkbuilding*/
-  tracking:Tracking,
+  tracking: Tracking,
   /*--------------*/
 
-  cliente_seleccionado:ClienteSeleccionado,
+  cliente_seleccionado: ClienteSeleccionado,
 
   items_clientes: ItemsClientes,
-  panel_home:PanelHome,
+  panel_home: PanelHome,
+
+  global: Global
 
 });
 

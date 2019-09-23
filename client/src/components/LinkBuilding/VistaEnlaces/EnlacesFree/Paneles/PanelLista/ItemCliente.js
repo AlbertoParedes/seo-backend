@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setClienteSeleccionado } from '../../../../../../redux/actions';
 import firebase from '../../../../../../firebase/Firebase';
+import {getEnlacesRestantesFree} from '../../../../../Global/functions'
 const db = firebase.database().ref();
 
 class ItemCliente extends Component {
@@ -42,13 +43,14 @@ class ItemCliente extends Component {
   }
 
   render(){
-    var mes = false;
-    var enlaces_restante = 0;
-    try {
+    //var mes = false;
+    var {enlaces_restante, follows, follows_done_all} = getEnlacesRestantesFree(this.props.cliente, this.props.fecha, this.props.filtros.empleados);
+    //var enlaces_restante=0, follows=0, follows_done_all=0
+    /*try {
       mes = this.props.cliente.servicios.linkbuilding.free.home.mensualidades[this.props.fecha]?this.props.cliente.servicios.linkbuilding.free.home.mensualidades[this.props.fecha]:false
     } catch (e) {}
     var follows = mes?mes.follows:0
-    var nofollows = mes?mes.nofollows:0
+    //var nofollows = mes?mes.nofollows:0
     var follows_done_all = 0
 
     var follows_empleados = 0, follows_done_empleados = 0
@@ -70,7 +72,7 @@ class ItemCliente extends Component {
       //si no tiene empelados asignados habrá que que restarle el total
       enlaces_restante = follows - follows_done_empleados;
     }
-
+    */
 
     var pausado = !this.props.cliente.activo || !this.props.cliente.servicios.linkbuilding.free.activo ;
     var eliminado = this.props.cliente.eliminado

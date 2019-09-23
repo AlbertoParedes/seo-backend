@@ -1,15 +1,11 @@
 
 import React, { Component } from 'react';
 import Switch from '../../../../../Global/Switch'
-import CheckBox from '../../../../../Global/CheckBox'
 import firebase from '../../../../../../firebase/Firebase';
-import data from '../../../../../Global/Data/Data'
-import functions from '../../../../../Global/functions'
+import * as functions from '../../../../../Global/functions'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { setClienteSeleccionado, setPanelClientesFreeLinkbuilding } from '../../../../../../redux/actions';
-import $ from 'jquery'
-import dotProp from 'dot-prop-immutable';
 const db = firebase.database().ref();
 
 class ItemCliente extends Component {

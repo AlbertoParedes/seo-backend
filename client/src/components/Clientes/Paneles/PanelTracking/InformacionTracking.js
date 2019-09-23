@@ -1,66 +1,124 @@
-import React,{Component} from 'react'
+import React, { Component } from 'react'
 import SimpleInput from '../../../Global/SimpleInput'
 import data from '../../../Global/Data/Data'
-import functions from '../../../Global/functions'
 import SimpleInputDesplegable from '../../../Global/SimpleInputDesplegable'
-import EmpleadoItem from '../../../Global/EmpleadoItem'
-import Switch from '../../../Global/Switch'
-import SimpleTextArea from '../../../Global/SimpleTextArea'
 import UpdateStateInputs from '../../../Global/UpdateStateInputs'
 import DesplegableInfo from '../../../Global/DesplegableInfo'
-
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as functions from '../../../Global/functions'
+import { setPopUpInfo } from '../../../../redux/actions';
+import equal from 'deep-equal'
 //import bbdd from '../../../Global/Data/resultados'
+import SideBar from './SideBar'
 
 import firebase from '../../../../firebase/Firebase';
 const db = firebase.database().ref();
 
 class InformacionTracking extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state={
-      status:this.props.status,
-      dominio_a_buscar:this.props.dominio_a_buscar,
-      keywords:this.props.keywords,
+    this.state = {
+      status: this.props.status,
+      dominios: this.props.dominios,
+      competidores: this.props.competidores,
 
-      id_tracking:''
+      id_tracking: '',
+      editDominios:false,
+      editCompetidores:false
     }
   }
 
-  shouldComponentUpdate = (nextProps, nextState) =>{
+  shouldComponentUpdate = (nextProps, nextState) => {
 
-    if( this.props.status !== nextProps.status ||
-        this.props.dominio_a_buscar !== nextProps.dominio_a_buscar ||
-        this.props.keywords !== nextProps.keywords ){
+    if (this.props.status !== nextProps.status ||
+      this.props.dominios !== nextProps.dominios ||
+      this.props.competidores !== nextProps.competidores) {
       return true;
-    }else if( this.state !== nextState){
+    } else if (this.state !== nextState) {
       return true;
     }
     return false;
   }
 
-  componentWillReceiveProps = (newProps) =>{
-    if(this.props.status!==newProps.status){ this.setState({status: newProps.status}) }
-    if(this.props.dominio_a_buscar!==newProps.dominio_a_buscar){ this.setState({dominio_a_buscar: newProps.dominio_a_buscar}) }
-    if(this.props.keywords!==newProps.keywords){ this.setState({keywords: newProps.keywords}) }
+  componentWillReceiveProps = (newProps) => {
+    if (this.props.status !== newProps.status) { this.setState({ status: newProps.status }) }
+    if (this.props.dominios !== newProps.dominios) { this.setState({ dominios: newProps.dominios }) }
+    if (this.props.competidores !== newProps.competidores) { this.setState({ competidores: newProps.competidores }) }
   }
 
-  undoData = () =>{ this.setState(this.props) }
+  undoData = () => { this.setState(this.props) }
 
   saveData = () => {
 
-    var multiPath={};
+    var multiPath = {};
 
-    multiPath[`Clientes/${this.props.id_cliente}/servicios/tracking/activo`]=this.state.status==='Activado'?true:false
-    //multiPath[`Clientes/${this.props.id_cliente}/servicios/tracking/keywords`]=this.state.keywords
-    multiPath[`Clientes/${this.props.id_cliente}/servicios/tracking/dominio_a_buscar`]=this.state.dominio_a_buscar
+    multiPath[`Clientes/${this.props.id_cliente}/servicios/tracking/activo`] = this.state.status === 'Activado' ? true : false
 
-    console.log(multiPath);
+
+    //multiPath[`Clientes/${this.props.id_cliente}/servicios/tracking/competidores`]=this.state.competidores
+    //multiPath[`Clientes/${this.props.id_cliente}/servicios/tracking/dominios`] = this.state.dominios.trim()
+
+
+
+    {/*LOGS*/ }
+    let id_log;
+    var timestamp = (+new Date());
+    var id_empleado = this.props.empleado.id_empleado;
+
+    if (this.props.status !== this.state.status) {
+      id_log = db.child(`Servicios/Logs/clientes/${this.props.id_cliente}/informacion/tracking`).push().key;
+      functions.createLogs(multiPath, timestamp, this.props.status, this.state.status, 'status', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/tracking/${id_log}`)
+    }
+
+    var dominios = this.state.dominios;
+    if(!equal(this.state.dominios,this.props.dominios)){
+      Object.entries(this.state.dominios).forEach(([k,o])=>{
+        if(o.new){
+          o.new=null
+        }
+      })
+      multiPath[`Clientes/${this.props.id_cliente}/servicios/tracking/dominios`] = dominios
+      functions.createLogs(multiPath, timestamp, this.props.dominios, this.state.dominios, 'dominios', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/tracking/${id_log}`)
+    }
+
+    var competidores = this.state.competidores;
+    if(!equal(this.state.competidores,this.props.competidores)){
+      Object.entries(this.state.competidores).forEach(([k,o])=>{
+        if(o.new){
+          o.new=null
+        }
+      })
+      multiPath[`Clientes/${this.props.id_cliente}/servicios/tracking/competidores`] = competidores
+      functions.createLogs(multiPath, timestamp, this.props.competidores, this.state.competidores, 'competidores', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/tracking/${id_log}`)
+    }
+
 
     db.update(multiPath)
-    .then(()=>{console.log('Ok');})
-    .catch(err=>{console.log(err);})
+      .then(() => {
+        this.props.setPopUpInfo({ visibility: true, status: 'done', moment: Date.now(), text: 'Se han guardado los cambios correctamente' })
+      })
+      .catch(err => {
+        this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'Error al guardar' })
+      })
 
 
+  }
+
+  callBack = (list, obj) =>{
+
+    var st = {
+      editDominios:false,
+      editCompetidores:false
+    }
+    if(!equal(this.state[obj],list)){
+      st[obj] = list
+    }
+    
+    console.log('kknn',st);
+    
+
+    this.setState(st)
   }
 
   render() {
@@ -68,26 +126,38 @@ class InformacionTracking extends Component {
     var privilegio = false
     try {
       privilegio = this.props.empleado.privilegios.tracking.edit.info || (this.props.empleados && this.props.empleados[this.props.empleado.id_empleado]);
-    } catch (e) {}
+    } catch (e) { }
 
     var edited = false;
-    if(this.props.status!==this.state.status ||
-       this.props.dominio_a_buscar!==this.state.dominio_a_buscar ||
-       this.props.keywords!==this.state.keywords){
+    if (this.props.status !== this.state.status ||
+        !equal(this.props.dominios, this.state.dominios) ||
+        !equal(this.props.competidores, this.state.competidores)
+      ) {
       edited = true;
     }
 
-    var lista_keywords = '', i=0
-    Object.entries(this.state.keywords).forEach(([k,a])=>{
-      lista_keywords = lista_keywords + a.keyword;
-      if(i<Object.keys(this.state.keywords).length-1){ lista_keywords=lista_keywords + ', ';}
-      i++
+    var lista_dominios = '', numDomin = 0
+    Object.entries(this.state.dominios).forEach(([k, a]) => {
+      if(a.status==='activo'){
+        lista_dominios = lista_dominios + a.valor+ ', ';
+        numDomin++
+      }
     })
+    lista_dominios+=';'; lista_dominios = lista_dominios.replace(', ;','').replace(';','')
 
-    return(
+    var lista_competidores = '', numCom = 0;
+    Object.entries(this.state.competidores).forEach(([k, a]) => {
+      if(a.status==='activo'){
+        lista_competidores = lista_competidores + a.valor+ ', ';
+        numCom++
+      }
+    })
+    lista_competidores+=';'; lista_competidores = lista_competidores.replace(', ;','').replace(';','')
+
+    return (
       <div className='sub-container-informacion'>
 
-        {edited? <UpdateStateInputs saveData={()=>this.saveData()} undoData={()=>this.undoData()}/> :null }
+        {edited ? <UpdateStateInputs saveData={() => this.saveData()} undoData={() => this.undoData()} /> : null}
 
         <p className='title-informacion-alumno'>1. Información del tracking</p>
 
@@ -96,26 +166,56 @@ class InformacionTracking extends Component {
 
 
         {/*follows y no follows*/}
+        <SimpleInputDesplegable type={`${privilegio ? '' : 'block'}`} lista={data.estados_act_des} title='Estado' _class='div_text_mitad' text={this.state.status} changeValor={(status) => this.setState({ status })} />
+
+
         <div className='col-2-input'>
-          <SimpleInputDesplegable type={`${privilegio?'':'block'}`} lista={data.estados_act_des} title='Estado'  text={this.state.status} changeValor={(status)=>this.setState({status})}/>
-          <SimpleInput title='Dominio a buscar' _class_container={this.state.dominio_a_buscar.trim()===''? 'error-form-input':null}  type={`${privilegio?'':'block'}`}  text={this.state.dominio_a_buscar.toString()} changeValue={dominio_a_buscar=>{this.setState({dominio_a_buscar})}} />
+          <DesplegableInfo type={`block`} lista={this.state.dominios}
+            title='Dominios'
+            number={numDomin}
+            text={lista_dominios}
+            callbackValue={true}
+            callBack={()=>{this.setState({editDominios:true})}}
+          />
+
+          <DesplegableInfo type={`block`} lista={this.state.competidores}
+            title='Competidores'
+            number={numCom}
+            text={lista_competidores}
+            callbackValue={true}
+            callBack={()=>{this.setState({editCompetidores:true})}}
+          />
 
         </div>
-        <DesplegableInfo type={`block`}  lista={this.state.keywords}
-          title='Keywords'
-          number={Object.keys(this.state.keywords).length}
-          text={lista_keywords}
-          objecto={this.state.keywords}
-          changeValor={(keywords)=>this.setState({keywords})}
-          nuevo={this.state.nuevoAnchor}
-          setNuevo={(nuevo)=>this.setNuevoAnchor(nuevo)}
-          deleteItem = {(id)=>this.deleteItemAnchor(id)}
 
-        />
+        
+
+        {this.state.editDominios?
+          <SideBar 
+            list={this.state.dominios} 
+            title='Dominios' 
+            placeHolderNew='Agrega un nuevo dominio'
+            path={`Clientes/${this.props.id_cliente}/servicios/tracking/dominios`}
+            callBack={(list)=>{this.callBack(list,'dominios')}}
+          />:null
+        }
+
+        {this.state.editCompetidores?
+          <SideBar 
+            list={this.state.competidores} 
+            title='Competidores' 
+            placeHolderNew='Agrega un nuevo competidor'
+            path={`Clientes/${this.props.id_cliente}/servicios/tracking/competidores`}
+            callBack={(list)=>{this.callBack(list,'competidores')}}
+          />:null
+        }
+        
+
 
       </div>
     )
   }
 }
 
-export default InformacionTracking
+function matchDispatchToProps(dispatch) { return bindActionCreators({ setPopUpInfo }, dispatch) }
+export default connect(null, matchDispatchToProps)(InformacionTracking);

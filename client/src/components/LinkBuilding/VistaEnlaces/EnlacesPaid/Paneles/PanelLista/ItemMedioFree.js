@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import functions from '../../../../../Global/functions'
+import * as functions from '../../../../../Global/functions'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { selectMedioMediosGratuitos, setPanelMediosFreeLinkbuilding } from '../../../../../../redux/actions';

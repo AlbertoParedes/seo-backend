@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import functions from '../functions'
+import * as functions from '../functions'
 import search from '../Imagenes/search.svg';
 
 class ListaOpciones extends Component {

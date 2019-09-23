@@ -1,7 +1,4 @@
-import React,{Component} from 'react'
-import data from '../../../Global/Data/Data'
-import EmpleadoItem from '../../../Global/EmpleadoItem'
-import functions from '../../../Global/functions'
+import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import InformacionTracking from './InformacionTracking'
 import InformacionEmpleados from './InformacionEmpleados'
@@ -11,31 +8,36 @@ import $ from 'jquery'
 
 class PanelTracking extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props)
-    this.state={
+    this.state = {
 
     }
   }
 
   componentDidMount = () => { this.scrollToCliente() }
-  scrollToCliente = () => { setTimeout(function(){ try { $('#container-clientes').animate({scrollTop:0}, 0); } catch (e) { } }, 0); }
+  scrollToCliente = () => { setTimeout(function () { try { $('#container-clientes').animate({ scrollTop: 0 }, 0); } catch (e) { } }, 0); }
 
-  render(){
-    return(
+  render() {
+    return (
       <div className='container-informacion'>
 
         <InformacionTracking
           id_cliente={this.props.cliente_seleccionado.id_cliente}
-          empleados={this.props.cliente_seleccionado.empleados && this.props.cliente_seleccionado.empleados.tracking ? this.props.cliente_seleccionado.empleados.tracking: false}
+          empleados={this.props.cliente_seleccionado.empleados && this.props.cliente_seleccionado.empleados.tracking ? this.props.cliente_seleccionado.empleados.tracking : false}
           empleado={this.props.empleado}
-          status={this.props.cliente_seleccionado.servicios.tracking.activo?'Activado':'Desactivado'}
-          keywords={this.props.cliente_seleccionado.servicios.tracking.keywords?this.props.cliente_seleccionado.servicios.tracking.keywords:{}}
-          dominio_a_buscar={this.props.cliente_seleccionado.servicios.tracking.dominio_a_buscar?this.props.cliente_seleccionado.servicios.tracking.dominio_a_buscar:''}
+          status={this.props.cliente_seleccionado.servicios.tracking.activo ? 'Activado' : 'Desactivado'}
+          keywords={this.props.cliente_seleccionado.servicios.tracking.keywords ? this.props.cliente_seleccionado.servicios.tracking.keywords : {}}
+          dominio_a_buscar={this.props.cliente_seleccionado.servicios.tracking.dominio_a_buscar ? this.props.cliente_seleccionado.servicios.tracking.dominio_a_buscar : ''}
+
+          dominios={this.props.cliente_seleccionado.servicios.tracking.dominios ? this.props.cliente_seleccionado.servicios.tracking.dominios : {}}
+          competidores={this.props.cliente_seleccionado.servicios.tracking.competidores ? this.props.cliente_seleccionado.servicios.tracking.competidores : {}}
+
         />
 
         <InformacionEmpleados
-          empleados={this.props.cliente_seleccionado.empleados && this.props.cliente_seleccionado.empleados.tracking ? this.props.cliente_seleccionado.empleados.tracking: false}
+          id_cliente={this.props.cliente_seleccionado.id_cliente}
+          empleados={this.props.cliente_seleccionado.empleados && this.props.cliente_seleccionado.empleados.tracking ? this.props.cliente_seleccionado.empleados.tracking : false}
           all_empleados={this.props.all_empleados}
           empleado={this.props.empleado}
           cliente_seleccionado={this.props.cliente_seleccionado}
@@ -44,9 +46,9 @@ class PanelTracking extends Component {
 
         <InformacionAdicional
           id_cliente={this.props.cliente_seleccionado.id_cliente}
-          empleados={this.props.cliente_seleccionado.empleados && this.props.cliente_seleccionado.empleados.tracking ? this.props.cliente_seleccionado.empleados.tracking: false}
+          empleados={this.props.cliente_seleccionado.empleados && this.props.cliente_seleccionado.empleados.tracking ? this.props.cliente_seleccionado.empleados.tracking : false}
           empleado={this.props.empleado}
-          comentarios={this.props.cliente_seleccionado.servicios.tracking.comentarios?this.props.cliente_seleccionado.servicios.tracking.comentarios:''}
+          comentarios={this.props.cliente_seleccionado.servicios.tracking.comentarios ? this.props.cliente_seleccionado.servicios.tracking.comentarios : ''}
         />
 
 
@@ -56,7 +58,7 @@ class PanelTracking extends Component {
 
 }
 
-function mapStateToProps(state){return{ cliente_seleccionado:state.cliente_seleccionado, empleado:state.empleado, all_empleados:state.empleados, empleados_disponibles:state.tracking.paneles.lista.filtros.empleados.items }}
+function mapStateToProps(state) { return { cliente_seleccionado: state.cliente_seleccionado, empleado: state.empleado, all_empleados: state.empleados, empleados_disponibles: state.tracking.paneles.lista.filtros.empleados.items } }
 export default connect(mapStateToProps)(PanelTracking);
 
 /*

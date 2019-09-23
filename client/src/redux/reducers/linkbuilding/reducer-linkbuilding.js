@@ -151,6 +151,7 @@ var linkbuilding = {
 
 
 export default function (state=linkbuilding, action){
+  var newProps = false
   switch (action.type) {
 
     case "LB_VISTAS" :
@@ -179,7 +180,7 @@ export default function (state=linkbuilding, action){
       return dotProp.set(state, `clientes.tipos.paid.panel`, action.panel);
 
     case 'LB_SORTBY_DES_CLIENTES_LISTA':
-      var newProps = dotProp.set(state, `clientes.tipos.free.paneles.lista.sortBy`, action.data.sortBy);
+      newProps = dotProp.set(state, `clientes.tipos.free.paneles.lista.sortBy`, action.data.sortBy);
       newProps.clientes.tipos.free.paneles.lista.des=action.data.des
       return newProps
 
@@ -197,7 +198,7 @@ export default function (state=linkbuilding, action){
 
 
     case 'LB_SORTBY_DES_CLIENTES_LISTA_PAID':
-      var newProps = dotProp.set(state, `clientes.tipos.paid.paneles.lista.sortBy`, action.data.sortBy);
+      newProps = dotProp.set(state, `clientes.tipos.paid.paneles.lista.sortBy`, action.data.sortBy);
       newProps.clientes.tipos.paid.paneles.lista.des=action.data.des
       return newProps
 
@@ -233,7 +234,7 @@ export default function (state=linkbuilding, action){
     case "LB_PANEL_MEDIOS_FREE_ITEMS_INFO":
       return dotProp.set(state, `medios.tipos.free.items_info`, action.items_info);
     case 'LB_SORTBY_DES_MEDIOS_LISTA_FREE':
-      var newProps = dotProp.set(state, `medios.tipos.free.paneles.lista.sortBy`, action.data.sortBy);
+      newProps = dotProp.set(state, `medios.tipos.free.paneles.lista.sortBy`, action.data.sortBy);
       newProps.medios.tipos.free.paneles.lista.des=action.data.des
       return newProps
 
@@ -263,7 +264,7 @@ export default function (state=linkbuilding, action){
       return dotProp.set(state, `medios.tipos.paid.panel`, action.panel);
 
     case 'LB_SORTBY_DES_MEDIOS_LISTA_PAID':
-      var newProps = dotProp.set(state, `medios.tipos.paid.paneles.lista.sortBy`, action.data.sortBy);
+      newProps = dotProp.set(state, `medios.tipos.paid.paneles.lista.sortBy`, action.data.sortBy);
       newProps.medios.tipos.paid.paneles.lista.des=action.data.des
       return newProps
 
@@ -293,7 +294,7 @@ export default function (state=linkbuilding, action){
       return dotProp.set(state, `enlaces.tipos.free.panel`, action.panel);
 
     case 'LB_SORTBY_DES_ENLACES_LISTA_FREE':
-      var newProps = dotProp.set(state, `enlaces.tipos.free.paneles.lista.sortBy`, action.data.sortBy);
+      newProps = dotProp.set(state, `enlaces.tipos.free.paneles.lista.sortBy`, action.data.sortBy);
       newProps.enlaces.tipos.free.paneles.lista.des=action.data.des
       return newProps
 
@@ -319,7 +320,7 @@ export default function (state=linkbuilding, action){
       return dotProp.set(state, `enlaces.tipos.paid.panel`, action.panel);
 
     case 'LB_SORTBY_DES_ENLACES_LISTA_PAID':
-      var newProps = dotProp.set(state, `enlaces.tipos.paid.paneles.lista.sortBy`, action.data.sortBy);
+      newProps = dotProp.set(state, `enlaces.tipos.paid.paneles.lista.sortBy`, action.data.sortBy);
       newProps.enlaces.tipos.paid.paneles.lista.des=action.data.des
       return newProps
 

@@ -2,8 +2,6 @@ import React, {Component} from 'react'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { setVistaLinkBuilding, setPanelClientesLinkbuilding } from '../../redux/actions';
-import data from '../Global/Data/Data'
-
 import VistaClientes from './VistaClientes/Clientes.js'
 import VistaMedios from './VistaMedios/Medios.js'
 import VistaEnlaces from './VistaEnlaces/Enlaces.js'

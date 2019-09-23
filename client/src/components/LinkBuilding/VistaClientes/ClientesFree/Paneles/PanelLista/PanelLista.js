@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import functions from '../../../../../Global/functions'
+import * as functions from '../../../../../Global/functions'
 import CargandoData from '../../../../../Global/CargandoData'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -97,20 +97,21 @@ class PanelLista extends Component {
 
 
     clientes_ordenados.sort((a, b) =>{ a=a[1]; b=b[1]
+      var aKeys=false,bKeys=false
       if(this.state.sortBy==='blog'){
-        var aKeys=a.blog,bKeys=b.blog
+        aKeys=a.blog;bKeys=b.blog
         if (aKeys > bKeys) { return 1; }
         if (aKeys < bKeys) { return -1; }
       }else if(this.state.sortBy==='follows'){
-        var aKeys=a.follows,bKeys=b.follows
+        aKeys=a.follows;bKeys=b.follows
         if (aKeys > bKeys) { return 1; }
         if (aKeys < bKeys) { return -1; }
       }else if(this.state.sortBy==='nofollows'){
-        var aKeys=a.nofollows,bKeys=b.nofollows
+        aKeys=a.nofollows;bKeys=b.nofollows
         if (aKeys > bKeys) { return 1; }
         if (aKeys < bKeys) { return -1; }
       }else if(this.state.sortBy==='status'){
-        var aKeys=a.activo && a.servicios.linkbuilding.free.activo?1:2,
+        aKeys=a.activo && a.servicios.linkbuilding.free.activo?1:2;
         bKeys=b.activo && b.servicios.linkbuilding.free.activo?1:2
         if(a.eliminado)aKeys=3
         if(b.eliminado)bKeys=3

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import functions from '../functions'
+import * as functions from '../functions'
 import CheckBox from '../CheckBox'
-import search from '../Imagenes/search.svg';
 
 class InputPopUp extends Component {
 

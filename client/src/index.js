@@ -25,7 +25,6 @@ const db = firebase.database().ref();
 
 firebase.auth().onAuthStateChanged( user => {
   var path = browserHistory.location.pathname
-  console.log(path);
   if(user && (path==='/' || path==='/signin') ){
     var empleado = null;
     db.child('Empleados').orderByChild('email').equalTo(user.email).once("value", snapshot => {
@@ -38,7 +37,7 @@ firebase.auth().onAuthStateChanged( user => {
     })
 
   }else{
-    //browserHistory.replace(`${process.env.PUBLIC_URL}/signin`);
+    browserHistory.replace(`${process.env.PUBLIC_URL}/signin`);
   }
 
 

@@ -1,11 +1,6 @@
 import React,{Component} from 'react'
 import SimpleInput from '../../../../../Global/SimpleInput'
-import data from '../../../../../Global/Data/Data'
-import functions from '../../../../../Global/functions'
-import SimpleInputDesplegable from '../../../../../Global/SimpleInputDesplegable'
-import Switch from '../../../../../Global/Switch'
-import SimpleTextArea from '../../../../../Global/SimpleTextArea'
-import UpdateStateInputs from '../../../../../Global/UpdateStateInputs'
+import * as functions from '../../../../../Global/functions'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { setMedioSeleccionadoPaid, setPanelMediosPaidLinkbuilding } from '../../../../../../redux/actions';
@@ -38,7 +33,6 @@ class NuevosEnlaces extends Component {
       return false;
     }
 
-    var multiPath = {};
     var key = db.child(`Servicios/Linkbuilding/Paid/Medios/medios/`).push().key;
     var medio = {
       id_medio:key,

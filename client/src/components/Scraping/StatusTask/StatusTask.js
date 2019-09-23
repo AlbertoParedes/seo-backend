@@ -280,8 +280,8 @@ class StatusTask extends Component {
                     if(c.sitemaps['1_index_sitemap'].status===200)n++
                     if(c.sitemaps.sitemap.status===200)n++
                     if(c.sitemaps.sitemap_index.status===200)n++
-                    if(n==0){ sites='No SiteMaps'
-                		}else if(n==1){ sites='OK'
+                    if(n===0){ sites='No SiteMaps'
+                  }else if(n===1){ sites='OK'
                 		}else if(n>1){ sites='Warning' }
                   }
 
@@ -291,21 +291,21 @@ class StatusTask extends Component {
                       <td className='st_col-status-status'><div className={`st_status-point ${c.status===1?'st_good-status':''} ${c.status===2?'st_warning-status':''} ${c.status===3?'st_wrong-status':''}     `} ></div></td>
 
                       <td className='st_col-status-web'>
-                        <a href={c.web} target='_blank'>{c.web}</a>
+                        <a href={c.web} target='_blank' rel="noopener noreferrer">{c.web}</a>
                       </td>
 
                       <td className={`st_col-status-code ${c.home && (c.home.status>=400 || c.home.status==='Error') ?'st_wrong-status-color':''}`} >{c.home? c.home.status : '-' }</td>
 
                       <td className={`st_col-status-meta ${c.home && c.home.robots && (c.home.robots.toLowerCase().includes('noindex') || c.home.robots.toLowerCase().includes('nofollow') )?'st_wrong-status-color':'' }`}>
-                        <a href={c.web} target='_blank'>{c.home? c.home.robots : '-' }</a>
+                        <a href={c.web} target='_blank' rel="noopener noreferrer">{c.home? c.home.robots : '-' }</a>
                       </td>
 
                       <td className={`st_col-status-txt ${txt==='Disallow' || txt==='Error' || txt===404?'st_warning-status-color':''}`}>
-                        <a href={c.web+'/robots.txt'} target='_blank'>{c.robots? txt : '-' }</a>
+                        <a href={c.web+'/robots.txt'} target='_blank' rel="noopener noreferrer">{c.robots? txt : '-' }</a>
                       </td>
 
                       <td className={`st_col-status-num ${num_sitemap_index===404?'st_warning-status-color':''}`} >
-                        <a href={c.web+'/sitemap_index.xml'} target='_blank'>{c.sitemaps? num_sitemap_index : '-' }</a>
+                        <a href={c.web+'/sitemap_index.xml'} target='_blank' rel="noopener noreferrer">{c.sitemaps? num_sitemap_index : '-' }</a>
                       </td>
 
 

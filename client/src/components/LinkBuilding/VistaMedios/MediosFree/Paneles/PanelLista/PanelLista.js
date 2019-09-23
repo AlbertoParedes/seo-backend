@@ -1,8 +1,7 @@
 import React, {Component} from 'react'
-import bbdd_file from '../../../../../Global/Data/linkbuilding_bbdd'
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import functions from '../../../../../Global/functions'
+import * as functions from '../../../../../Global/functions'
 import { selectCategoriaMediosGratuitos, setSortTableMediosFreeLB, setItemsLoadTableMediosFreeLB, setInfoTableMediosFreeLB } from '../../../../../../redux/actions';
 import ItemMedioFree from './ItemMedioFree'
 
@@ -68,72 +67,6 @@ class PanelLista extends Component{
     this.props.selectCategoriaMediosGratuitos(categoria);
   }
 
-  restaurarbbdd = () =>{
-    /*
-    var enlaces = bbdd_file.enlaces.enlaces_gratuitos;
-    console.log(bbdd_file.enlaces.enlaces_gratuitos);
-    var multiPath= {}
-    Object.entries(enlaces).forEach(([k,e])=>{
-
-
-      Object.entries(e).forEach(([k2,f])=>{
-        Object.entries(f).forEach(([k3,r])=>{
-
-          if(r.categoria==='blogs_gratuitos'){
-            //medios.webs2_0.medios=c.medios;
-            r.categoria='webs2_0'
-          }
-          else if(r.categoria==='comentarios_en_webs'){
-            //medios.comentarios.medios=c.medios;
-            r.categoria='comentarios'
-          }else if(r.categoria==='herramientas_de_analisis'){
-            //medios.herramientas_de_analisis.medios=c.medios;
-            r.categoria='herramientas_de_analisis'
-          }
-          else if(r.categoria==='directorios'){
-            //medios.directorios.medios=c.medios;
-            r.categoria='directorios'
-          }else if(r.categoria==='foros'){
-            //medios.foros.medios=c.medios;
-            r.categoria='foros'
-          }
-          else if(r.categoria==='marcadores'){
-            //medios.marcadores.medios=c.medios;
-            r.categoria='marcadores'
-          }
-          else if(r.categoria==='perfiles'){
-            //medios.perfiles.medios=c.medios;
-            r.categoria='perfiles'
-          }else if(r.categoria==='redes_sociales_o_agregadores'){
-            //medios.redes_sociales_o_agregadores.medios=c.medios;
-            r.categoria='redes_sociales_o_agregadores'
-          }
-
-          else if(r.categoria==='enlaces_contextuales' || r.categoria==='enlaces_de_interes' || r.categoria==='enlaces_rotos' || r.categoria==='guestblogging'){
-            //Object.entries(c.medios).forEach(([k2,m])=>{
-
-              if(r.id_medio==='-LSGEHAjfP9xgFmQ_FeK' || r.id_medio==='-LSGFEMe30srKt0nwuZ7' || r.id_medio==='-LSHCQIphvKad6PQr1N3' || r.id_medio==='-LSJFBXcDfVwrx4RsspZ' || r.id_medio==='-LSOv9x9eic4wgkl4LVI' || r.id_medio==='-LSP763RnvnJCC-aOXa4' || r.id_medio==='-LSPvXVT2_MqeH3JbSIq' || r.id_medio==='-LSUS8iaE7Kxow6co_ZY' ){
-                //medios.pbn.medios[k2]=m;
-                r.categoria='pbn'
-              }else{
-                //medios.colaboraciones.medios[k2]=m;
-                r.categoria='colaboraciones'
-              }
-            //})
-          }
-
-          multiPath[`Servicios/Linkbuilding/Free/Enlaces/clientes/${k}/mensualidades/${k2}/enlaces/${k3}`]=r
-
-        })
-      })
-    })
-
-    console.log(enlaces);
-    console.log(multiPath);
-    db.update(multiPath)
-    */
-  }
-
   ordenarMedios = () => {
     if(this.state.categoria_seleccionada){
       var medios_ordenados = Object.entries(this.state.medios[this.state.categoria_seleccionada.id].medios)
@@ -158,16 +91,17 @@ class PanelLista extends Component{
       })
       console.log('this.state.sortBy',this.state.sortBy);
       medios_ordenados.sort((a, b) =>{ a=a[1]; b=b[1]
+        var aKeys = false, bKeys= false;
         if(this.state.sortBy==='web'){
-          var aKeys=functions.cleanProtocolo(a.web),bKeys=functions.cleanProtocolo(b.web)
+          aKeys=functions.cleanProtocolo(a.web);bKeys=functions.cleanProtocolo(b.web)
           if (aKeys > bKeys) { return 1; }
           if (aKeys < bKeys) { return -1; }
         }else if(this.state.sortBy==='dr' || this.state.sortBy==='ur'){
-          var aKeys=a[this.state.sortBy],bKeys=b[this.state.sortBy]
+          aKeys=a[this.state.sortBy];bKeys=b[this.state.sortBy]
           if (aKeys > bKeys) { return 1; }
           if (aKeys < bKeys) { return -1; }
         }else if(this.state.sortBy==='status'){
-          var aKeys=a.activo?1:2,
+          aKeys=a.activo?1:2;
           bKeys=b.activo?1:2
           if(a.eliminado)aKeys=3
           if(b.eliminado)bKeys=3

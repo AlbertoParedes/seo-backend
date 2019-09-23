@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import functions from '../../../../../Global/functions'
+import * as functions from '../../../../../Global/functions'
 import CargandoData from '../../../../../Global/CargandoData'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -99,16 +99,17 @@ class PanelLista extends Component {
 
 
     clientes_ordenados.sort((a, b) =>{ a=a[1]; b=b[1]
+      var aKeys= false, bKeys=false
       if(this.state.sortBy==='micronichos'){
-        var aKeys=a.servicios.linkbuilding.paid.micronichos.activo,bKeys=b.servicios.linkbuilding.paid.micronichos.activo
+        aKeys=a.servicios.linkbuilding.paid.micronichos.activo;bKeys=b.servicios.linkbuilding.paid.micronichos.activo
         if (aKeys > bKeys) { return 1; }
         if (aKeys < bKeys) { return -1; }
       }else if(this.state.sortBy==='inversion_mensual' || this.state.sortBy==='beneficio' || this.state.sortBy==='porcentaje_perdida' || this.state.sortBy==='bote'){
-        var aKeys=a.servicios.linkbuilding.paid[this.state.sortBy],bKeys=b.servicios.linkbuilding.paid[this.state.sortBy]
+        aKeys=a.servicios.linkbuilding.paid[this.state.sortBy];bKeys=b.servicios.linkbuilding.paid[this.state.sortBy]
         if (aKeys > bKeys) { return 1; }
         if (aKeys < bKeys) { return -1; }
       }else if(this.state.sortBy==='status'){
-        var aKeys=a.activo && a.servicios.linkbuilding.paid.activo?1:2,
+        aKeys=a.activo && a.servicios.linkbuilding.paid.activo?1:2;
         bKeys=b.activo && b.servicios.linkbuilding.paid.activo?1:2
         if(a.eliminado)aKeys=3
         if(b.eliminado)bKeys=3

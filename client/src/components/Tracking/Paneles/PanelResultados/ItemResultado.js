@@ -1,6 +1,5 @@
 import React, { Component, Fragment  } from 'react';
 import data from '../../../Global/Data/Data'
-import $ from 'jquery'
 
 class ItemDate extends Component {
 
@@ -12,7 +11,7 @@ class ItemDate extends Component {
     }
 
   render() {
-    var id_date=false, url=false;
+    var id_date=false
     var resultados = this.props.date.results.all_positions ? this.props.date.results.all_positions : false
     var date = this.props.date.id_date.split('-');
     id_date = (+date[2])+' '+data.months[ (+date[1])-1 ]+", "+date[0]
@@ -48,7 +47,7 @@ class ItemDate extends Component {
 
           <td className={`key-item-img ${resultados && resultados.length>1  && this.state.show_more?'td-more-result':''}`} rowSpan={resultados && this.state.show_more && false/*quitar este false si se quiere unir las celdas*/?resultados.length:1}>
             {this.props.date.image?
-                <a href={this.props.date.image} target='_blank' className='align-center'><i className="material-icons">camera_alt</i></a>
+                <a href={this.props.date.image} target='_blank' rel="noopener noreferrer" className='align-center'><i className="material-icons">camera_alt</i></a>
               :
                 <span className='align-center'>-</span>
             }

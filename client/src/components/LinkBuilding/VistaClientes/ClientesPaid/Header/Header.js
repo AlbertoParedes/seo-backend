@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import EmpleadoMenu from '../../../../Global/EmpleadoMenu'
+import EmpleadoMenu from '../../../../Global/Empleado/EmpleadoMenu'
 import FiltrosClientes from './FiltroClientes/Filtros'
 import InfoItems from './InfoItems'
 import ListaOpciones from '../../../../Global/ListaOpciones';
@@ -8,35 +8,35 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { setPanelClientesPaidLinkbuilding, setSearchTableClientesPaidLB, setSearchByTableClientesPaidLB } from '../../../../../redux/actions';
 
-class Header extends Component{
+class Header extends Component {
 
-  constructor(props){
+  constructor(props) {
     super(props)
-    this.state={
+    this.state = {
 
     }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if(nextProps.search !== this.props.search){ return true; }
-    else if(nextProps.searchBy !== this.props.searchBy){ return true; }
-    else if(nextProps.panel !== this.props.panel){ return true; }
-    else if(nextProps.cliente_seleccionado !== this.props.cliente_seleccionado){ return true; }
+    if (nextProps.search !== this.props.search) { return true; }
+    else if (nextProps.searchBy !== this.props.searchBy) { return true; }
+    else if (nextProps.panel !== this.props.panel) { return true; }
+    else if (nextProps.cliente_seleccionado !== this.props.cliente_seleccionado) { return true; }
     return false;
   }
 
   setPanel = panel => {
-    if(panel==='info' && !this.props.cliente_seleccionado){
+    if (panel === 'info' && !this.props.cliente_seleccionado) {
       console.log('No se ha seleccionado ningun cliente');
-    }else{
+    } else {
       this.props.setPanelClientesPaidLinkbuilding(panel)
     }
 
   }
 
 
-  render(){
-    return(
+  render() {
+    return (
       <div className='container-header-panels pr'>
 
         {/*Div para mensajes sobre los clientes*/}
@@ -48,10 +48,10 @@ class Header extends Component{
 
             {/*Input para buscar a los clientes*/}
             <div>
-              <img className='icon-search-panel' src={search} alt=''/>
-              <input placeholder='Buscar clientes por' value={this.props.search} onChange={(e)=>this.props.setSearchTableClientesPaidLB(e.target.value)} />
-              {this.props.search.trim()===''?
-                <ListaOpciones opciones={this.props.lista_search_by} opcion_selected={this.props.searchBy} changeOpcion={(id)=>this.props.setSearchByTableClientesPaidLB(id)}/>:null
+              <img className='icon-search-panel' src={search} alt='' />
+              <input placeholder='Buscar clientes por' value={this.props.search} onChange={(e) => this.props.setSearchTableClientesPaidLB(e.target.value)} />
+              {this.props.search.trim() === '' ?
+                <ListaOpciones opciones={this.props.lista_search_by} opcion_selected={this.props.searchBy} changeOpcion={(id) => this.props.setSearchByTableClientesPaidLB(id)} /> : null
               }
             </div>
 
@@ -61,21 +61,21 @@ class Header extends Component{
 
         <p className='title-header'>
           <span>LinkBuilding</span> <i className="material-icons align-center color-gris">chevron_right</i> <span>Clientes de pago</span>
-          {this.props.cliente_seleccionado? <i className="material-icons align-center color-gris">chevron_right</i> :null}
-          {this.props.cliente_seleccionado? <span className='block-with-text'>{this.props.cliente_seleccionado.dominio}</span> :null}
+          {this.props.cliente_seleccionado ? <i className="material-icons align-center color-gris">chevron_right</i> : null}
+          {this.props.cliente_seleccionado ? <span className='block-with-text'>{this.props.cliente_seleccionado.dominio}</span> : null}
         </p>
 
-        <InfoItems/>
-        <FiltrosClientes/>
+        <InfoItems />
+        <FiltrosClientes />
 
         {/*TABS*/}
         <div className='barra-opciones-alumnos'>
           {/*Lista*/}
-          <div onClick={()=>{this.setPanel('lista')}} className={`${this.props.panel==='lista'?'active-option':''}`} >Listado</div>
+          <div onClick={() => { this.setPanel('lista') }} className={`${this.props.panel === 'lista' ? 'active-option' : ''}`} >Listado</div>
           {/*Informacion*/}
           <div
-            onClick={()=>{ this.setPanel('info') }}
-            className={`${this.props.panel==='info'?'active-option':''} ${!this.props.cliente_seleccionado?'disable-opciones-alumno':''}`} >Información</div>
+            onClick={() => { this.setPanel('info') }}
+            className={`${this.props.panel === 'info' ? 'active-option' : ''} ${!this.props.cliente_seleccionado ? 'disable-opciones-alumno' : ''}`} >Información</div>
         </div>
 
 
@@ -86,12 +86,14 @@ class Header extends Component{
 
 }
 
-function mapStateToProps(state){return{
-  cliente_seleccionado: state.cliente_seleccionado,
-  panel: state.linkbuilding.clientes.tipos.paid.panel,
-  search:state.linkbuilding.clientes.tipos.paid.paneles.lista.search,
-  searchBy:state.linkbuilding.clientes.tipos.paid.paneles.lista.searchBy,
-  lista_search_by:state.linkbuilding.clientes.tipos.paid.paneles.lista.lista_search_by,
-}}
-function matchDispatchToProps(dispatch){ return bindActionCreators({ setPanelClientesPaidLinkbuilding, setSearchTableClientesPaidLB, setSearchByTableClientesPaidLB }, dispatch) }
+function mapStateToProps(state) {
+  return {
+    cliente_seleccionado: state.cliente_seleccionado,
+    panel: state.linkbuilding.clientes.tipos.paid.panel,
+    search: state.linkbuilding.clientes.tipos.paid.paneles.lista.search,
+    searchBy: state.linkbuilding.clientes.tipos.paid.paneles.lista.searchBy,
+    lista_search_by: state.linkbuilding.clientes.tipos.paid.paneles.lista.lista_search_by,
+  }
+}
+function matchDispatchToProps(dispatch) { return bindActionCreators({ setPanelClientesPaidLinkbuilding, setSearchTableClientesPaidLB, setSearchByTableClientesPaidLB }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(Header);

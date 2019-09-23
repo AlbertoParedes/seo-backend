@@ -1,23 +1,30 @@
-
 import React, { Component } from 'react';
-import Switch from '../../../../../Global/Switch'
-import CheckBox from '../../../../../Global/CheckBox'
-import firebase from '../../../../../../firebase/Firebase';
-import data from '../../../../../Global/Data/Data'
-import functions from '../../../../../Global/functions'
+import {cleanProtocolo} from '../../../../../Global/functions'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { setMedioSeleccionadoPaid, setPanelMediosPaidLinkbuilding } from '../../../../../../redux/actions';
-import $ from 'jquery'
-import dotProp from 'dot-prop-immutable';
-const db = firebase.database().ref();
+import SideBar from '../../../MediosFree/Paneles/PanelLista/SideBar'
 
 class ItemMedio extends Component {
 
   constructor(props){
       super(props);
       this.state={
+        clientes:this.props.clientes,
+        clientes_usados:[],
+        clientes_disponibles:[],
+        showClientes:false
       };
+  }
+
+  componentWillMount = () => {
+    this.setClientes(this.state.clientes, this.state.clientes_usados, this.state.clientes_disponibles)
+  }
+
+  componentWillReceiveProps = newProps => {
+    if(this.state.clientes!==newProps.clientes ){
+      this.setClientes(newProps.clientes, this.state.clientes_usados, this.state.clientes_disponibles)
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -32,7 +39,52 @@ class ItemMedio extends Component {
     if(this.state.showEmpleados!==nextState.showEmpleados)return true
     return false;
     */
-    return true;
+    if(this.state!==nextState){
+      return true
+    }
+    return false
+  }
+
+  setClientes = (clientes, clientes_usados_old, clientes_disponibles_old) => {
+    var clientes_usados = [], clientes_disponibles=[];
+    
+    
+    Object.entries(clientes).forEach(([k,c])=>{
+      var m = false
+      try {
+        m = c.servicios.linkbuilding.paid.home.medios_usados_follows[this.props.medio.id_medio]?true:false
+      } catch (error) {}
+      //console.log(this.props.medio.id_medio,k,m);
+      
+      if(m){
+       // console.log(this.props.medio.id_medio);
+        
+        clientes_usados.push({id_cliente:c.id_cliente, web:c.web,medio:c.servicios.linkbuilding.paid.home.medios_usados_follows[this.props.medio.id_medio]})
+      }else if(c.activo && !c.eliminado && c.servicios.linkbuilding.paid.activo){
+        clientes_disponibles.push({id_cliente:c.id_cliente, web:c.web})
+      }
+    })
+
+    // ordenamos los clientes 
+    clientes_disponibles.sort((a, b) =>{ 
+      var dominioA = cleanProtocolo(this.props.clientes[a.id_cliente].web);
+      var dominioB = cleanProtocolo(this.props.clientes[b.id_cliente].web);
+      if (dominioA.toLowerCase() > dominioB.toLowerCase()) { return 1; }
+      if (dominioA.toLowerCase() < dominioB.toLowerCase()) { return -1; }
+      return 0;
+    })
+    clientes_usados.sort((a, b) =>{ 
+      var dominioA = cleanProtocolo(this.props.clientes[a.id_cliente].web);
+      var dominioB = cleanProtocolo(this.props.clientes[b.id_cliente].web);
+      if (dominioA.toLowerCase() > dominioB.toLowerCase()) { return 1; }
+      if (dominioA.toLowerCase() < dominioB.toLowerCase()) { return -1; }
+      return 0;
+    })
+    
+    if(clientes_usados_old!==clientes_usados || clientes_disponibles_old!==clientes_disponibles){
+      this.setState({clientes, clientes_usados, clientes_disponibles})
+    }
+
   }
 
   seleccionarMedio = () => {
@@ -42,6 +94,13 @@ class ItemMedio extends Component {
   seleccionarEnlaces = () => {
     this.props.setMedioSeleccionadoPaid(this.props.medio)
     this.props.setPanelMediosPaidLinkbuilding('enlaces')
+  }
+
+  showClientes = () => {
+    this.setState({showClientes:true})
+  }
+  callBack = () => {
+    this.setState({showClientes:false})
   }
 
   render() {
@@ -69,7 +128,7 @@ class ItemMedio extends Component {
 
 
         <td className='lb-medios-paid-web block-with-text'>
-          <span>{functions.cleanProtocolo(this.props.medio.web)}</span>
+          <span>{cleanProtocolo(this.props.medio.web)}</span>
         </td>
 
         <td  className='lb-medios-paid-dr'>
@@ -98,6 +157,21 @@ class ItemMedio extends Component {
           <span>{Object.keys(enlaces_disponibles).length}</span>
         </td>
 
+        <td  className='lb-medios-paid-clientes' onClick={()=>this.showClientes()}>
+          <span>{this.state.clientes_disponibles.length}</span>
+
+          {this.state.showClientes?
+            <SideBar
+              subtext={this.props.medio.web}
+              clientes_disponibles={this.state.clientes_disponibles}
+              clientes_usados={this.state.clientes_usados}
+              clientes={this.props.clientes}
+              
+              callBack={(list)=>{this.callBack()}}
+            />:null
+          }
+
+        </td>
 
         <td onClick={()=>{this.seleccionarMedio()}} className='lb-medios-paid-more'>
           <i className="material-icons align-center">chevron_right</i>
@@ -108,6 +182,6 @@ class ItemMedio extends Component {
   }
 }
 
-function mapStateToProps(state){return{ medio_seleccionado: state.linkbuilding.medios.tipos.paid.medio_seleccionado }}
+function mapStateToProps(state){return{ medio_seleccionado: state.linkbuilding.medios.tipos.paid.medio_seleccionado, clientes: state.clientes }}
 function matchDispatchToProps(dispatch){ return bindActionCreators({  setMedioSeleccionadoPaid, setPanelMediosPaidLinkbuilding }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(ItemMedio);

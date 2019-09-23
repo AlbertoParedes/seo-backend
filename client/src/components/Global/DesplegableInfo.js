@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import functions from './functions'
+import * as functions from './functions'
 class DesplegableInfo extends Component {
 
     constructor(props){
@@ -19,11 +19,20 @@ class DesplegableInfo extends Component {
 
     openDesplegable = () => {
       if(this.props.type && this.props.type==='block'){
-        console.log('No tienes suficientes permisos');
+
+        if(this.props.callbackValue){
+          this.props.callBack()
+        }else{
+          console.log('No tienes suficientes permisos');
+
+        }
         return false
       }
       this.setState({show_lista:true})
     }
+
+
+    
 
     render() {
       return (

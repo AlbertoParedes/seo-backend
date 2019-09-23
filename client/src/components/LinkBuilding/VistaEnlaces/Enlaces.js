@@ -3,7 +3,6 @@ import HeaderFree from './EnlacesFree/Header/Header'
 import HeaderPaid from './EnlacesPaid/Header/Header'
 import PanelListaFree from './EnlacesFree/Paneles/PanelLista/PanelLista'
 import PanelListaPaid from './EnlacesPaid/Paneles/PanelLista/PanelLista'
-import PanelInfoFree from './EnlacesFree/Paneles/PanelInfo/PanelInfo'
 import { connect } from 'react-redux';
 
 class Enlaces extends Component{

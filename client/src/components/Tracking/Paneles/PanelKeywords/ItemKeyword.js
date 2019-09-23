@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
-import Switch from '../../../Global/Switch'
 import CheckBox from '../../../Global/CheckBox'
 import firebase from '../../../../firebase/Firebase';
 import data from '../../../Global/Data/Data'
-import functions from '../../../Global/functions'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { setPanelTracking, setKeywordTrackingSelected, setEditKeywordsTracking } from '../../../../redux/actions';
-import $ from 'jquery'
 import dotProp from 'dot-prop-immutable';
 const db = firebase.database().ref();
 
@@ -43,7 +40,7 @@ class ItemKeyword extends Component {
     var multiPath = {}
     if(json.id==='activo'){
       //si eres el empleado de ese cliente si vas a poder modificar el activo
-      if( !this.props.cliente.empleados || (this.props.cliente.empleados && !this.props.cliente.empleados .tracking) || (this.props.cliente.empleados && this.props.cliente.empleados.tracking[this.props.empleado.id_empleado])   ||   this.props.empleado.privilegios.tracking.edit.status_keyword){
+      if( !this.props.cliente.empleados || (this.props.cliente.empleados && !this.props.cliente.empleados.tracking) || (this.props.cliente.empleados && this.props.cliente.empleados.tracking[this.props.empleado.id_empleado])   ||   this.props.empleado.privilegios.tracking.edit.status_keyword){
 
         multiPath[`Clientes/${this.props.cliente.id_cliente}/tracking/keywords/${this.props.keyword.id_keyword}/activo`]=json.valor
         db.update(multiPath)
@@ -132,7 +129,7 @@ class ItemKeyword extends Component {
 
         <td  className='key-img'>
           {this.props.keyword.results.new.image?
-              <a href={this.props.keyword.results.new.image} target='_blank' className='align-center'><i className="material-icons">camera_alt</i></a>
+              <a href={this.props.keyword.results.new.image} target='_blank' rel="noopener noreferrer" className='align-center'><i className="material-icons">camera_alt</i></a>
             :
               <span className='align-center'>-</span>
           }
