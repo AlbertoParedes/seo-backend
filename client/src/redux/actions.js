@@ -1,8 +1,8 @@
 
-export const setPopUpInfo = (popup) => {
-  return { type: "CHANGE_POPUP", popup }
-}
-
+export const setPopUpInfo = (popup) => {return { type: "CHANGE_POPUP", popup }}
+export const setTareasEmpleado = (tareas) => {return {type:"SET_TAREAS_EMPLEADO",tareas}}
+export const setFiltrosTareasEmpleado = (filtros) => {return { type: "SET_FILTRO_TAREAS_EMPLEADO", filtros }}
+export const setOrderTareasEmpleado = (obj) => {return { type: "CHANGE_ORDER_TAREAS_EMPLEADO", obj }}
 
 export const setNotificaciones = (notificaciones) => {
   return { type: "CHANGE_NOTIFICACIONES", notificaciones }

@@ -24,6 +24,7 @@ import Linbuilding from './linkbuilding/reducer-linkbuilding'
 /*Panel linkbuilding*/
 import Tracking from './tracking/reducer-tracking'
 /*--------------*/
+import PanelEmpleado from './empleado/reducer-empleado'
 
 const allReducers = combineReducers({
   clientes: Clientes,
@@ -50,7 +51,8 @@ const allReducers = combineReducers({
   items_clientes: ItemsClientes,
   panel_home: PanelHome,
 
-  global: Global
+  global: Global,
+  panelEmpleado : PanelEmpleado
 
 });
 

@@ -12,6 +12,8 @@ import moment from 'moment';
 import _ from 'underscore';
 import firebase from '../../../../firebase/Firebase';
 import $ from 'jquery'
+import SideBar from './SideBar';
+
 
 const db = firebase.database().ref();
 
@@ -23,7 +25,9 @@ class InformacionLinkbuilding extends Component {
       follows: this.props.follows,
       nofollows: this.props.nofollows,
       seo: this.props.seo,
-      enlaces_por_seo: this.props.enlaces_por_seo
+      enlaces_por_seo: this.props.enlaces_por_seo,
+      estrategia: this.props.estrategia,
+      showEstrategia:false
     }
   }
 
@@ -33,6 +37,7 @@ class InformacionLinkbuilding extends Component {
       this.props.follows !== nextProps.follows ||
       this.props.nofollows !== nextProps.nofollows ||
       this.props.enlaces_por_seo !== nextProps.enlaces_por_seo ||
+      this.props.estrategia !== nextProps.estrategia ||
       this.props.seo !== nextProps.seo) {
       return true;
     } else if (this.state !== nextState) {
@@ -42,11 +47,18 @@ class InformacionLinkbuilding extends Component {
   }
 
   componentWillReceiveProps = (newProps) => {
+
+
+    
+    
+
     if (this.props.status !== newProps.status) { this.setState({ status: newProps.status }) }
     if (this.props.follows !== newProps.follows) { this.setState({ follows: newProps.follows }) }
     if (this.props.nofollows !== newProps.nofollows) { this.setState({ nofollows: newProps.nofollows }) }
     if (!_.isEqual(this.state.enlaces_por_seo, newProps.enlaces_por_seo)) { this.setState({ enlaces_por_seo: newProps.enlaces_por_seo }) }
     if (this.props.seo !== newProps.seo) { this.setState({ seo: newProps.seo }) }
+    if (!_.isEqual(this.props.estrategia, newProps.estrategia)) { this.setState({ estrategia: newProps.estrategia }) }
+
   }
 
   undoData = () => { this.setState(this.props) }
@@ -65,6 +77,40 @@ class InformacionLinkbuilding extends Component {
 
       return false;
     }
+    //comprobamos la estrategia
+    var isCorrect = true
+    var estrategia = JSON.parse(JSON.stringify(this.state.estrategia))
+    if(Object.keys(estrategia).length>0 && estrategia.urls){
+      //recorremos todas las urls 
+      Object.entries(estrategia.urls).forEach(([i,u])=>{
+        if(!isCorrect) return false
+        //si la url esta vacia no podremos guardar los datos
+        if(u.url.trim()===""){
+          if(u.keywords && Object.entries(u.keywords).some(([i,k])=>k.keyword.trim()!=="")){
+            isCorrect = false
+          }else{
+            estrategia.urls[i]=null
+          }
+        }else if(estrategia.urls && Object.keys(estrategia.urls).length>0){
+          isCorrect =  !Object.entries(estrategia.urls).some(([t,url])=> i !== t && url && u && functions.cleanProtocolo(url.url.toLowerCase())===functions.cleanProtocolo(u.url.toLowerCase()))
+          if(isCorrect) isCorrect = functions.isLink(u.url)
+        }
+        if(isCorrect && u && u.keywords && Object.keys(u.keywords).length>0){
+          //recorremos las keywords de las url para ver si hay vacios, y en el caso de que haya vacios remplazarlos por null para asi, no guardarlos en la bbss
+          Object.entries(u.keywords).forEach(([j,k])=>{
+            if(k.keyword.trim()===''){ k.keyword = null; }
+          })
+        }
+
+      })
+    }
+    if(!isCorrect){
+      this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'Existen errores en la estrategia' })
+      return false
+    }
+    //console.log(isCorrect,estrategia);
+    
+    
 
 
     var multiPath = {};
@@ -90,6 +136,8 @@ class InformacionLinkbuilding extends Component {
     multiPath[`Clientes/${this.props.id_cliente}/nofollows`] = (+this.state.nofollows)
     multiPath[`Clientes/${this.props.id_cliente}/servicios/linkbuilding/free/home/mensualidades/${functions.getTodayDate()}/follows`] = (+this.state.follows)
     multiPath[`Clientes/${this.props.id_cliente}/servicios/linkbuilding/free/home/mensualidades/${functions.getTodayDate()}/nofollows`] = (+this.state.nofollows)
+    multiPath[`Clientes/${this.props.id_cliente}/servicios/linkbuilding/free/home/estrategia`] = estrategia
+
 
     //si cambia los enlaces_por_seo(enterprise) se hara esto
     if (!_.isEqual(enlaces_por_seo, this.props.enlaces_por_seo)) {
@@ -119,13 +167,22 @@ class InformacionLinkbuilding extends Component {
       functions.createLogs(multiPath, timestamp, this.props.nofollows, this.state.nofollows, 'nofollows', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_gratuito/${id_log}`)
     }
 
+    if (!_.isEqual(estrategia, this.props.estrategia)) {
+      id_log = db.child(`Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_gratuito`).push().key;
+      functions.createLogs(multiPath, timestamp, this.props.estrategia, estrategia, 'estrategia', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_gratuito/${id_log}`)
+    }
+
 
     const oldStatus = this.props.status;
     const newStatus = this.state.status;
+    console.log(estrategia);
 
+    
+    
     db.update(multiPath)
       .then(() => {
 
+        
 
         var data = {}
         if (oldStatus !== newStatus) {
@@ -145,20 +202,28 @@ class InformacionLinkbuilding extends Component {
           $.post(URLESTADOCLIENTE, data, (request, data) => {
             //console.log(request, data);
           })
-          this.props.setPopUpInfo({ visibility: true, status: 'done', moment: Date.now(), text: 'Se han guardado los cambios correctamente' })
-
         }
 
+        
 
+        if(estrategia.urls){
+          var vacio = true
+          Object.entries(estrategia.urls).forEach(([i,o])=>{
+            if(o===null){
+              delete estrategia.urls[i]
+            }else{
+              vacio = false
+            }
+          })
+          this.setState({estrategia: vacio?{}:estrategia})
+        }
 
+        this.props.setPopUpInfo({ visibility: true, status: 'done', moment: Date.now(), text: 'Se han guardado los cambios correctamente' })
       })
       .catch(err => {
         console.log(err);
-
         this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'Error al guardar' })
       })
-
-
 
   }
 
@@ -205,22 +270,59 @@ class InformacionLinkbuilding extends Component {
     this.setState({ seo, follows, nofollows, enlaces_por_seo })
   }
 
+  callBack = () => {
+    this.setState({showEstrategia:false})
+  }
+
 
   render() {
 
-    var privilegio = false
+    var privilegio = false, privilegioEstrategia=false;
     try {
       privilegio = this.props.empleado.privilegios.linkbuilding_free.edit.info;
     } catch (e) { }
+    try {
+      privilegioEstrategia = this.props.empleado.privilegios.linkbuilding_free.edit.change_estrategia;
+    } catch (e) { }
+    
 
     var edited = false;
     if (this.props.status !== this.state.status ||
       this.props.follows.toString() !== this.state.follows.toString() ||
       this.props.nofollows.toString() !== this.state.nofollows.toString() ||
       !_.isEqual(this.props.enlaces_por_seo, this.state.enlaces_por_seo) ||
+      !_.isEqual(this.props.estrategia, this.state.estrategia) ||
       this.props.seo !== this.state.seo) {
       edited = true;
     }
+
+
+    const estrategiaView = () => {
+      var isCorrect = true;
+      var text = "Sin destinos asignados"
+      if(Object.keys(this.state.estrategia).length>0 && Object.keys(this.state.estrategia.urls).length>0){
+        isCorrect = !Object.entries(this.state.estrategia.urls).some(([i,o])=>{
+          return (!functions.isLink(o.url) && o.url.trim()!=="") || ( ( o.url.trim()==="") && (o.keywords && Object.keys(o.keywords).length>0 && Object.entries(o.keywords).some(([i,k])=>k.keyword.trim()!==""))) ||  Object.entries(this.state.estrategia.urls).some(([j,o2])=> i!==j && o.url.trim()!==""  && functions.cleanProtocolo(o.url)===functions.cleanProtocolo(o2.url) )
+        })
+        text = ""
+        Object.entries(this.state.estrategia.urls).forEach(([i,o])=>{
+          if(o.url.trim()!=='')
+            text= `${text}${text!==''?',':''} ${o.url.trim()}`
+        })
+      }
+          
+      return(
+        <div className={`container-simple-input`} onClick={()=>this.setState({showEstrategia:true})}>
+        <div className="title-input">Destinos y anchors:</div>
+        <div className={`container-input ${!isCorrect?'error-form-input':''}`}>
+          <input className="curso-pointer" readonly="" value={text}/>
+        </div>
+      </div>
+      )
+    }
+
+    var enterprise = this.state.seo === 'Enterprise' && this.state.enlaces_por_seo && this.state.enlaces_por_seo.mensualidades && this.state.enlaces_por_seo.mensualidades[moment().format('YYYY-MM')]
+    
     return (
       <div className='sub-container-informacion'>
 
@@ -242,10 +344,26 @@ class InformacionLinkbuilding extends Component {
         </div>
 
         {
-          this.state.seo === 'Enterprise' && this.state.enlaces_por_seo && this.state.enlaces_por_seo.mensualidades && this.state.enlaces_por_seo.mensualidades[moment().format('YYYY-MM')] ?
-            <SimpleInput title='Bote según seo' _class='div_text_mitad' type={`${privilegio ? 'block' : 'block'}`} text={this.state.enlaces_por_seo.bote.toString()} changeValue={enlaces_por_seo => { this.setState({ enlaces_por_seo }) }} />
-            : null
+          enterprise ?
+          <div className='col-2-input'>
+            <SimpleInput title='Bote según seo' type={`${privilegio ? 'block' : 'block'}`} text={this.state.enlaces_por_seo.bote.toString()} changeValue={enlaces_por_seo => { this.setState({ enlaces_por_seo }) }} />
+            {estrategiaView()}
+          </div>
+          : estrategiaView()
         }
+       
+
+        {this.state.showEstrategia?
+          <SideBar 
+            idCliente={this.props.id_cliente}
+            estrategia={this.state.estrategia}
+            subtext={this.props.clientes[this.props.id_cliente].web}
+            callBack={(list)=>{this.callBack()}}
+            setNewEstrategia={estrategia=>this.setState({estrategia})}
+            path={`Clientes/${this.props.id_cliente}/servicios/linkbuilding/free/home/estrategia/urls`}
+            privilegio={privilegioEstrategia}
+          />  
+        :null}
 
 
       </div>

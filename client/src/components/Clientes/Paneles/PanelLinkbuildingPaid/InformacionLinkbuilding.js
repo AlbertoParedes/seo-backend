@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import SimpleInput from '../../../Global/SimpleInput'
 import data from '../../../Global/Data/Data'
-import * as functions from '../../../Global/functions'
+import {cleanProtocolo, getTodayDate, isLink, createLogs, getNumber, checkNumber} from '../../../Global/functions'
 import { URLESTADOCLIENTE } from '../../../Global/Data/constants'
 import SimpleInputDesplegable from '../../../Global/SimpleInputDesplegable'
 import UpdateStateInputs from '../../../Global/UpdateStateInputs'
@@ -9,7 +9,11 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setPopUpInfo } from '../../../../redux/actions';
 import firebase from '../../../../firebase/Firebase';
+import SideBar from '../PanelLinkbuildingFree/SideBar'
+import _ from 'underscore';
 import $ from 'jquery'
+import Switch from '../../../Global/Switch'
+
 const db = firebase.database().ref();
 
 class InformacionLinkbuilding extends Component {
@@ -21,6 +25,9 @@ class InformacionLinkbuilding extends Component {
       beneficio: this.props.beneficio,
       inversion_mensual: this.props.inversion_mensual,
       porcentaje_perdida: this.props.porcentaje_perdida,
+      estrategia: this.props.estrategia,
+      showEstrategia: false,
+      micronichos: this.props.micronichos,
     }
   }
 
@@ -30,6 +37,8 @@ class InformacionLinkbuilding extends Component {
       this.props.bote !== nextProps.bote ||
       this.props.beneficio !== nextProps.beneficio ||
       this.props.inversion_mensual !== nextProps.inversion_mensual ||
+      this.props.micronichos !== nextProps.micronichos ||
+      this.props.estrategia !== nextProps.estrategia ||
       this.props.porcentaje_perdida !== nextProps.porcentaje_perdida) {
       return true;
     } else if (this.state !== nextState) {
@@ -44,12 +53,15 @@ class InformacionLinkbuilding extends Component {
     if (this.props.beneficio !== newProps.beneficio) { this.setState({ beneficio: newProps.beneficio }) }
     if (this.props.inversion_mensual !== newProps.inversion_mensual) { this.setState({ inversion_mensual: newProps.inversion_mensual }) }
     if (this.props.porcentaje_perdida !== newProps.porcentaje_perdida) { this.setState({ porcentaje_perdida: newProps.porcentaje_perdida }) }
+    if (!_.isEqual(this.props.estrategia, newProps.estrategia)) { this.setState({ estrategia: newProps.estrategia }) }
+    if (this.props.micronichos !== newProps.micronichos) { this.setState({ micronichos: newProps.micronichos }) }
+
   }
 
   undoData = () => { this.setState(this.props) }
 
   saveData = () => {
-    var fechaMes = functions.getTodayDate()
+    var fechaMes = getTodayDate()
 
     var preciosModificados = false
     try {
@@ -78,6 +90,39 @@ class InformacionLinkbuilding extends Component {
       return false
     }
 
+    //comprobamos la estrategia ------------------------------------------------------------------------------------------------------------------
+    var isCorrect = true
+    var estrategia = JSON.parse(JSON.stringify(this.state.estrategia))
+    if(Object.keys(estrategia).length>0 && estrategia.urls){
+      //recorremos todas las urls 
+      Object.entries(estrategia.urls).forEach(([i,u])=>{
+        if(!isCorrect) return false
+        //si la url esta vacia no podremos guardar los datos
+        if(u.url.trim()===""){
+          if(u.keywords && Object.entries(u.keywords).some(([i,k])=>k.keyword.trim()!=="")){
+            isCorrect = false
+          }else{
+            estrategia.urls[i]=null
+          }
+        }else if(estrategia.urls && Object.keys(estrategia.urls).length>0){
+          isCorrect =  !Object.entries(estrategia.urls).some(([t,url])=> i !== t && url && u && cleanProtocolo(url.url.toLowerCase())===cleanProtocolo(u.url.toLowerCase()))
+          if(isCorrect) isCorrect = isLink(u.url)
+        }
+        if(isCorrect && u && u.keywords && Object.keys(u.keywords).length>0){
+          //recorremos las keywords de las url para ver si hay vacios, y en el caso de que haya vacios remplazarlos por null para asi, no guardarlos en la bbss
+          Object.entries(u.keywords).forEach(([j,k])=>{
+            if(k.keyword.trim()===''){ k.keyword = null; }
+          })
+        }
+
+      })
+    }
+    if(!isCorrect){
+      this.props.setPopUpInfo({ visibility: true, status: 'close', moment: Date.now(), text: 'Existen errores en la estrategia' })
+      return false
+    }
+    //----------------------------------------------------------------------------------------------------------------------------------------
+
 
     if (inversion_mensual_old !== inversion_mensual || beneficio_old !== beneficio) {
       //revertir la mensualidad añadida para poder restarle la nueva cantidad al bote
@@ -99,6 +144,8 @@ class InformacionLinkbuilding extends Component {
     multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/paid/home/mensualidades/${fechaMes}/inversion_mensual`] = (+inversion_mensual)
     multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/paid/home/mensualidades/${fechaMes}/beneficio`] = (+beneficio)
     multiPath[`Clientes/${this.props.cliente_seleccionado.id_cliente}/servicios/linkbuilding/paid/home/mensualidades/${fechaMes}/porcentaje_perdida`] = (+porcentaje_perdida)
+    multiPath[`Clientes/${this.props.id_cliente}/servicios/linkbuilding/paid/home/estrategia`] = estrategia
+    multiPath[`Clientes/${this.props.id_cliente}/servicios/linkbuilding/paid/micronichos/activo`] = this.state.micronichos;
 
     {/*LOGS*/ }
     let id_log;
@@ -107,28 +154,39 @@ class InformacionLinkbuilding extends Component {
 
     if (this.props.status !== this.state.status) {
       id_log = db.child(`Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid`).push().key;
-      functions.createLogs(multiPath, timestamp, this.props.status, this.state.status, 'status', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid/${id_log}`)
+      createLogs(multiPath, timestamp, this.props.status, this.state.status, 'status', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid/${id_log}`)
     }
 
     if (inversion_mensual_old !== inversion_mensual) {
       id_log = db.child(`Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid`).push().key;
-      functions.createLogs(multiPath, timestamp, inversion_mensual_old, inversion_mensual, 'inversion_mensual', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid/${id_log}`)
+      createLogs(multiPath, timestamp, inversion_mensual_old, inversion_mensual, 'inversion_mensual', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid/${id_log}`)
     }
 
     if (this.props.beneficio !== this.state.beneficio) {
       id_log = db.child(`Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid`).push().key;
-      functions.createLogs(multiPath, timestamp, this.props.beneficio ? this.props.beneficio : 0, this.state.beneficio ? this.state.beneficio : 0, 'beneficio', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid/${id_log}`)
+      createLogs(multiPath, timestamp, this.props.beneficio ? this.props.beneficio : 0, this.state.beneficio ? this.state.beneficio : 0, 'beneficio', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid/${id_log}`)
     }
 
     if ((+this.props.porcentaje_perdida) !== porcentaje_perdida) {
       id_log = db.child(`Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid`).push().key;
-      functions.createLogs(multiPath, timestamp, (+this.props.porcentaje_perdida), porcentaje_perdida, 'porcentaje_perdida', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid/${id_log}`)
+      createLogs(multiPath, timestamp, (+this.props.porcentaje_perdida), porcentaje_perdida, 'porcentaje_perdida', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid/${id_log}`)
     }
 
     if ((+this.props.bote) !== (+bote)) {
       id_log = db.child(`Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid`).push().key;
-      functions.createLogs(multiPath, timestamp, (+this.props.bote), (+bote), 'bote', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid/${id_log}`)
+      createLogs(multiPath, timestamp, (+this.props.bote), (+bote), 'bote', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid/${id_log}`)
     }
+
+    if (!_.isEqual(estrategia, this.props.estrategia)) {
+      id_log = db.child(`Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid`).push().key;
+      createLogs(multiPath, timestamp, this.props.estrategia, estrategia, 'estrategia', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid/${id_log}`)
+    }
+
+    if (this.props.micronichos !== this.state.micronichos) {
+      id_log = db.child(`Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid`).push().key;
+      createLogs(multiPath, timestamp, this.props.micronichos, this.state.micronichos, 'micronichos', id_empleado, `Servicios/Logs/clientes/${this.props.id_cliente}/informacion/linkbuilding_paid/${id_log}`)
+    }
+
     const oldStatus = this.props.status;
     const newStatus = this.state.status;
     db.update(multiPath)
@@ -155,6 +213,18 @@ class InformacionLinkbuilding extends Component {
 
         }
 
+        if(estrategia.urls){
+          var vacio = true
+          Object.entries(estrategia.urls).forEach(([i,o])=>{
+            if(o===null){
+              delete estrategia.urls[i]
+            }else{
+              vacio = false
+            }
+          })
+          this.setState({estrategia: vacio?{}:estrategia})
+        }
+
         this.props.setPopUpInfo({ visibility: true, status: 'done', moment: Date.now(), text: 'Se han guardado los cambios correctamente' })
 
       })
@@ -165,7 +235,7 @@ class InformacionLinkbuilding extends Component {
   }
 
   cambiarNumeros = (valor, id) => {
-    var num = functions.getNumber(valor)
+    var num = getNumber(valor)
 
     var decimales = num.toString().split('.');
     if (decimales[1] && decimales[1].length > 2) {
@@ -173,6 +243,14 @@ class InformacionLinkbuilding extends Component {
     }
 
     this.setState({ [id]: num.toString() })
+  }
+
+  callBack = () => {
+    this.setState({showEstrategia:false})
+  }
+
+  callbackSwitch = (json) => {
+    this.setState({ micronichos: json.valor })
   }
 
 
@@ -183,38 +261,67 @@ class InformacionLinkbuilding extends Component {
 
 
     var bote = '0'
-    bote = functions.checkNumber(this.state.bote)
+    bote = checkNumber(this.state.bote)
 
     var inversion_mensual = '0'
-    inversion_mensual = functions.checkNumber(this.state.inversion_mensual)
+    inversion_mensual = checkNumber(this.state.inversion_mensual)
 
     var beneficio = '0'
-    beneficio = functions.checkNumber(this.state.beneficio)
+    beneficio = checkNumber(this.state.beneficio)
 
     var porcentaje_perdida = '0'
-    porcentaje_perdida = functions.checkNumber(this.state.porcentaje_perdida)
+    porcentaje_perdida = checkNumber(this.state.porcentaje_perdida)
 
 
     var edited = false;
     if (this.props.status !== this.state.status ||
-      functions.checkNumber(this.props.bote) !== bote ||
-      functions.checkNumber(this.props.beneficio) !== beneficio ||
-      functions.checkNumber(this.props.inversion_mensual) !== inversion_mensual ||
-      functions.checkNumber(this.props.porcentaje_perdida) !== porcentaje_perdida) {
+      checkNumber(this.props.bote) !== bote ||
+      checkNumber(this.props.beneficio) !== beneficio ||
+      checkNumber(this.props.inversion_mensual) !== inversion_mensual ||
+      this.props.micronichos !== this.state.micronichos ||
+      !_.isEqual(this.props.estrategia, this.state.estrategia) ||
+      checkNumber(this.props.porcentaje_perdida) !== porcentaje_perdida) {
       edited = true;
     }
 
-    var privilegio = false, privilegio_bote = false;
+    var privilegio = false, privilegio_bote = false, privilegioEstrategia=false;
     try {
       privilegio = this.props.empleado.privilegios.linkbuilding_paid.edit.change_inversion;
       privilegio_bote = this.props.empleado.privilegios.linkbuilding_paid.edit.change_bote;
     } catch (e) { }
+    try {
+      privilegioEstrategia = this.props.empleado.privilegios.linkbuilding_paid.edit.change_estrategia;
+    } catch (e) { }
 
-    if (privilegio_bote && (functions.checkNumber(this.props.beneficio) !== beneficio || functions.checkNumber(this.props.inversion_mensual) !== inversion_mensual)) {
+    if (privilegio_bote && (checkNumber(this.props.beneficio) !== beneficio || checkNumber(this.props.inversion_mensual) !== inversion_mensual)) {
       privilegio_bote = false
     }
-    if (privilegio && bote !== functions.checkNumber(this.props.bote)) {
+    if (privilegio && bote !== checkNumber(this.props.bote)) {
       privilegio = false
+    }
+
+    const estrategiaView = () => {
+      var isCorrect = true;
+      var text = "Sin destinos asignados"
+      if(Object.keys(this.state.estrategia).length>0 && Object.keys(this.state.estrategia.urls).length>0){
+        isCorrect = !Object.entries(this.state.estrategia.urls).some(([i,o])=>{
+          return (!isLink(o.url) && o.url.trim()!=="") || ( ( o.url.trim()==="") && (o.keywords && Object.keys(o.keywords).length>0 && Object.entries(o.keywords).some(([i,k])=>k.keyword.trim()!==""))) ||  Object.entries(this.state.estrategia.urls).some(([j,o2])=> i!==j && o.url.trim()!==""  && cleanProtocolo(o.url)===cleanProtocolo(o2.url) )
+        })
+        text = ""
+        Object.entries(this.state.estrategia.urls).forEach(([i,o])=>{
+          if(o.url.trim()!=='')
+            text= `${text}${text!==''?',':''} ${o.url.trim()}`
+        })
+      }
+          
+      return(
+        <div className={`container-simple-input`} onClick={()=>this.setState({showEstrategia:true})}>
+        <div className="title-input">Destinos y anchors:</div>
+        <div className={`container-input ${!isCorrect?'error-form-input':''}`}>
+          <input className="curso-pointer" readonly="" value={text}/>
+        </div>
+      </div>
+      )
     }
 
 
@@ -238,6 +345,29 @@ class InformacionLinkbuilding extends Component {
         <div className='col-2-input'>
           <SimpleInput type={`${privilegio ? 'float' : 'block'}`} title='Porcentaje de pérdida (%)' text={porcentaje_perdida.toString()} changeValue={(porcentaje_perdida) => this.cambiarNumeros(porcentaje_perdida, 'porcentaje_perdida')} />
           <SimpleInput type={`${privilegio_bote ? 'float' : 'block'}`} _class_input='dni-input' title='Bote (€)' text={bote.toString()} changeValue={(bote) => this.cambiarNumeros(bote, 'bote')} />
+        </div>
+
+        {estrategiaView(true)}
+
+        {this.state.showEstrategia?
+          <SideBar 
+            idCliente={this.props.id_cliente}
+            estrategia={this.state.estrategia}
+            subtext={this.props.clientes[this.props.id_cliente].web}
+            callBack={(list)=>{this.callBack()}}
+            setNewEstrategia={estrategia=>this.setState({estrategia})}
+            path={`Clientes/${this.props.id_cliente}/servicios/linkbuilding/paid/home/estrategia/urls`}
+            privilegio={privilegioEstrategia}
+          />  
+        :null}
+
+
+        {/*BLOG*/}
+        <div className='display_flex container-simple-input pdd-top-40'>
+          <div className="title-input align-center mg-right-10 pdd-v-0">Micronichos</div>
+          <span className='options-switch'>NO</span>
+          <Switch class_div='switch-table' valor={this.state.micronichos} json={{ id: 'micronichos' }} type={`${privilegio ? '' : 'block'}`} callbackSwitch={(json) => this.callbackSwitch(json)} />
+          <span className='options-switch'>SI</span>
         </div>
 
 

@@ -79,7 +79,7 @@ class InformacionAdicional extends Component {
 
         {edited ? <UpdateStateInputs saveData={() => this.saveData()} undoData={() => this.undoData()} /> : null}
 
-        <p className='title-informacion-alumno'>4. Información adicional</p>
+        <p className='title-informacion-alumno'>3. Información adicional</p>
 
 
         {/*COMENTARIOS*/}

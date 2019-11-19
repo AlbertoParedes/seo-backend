@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setEditTask, setTareaSeleccionada } from '../../../../../redux/actions'
 import moment from 'moment'
+import * as functions from '../../../../Global/functions'
+
 import StarRatingComponent from 'react-star-rating-component';
 
 class ItemTarea extends Component {
@@ -26,6 +28,9 @@ class ItemTarea extends Component {
       update = true;
     }
     if(this.props.tarea_seleccionada!==newProps.tarea_seleccionada){
+      update = true;
+    }
+    if(this.props.clienteDominio!==newProps.clienteDominio){
       update = true;
     }
     return update;
@@ -100,44 +105,52 @@ class ItemTarea extends Component {
           */
         }
 
+        {this.props.panel==="empleado"?
+          <td className='tk-clientes-cliente'>
+            <span className='span_edit'>
+              <span className='break_sentence'>{functions.cleanProtocolo(this.props.clienteDominio)}</span>
+            </span>
+          </td>:null
+        }
+        
+        {this.props.panel==='cliente'?
+          <td className='tk-clientes-empleados'>
 
-        <td className='tk-clientes-empleados'>
-
-          <div className='FollowersList empleados-div-item-task' data-empleado={Object.keys(tarea.empleados).length > 4 ? 'max' : 'min'}>
-            {/* Array de los empleados asignados */}
-            {tarea.empleados && tarea.empleados.cliente?
-              <div className="RemovableAvatar FollowersList-facepileAvatar">
-                <div className="Avatar Avatar--small Avatar--color7">
-                  <i className="material-icons icon-person icon-client-task">person</i>
+            <div className='FollowersList empleados-div-item-task' data-empleado={Object.keys(tarea.empleados).length > 4 ? 'max' : 'min'}>
+              {/* Array de los empleados asignados */}
+              {tarea.empleados && tarea.empleados.cliente?
+                <div className="RemovableAvatar FollowersList-facepileAvatar">
+                  <div className="Avatar Avatar--small Avatar--color7">
+                    <i className="material-icons icon-person icon-client-task">person</i>
+                  </div>
                 </div>
-              </div>
-            :null}
-            <ListaEmpleados empleados={tarea.empleados?tarea.empleados:{}} listaEmpleados={this.props.empleados} />
+              :null}
+              <ListaEmpleados empleados={tarea.empleados?tarea.empleados:{}} listaEmpleados={this.props.empleados} />
 
-            {/*
-              Object.entries(tarea.empleados).map(([index, item]) => {
-                if (!item) return null
-                var fullName = this.props.empleados[index].nombre + " " + this.props.empleados[index].apellidos;
-                return (
-                  <div className="RemovableAvatar FollowersList-facepileAvatar" key={index}>
-                    <div className="Avatar Avatar--small Avatar--color7" style={{ backgroundImage: `url(${this.props.empleados[index].foto})` }}>
-                      {this.props.empleados[index].foto === 'x' ? 'al' : ''}
-                    </div>
-                    <div className='more-info-task-empleado' style={{ backgroundImage: `url(${this.props.empleados[index].foto})` }}>
-                      <div>
-                        <span>{fullName}</span>
+              {/*
+                Object.entries(tarea.empleados).map(([index, item]) => {
+                  if (!item) return null
+                  var fullName = this.props.empleados[index].nombre + " " + this.props.empleados[index].apellidos;
+                  return (
+                    <div className="RemovableAvatar FollowersList-facepileAvatar" key={index}>
+                      <div className="Avatar Avatar--small Avatar--color7" style={{ backgroundImage: `url(${this.props.empleados[index].foto})` }}>
+                        {this.props.empleados[index].foto === 'x' ? 'al' : ''}
+                      </div>
+                      <div className='more-info-task-empleado' style={{ backgroundImage: `url(${this.props.empleados[index].foto})` }}>
+                        <div>
+                          <span>{fullName}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )
-              })
-            */}
+                  )
+                })
+              */}
 
+            </div>
 
-          </div>
-
-        </td>
-
+          </td> :null
+        }
+        
 
         <td className='tk-clientes-due'>
           {fecha}

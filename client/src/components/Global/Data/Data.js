@@ -560,7 +560,87 @@ const data = {
     anualmente: {
       texto: 'Anualmente'
     },
-  }
+  },
+
+  categoriaMediosFree: {
+    colaboraciones:{
+      id:'colaboraciones',
+      texto:'Colaboraciones'
+    },
+
+    comentarios:{
+      id:'comentarios',
+      texto:'Comentarios'
+    },
+    directorios:{
+      id:'directorios',
+      texto:'Directorios'
+    },
+    foros:{
+      id:'foros',
+      texto:'Foros'
+    },
+    herramientas_de_analisis:{
+      id:'herramientas_de_analisis',
+      texto:'Herramientas de análisis'
+    },
+    marcadores:{
+      id:'marcadores',
+      texto:'Marcadores'
+    },
+    pbn:{
+      id:'pbn',
+      texto:'PBN'
+    },
+    perfiles:{
+      id:'perfiles',
+      texto:'Perfiles'
+    },
+    redes_sociales_o_agregadores:{
+      id:'redes_sociales_o_agregadores',
+      texto:'RRSS y agregadores'
+    },
+    webs2_0:{
+      id:'webs2_0',
+      texto:'Webs 2.0'
+    },
+    
+  },
+  tematicasPrensarank: [
+    'Todas',
+    'Actualidad y Política',
+    'Amor, bodas, relaciones o parejas',
+    'Apuestas y casino',
+    'Arte y diseño',
+    'Bebés y Niños',
+    'Belleza',
+    'Cine y TV',
+    'Cocina y gastronomía',
+    'Dating',
+    'Deportes',
+    'Economía',
+    'Educación',
+    'Empresa (Publicitario)',
+    'Hogar, Decoración y Bricolaje',
+    'Humor y Ocio',
+    'Informática Internet',
+    'Juegos y videoconsolas',
+    'Música y Espectáculos',
+    'Marketing y SEO',
+    'Mascotas',
+    'Moda',
+    'Motor',
+    'Naturaleza',
+    'Otros',
+    'Religión, Místico',
+    'Salud',
+    'Servicios Inmobiliarios (Venta, Alquiler)',
+    'SexShop',
+    'Sexualidad',
+    'Tarot, videncia y esoterismo',
+    'Tecnología Física',
+    'Viajes, hoteles y turismo']
+  
 
 }
 export default data

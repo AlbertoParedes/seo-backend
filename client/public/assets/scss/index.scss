@@ -6,7 +6,7 @@ body {margin: 0;padding: 0px;font-size: 13px;line-height: 22px;    background: w
 .container-paneles{width: 100%;}
 .container-paneles *:not(i) {font-family: Montserrat;}
 .container-icons-bar{width: 100%;position: relative;top: 100px;}
-.container-icons-bar > div{text-align: center;border-left: 4px solid transparent;margin: 10px 0px;height: 40px;padding: 4px 4px 4px 0px;}
+.container-icons-bar > div:not(.globo-tareas){text-align: center;border-left: 4px solid transparent;margin: 10px 0px;height: 40px;padding: 4px 4px 4px 0px;}
 .container-icons-bar > div > i {color: #79909C; line-height: 32px;cursor: pointer;}
 
 .container-icons-bar > div.active {border-left: 4px solid transparent}
@@ -606,10 +606,29 @@ a{ text-decoration: none!important;color: #253238!important}
 #table-resultados-sport tr td.col-dep-more{width: 80px;cursor: pointer;}
 #table-resultados-sport tr td.col-dep-more:hover{color: #1090f7;}
 
+/*panel tareas empleado*/
 
+#table-tareas-empleado tbody {border: 1px solid #e5e6e7;}
+#table-tareas-empleado thead{background: #EAEEF0; border: 1px solid #e5e6e7; color: #8298A3;font-size: 11px;}
+#table-tareas-empleado{width: 100%;border-collapse: collapse;table-layout: fixed;}
+#table-tareas-empleado tr td{border-bottom: 1px solid #e5e6e7;padding: 12px; color: #869BA6}
+#table-tareas-empleado tr th{padding: 12px;}
+#table-tareas-empleado tbody tr:hover {-webkit-box-shadow: 0px 0px 22px 8px rgba(0, 0, 0, 0.05); box-shadow: 0px 0px 22px 8px rgba(0, 0, 0, 0.05);}
+#table-tareas-empleado tbody tr:hover i.idit-icon {display: flex;}
 
+#table-tareas-empleado tr th {text-transform: uppercase;}
+#table-tareas-empleado tr th.tareas-status {cursor: pointer;}
+#table-tareas-empleado tr th.tareas-cliente {cursor: pointer; width: 150px; text-align: center;}
+#table-tareas-empleado tr th.ctareas-titulo {width: 175px; text-align: center; cursor: pointer;}
+#table-tareas-empleado tr th.tareas-fecha-fin {width: 110px;text-align: center;cursor: pointer;}
+#table-tareas-empleado tr th.col-dep-more{width: 80px;}
 
-
+#table-tareas-empleado tr td.tareas-status {text-transform: capitalize;font-size: 14.5px;color: #253238;font-weight: 500;}
+#table-tareas-empleado tr td.tareas-cliente {cursor: pointer; width: 150px; text-align: center;}
+#table-tareas-empleado tr td.tareas-titulo {width: 175px; text-align: center; cursor: pointer;}
+#table-tareas-empleado tr td.tareas-fecha-fin {width: 110px;text-align: center;cursor: pointer;}
+#table-tareas-empleado tr td.tareas-prioridad{width: 90px;text-align: center;}
+#table-tareas-empleado tr td.col-dep-more:hover{color: #1090f7;}
 
 
 
@@ -1230,6 +1249,7 @@ font-weight: 500;
     bottom: -3px;
     width: 100%;
     text-align: center;
+    left: 0px;
 }
 
 .container-vistas{
@@ -1444,10 +1464,12 @@ div.chartjs-tooltip-key{
 #table-clientes-task tr th.tk-clientes-checkbox {width: 57px;cursor: pointer;}
 #table-clientes-task tr th.tk-clientes-status {cursor: pointer; min-width: 170px;text-align: left;}
 #table-clientes-task tr th.tk-clientes-title {cursor: pointer; width: 90%; min-width: 300px;}
-#table-clientes-task tr th.tk-clientes-prioridad {cursor: pointer;min-width: 110px;text-align: center;}
+#table-clientes-task tr th.tk-clientes-prioridad {cursor: pointer;min-width: 120px;text-align: center;}
 #table-clientes-task tr th.tk-clientes-due {cursor: pointer;min-width: 170px;text-align: center;}
 #table-clientes-task tr th.tk-clientes-diasRestantes {cursor: pointer;width: 145px;text-align: center;}
 #table-clientes-task tr th.tk-clientes-empleados {width: 30%;min-width: 130px;cursor: pointer;text-align: center;}
+#table-clientes-task tr th.tk-clientes-cliente {width: 30%;min-width: 180px;cursor: pointer;}
+
 #table-clientes-task tr th.tk-clientes-more  /*More*/{min-width: 75px;}
 
 
@@ -1460,6 +1482,8 @@ div.chartjs-tooltip-key{
 #table-clientes-task tr td.tk-clientes-due {cursor: pointer;width: 145px;text-align: center;}
 #table-clientes-task tr td.tk-clientes-diasRestantes {cursor: pointer;width: 145px;text-align: center;}
 #table-clientes-task tr td.tk-clientes-empleados{min-width: 130px;text-align: center;    padding: 0px;overflow: hidden;}
+#table-clientes-task tr td.tk-clientes-cliente{min-width: 180px;text-align: center;overflow: hidden;}
+
 #table-clientes-task tr td.tk-clientes-more {cursor: pointer;    position: relative;    background: transparent;}
 #table-clientes-task tr td.tk-clientes-more:hover {color: #1090f7;}
 
@@ -1475,6 +1499,12 @@ div.chartjs-tooltip-key{
 }
 .overflow_h_hidden{
   overflow-x: hidden
+}
+.overflow_hidden{
+  overflow: hidden!important;
+}
+.pdd-65{
+  padding-bottom: 65px!important;
 }
 #container-clientes-task{
   display: flex;
@@ -2538,8 +2568,28 @@ svg:not(:root) {
 }
 
 
+.globo-tareas{
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  min-width: 15px;
+  height: 14px;
+  padding: 0px 4px;
+  margin: 0px;
+  background: red;
+  border: none;
+  color: white;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 400;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-
+.curso-pointer{
+  cursor: pointer!important;
+}
 
 
 

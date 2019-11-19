@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 import NewTask from './NewTask'
 import EditTask from './EditTask'
 import ItemTarea from './ItemTarea'
-import { setSortTableClientesFreeLB, setItemsLoadTableClientesFreeLB, setInfoTableClientesFreeLB } from '../../../../../redux/actions';
+import { setOrderTareasEmpleado, setItemsLoadTableClientesFreeLB, setInfoTableClientesFreeLB } from '../../../../../redux/actions';
 import firebase from '../../../../../firebase/Firebase';
 import moment from 'moment'
 const db = firebase.firestore();
+
 class PanelLista extends Component {
 
   constructor(props) {
@@ -30,6 +31,9 @@ class PanelLista extends Component {
 
   componentWillReceiveProps = newProps => {
     if (this.state.tarea_seleccionada !== newProps.tarea_seleccionada) { this.setState({ tarea_seleccionada: newProps.tarea_seleccionada }, () => this.getTareaDB()) }
+    if(this.state.sortBy!==newProps.sortBy || this.props.des!==newProps.des){
+      this.setState({sortBy:newProps.sortBy, des:newProps.des},()=>this.ordenarTareas())
+    }
   }
 
   componentWillMount = () => {
@@ -38,11 +42,11 @@ class PanelLista extends Component {
   }
 
   getTareaDB = () => {
-    db.collection(`Servicios/Tareas/tareas/${this.state.tarea_seleccionada}/logs`).onSnapshot(snapshot => {
+    /*db.collection(`Servicios/Tareas/tareas/${this.state.tarea_seleccionada}/logs`).onSnapshot(snapshot => {
       snapshot.forEach(doc => {
         console.log(doc.data());
       });
-    })
+    })*/
   }
 
   getData = () => {
@@ -72,56 +76,42 @@ class PanelLista extends Component {
     var tareas_ordenadas = Object.entries(this.state.tareas)
 
     if (this.state.search.trim() !== '') {
-      /*tareas_ordenadas = tareas_ordenadas.filter(item=>{
-        return item[1][this.state.searchBy] && functions.limpiarString(item[1][this.state.searchBy]).includes(functions.limpiarString(this.state.search))
-      })
-      */
+
     }
 
-
-    //filtramos por los filtros seleccionados
-
-    /*const filtros = this.state.filtros;
-    clientes_ordenados = clientes_ordenados.filter( (item)=>{
-      item=item[1];
-      var empleado = false;
-      try {
-        if(item.empleados && item.servicios.linkbuilding.free.home.mensualidades[this.state.fecha].empleados){
-          empleado = Object.entries(item.servicios.linkbuilding.free.home.mensualidades[this.state.fecha].empleados).some(([k,e])=>{
-            return filtros.empleados.items[k].checked
-          })
-        }
-      } catch (e) {   }
-
-      if(
-          ( (filtros.empleados.todos && filtros.empleados.todos.checked) || empleado ) &&
-          ( (filtros.status.todos && filtros.status.todos.checked) || (filtros.status.items.activos.checked && item.servicios.linkbuilding.free.activo && !item.eliminado) || (filtros.status.items.pausados.checked && !item.servicios.linkbuilding.free.activo && !item.eliminado) || (filtros.status.items.eliminados.checked && item.eliminado)       ) &&
-          ( (filtros.tipo_cliente.todos && filtros.tipo_cliente.todos.checked) || (item.tipo!=='pause' && filtros.tipo_cliente.items[item.tipo].checked   )     )
-
-        ){
-        return true
-      }
-      return false;
-    })
-
-    */
     console.log(this.state.sortBy);
 
     tareas_ordenadas.sort((a, b) => {
       a = a[1]; b = b[1]
 
-
-
-      if (a[this.state.sortBy] > b[this.state.sortBy]) { return 1; }
-      if (a[this.state.sortBy] < b[this.state.sortBy]) { return -1; }
-
-      return 0;
+      if(this.state.sortBy==='cliente'){
+        if (a['fecha_limite'] > b['fecha_limite']) { return 1; }
+        if (a['fecha_limite'] < b['fecha_limite']) { return -1; }
+      }else if(this.state.sortBy==='fecha_limite' || this.state.sortBy==='prioridad'){
+        if (a[this.state.sortBy] > b[this.state.sortBy]) { return 1; }
+        if (a[this.state.sortBy] < b[this.state.sortBy]) { return -1; }
+      }
+      else{
+        if (a[this.state.sortBy].toLowerCase() > b[this.state.sortBy].toLowerCase()) { return 1; }
+        if (a[this.state.sortBy].toLowerCase() < b[this.state.sortBy].toLowerCase()) { return -1; }
+      }
+      return 0
     });
 
     if (this.state.des) { tareas_ordenadas.reverse(); }
 
 
     this.setState({ tareas_ordenadas }, () => { })
+  }
+
+  changeSort = (id) =>{
+    console.log('lll');
+    
+    var des = false;
+    if(this.state.sortBy===id){ des = !this.state.des;}
+    //this.setState({sortBy:id,des}, ()=>this.getTareas())
+    this.props.setOrderTareasEmpleado({item:'sortBy',value:id})
+    this.props.setOrderTareasEmpleado({item:'des',value:des})
   }
 
   render() {
@@ -140,12 +130,12 @@ class PanelLista extends Component {
                       <th className='lb-clientes-checkbox' > <span></span> </th> :null
                     */}
 
-                  <th onClick={() => this.changeSort('status')} className='tk-clientes-status' >
-                    <span>Estado</span> {this.state.sortBy === 'status' ? <i className={`material-icons sort-arrow ${this.state.des ? 'des-arrow' : ''}`}>arrow_downward</i> : null}
+                  <th onClick={() => this.changeSort('estado')} className='tk-clientes-status' >
+                    <span>Estado</span> {this.state.sortBy === 'estado' ? <i className={`material-icons sort-arrow ${this.state.des ? 'des-arrow' : ''}`}>arrow_downward</i> : null}
                   </th>
 
-                  <th className='tk-clientes-title' >
-                    <span>Titulo</span>
+                  <th className='tk-clientes-title' onClick={() => this.changeSort('title')}>
+                    <span>Titulo</span> {this.state.sortBy === 'title' ? <i className={`material-icons sort-arrow ${this.state.des ? 'des-arrow' : ''}`}>arrow_downward</i> : null}
                   </th>
 
                   
@@ -158,12 +148,12 @@ class PanelLista extends Component {
                   </th>
                   */}
 
-                  <th onClick={() => this.changeSort('empleados')} className='tk-clientes-empleados'>
-                    <span>Empleados</span> {this.state.sortBy === 'empleados' ? <i className={`material-icons sort-arrow ${this.state.des ? 'des-arrow' : ''}`}>arrow_downward</i> : null}
+                  <th className='tk-clientes-empleados'>
+                    <span>Empleados</span>
                   </th>
 
-                  <th onClick={() => this.changeSort('due')} className='tk-clientes-due'>
-                    <span>Fecha fin</span> {this.state.sortBy === 'due' ? <i className={`material-icons sort-arrow ${this.state.des ? 'des-arrow' : ''}`}>arrow_downward</i> : null}
+                  <th onClick={() => this.changeSort('fecha_limite')} className='tk-clientes-due'>
+                    <span>Fecha fin</span> {this.state.sortBy === 'fecha_limite' ? <i className={`material-icons sort-arrow ${this.state.des ? 'des-arrow' : ''}`}>arrow_downward</i> : null}
                   </th>
 
                   <th onClick={() => this.changeSort('prioridad')} className='tk-clientes-prioridad'>
@@ -181,7 +171,7 @@ class PanelLista extends Component {
                     const k = item[0], tarea = item[1];
                     if (i < this.state.items) {
                       result.push(
-                        <ItemTarea key={k} tarea={tarea} tarea_seleccionada={this.state.tarea_seleccionada} />
+                        <ItemTarea key={k} tarea={tarea} tarea_seleccionada={this.state.tarea_seleccionada} panel='cliente'/>
                       );
                     }
                     return result;
@@ -220,15 +210,21 @@ function mapStateToProps(state) {
     editTask: state.clients.task.editTask,
     tarea_seleccionada: state.clients.task.tarea_seleccionada,
 
-    search: state.clients.task.lista.search,
+    /*search: state.clients.task.lista.search,
     searchBy: state.clients.task.lista.searchBy,
     sortBy: state.clients.task.lista.sortBy,
     des: state.clients.task.lista.des,
+    */
+    search:state.panelEmpleado.paneles.tareas.search,
+    searchBy:state.panelEmpleado.paneles.tareas.searchBy,
+    sortBy:state.panelEmpleado.paneles.tareas.sortBy,
+    des:state.panelEmpleado.paneles.tareas.des,
+
     items: state.clients.task.lista.items_loaded,
 
     empleado: state.empleado,
     cliente_seleccionado: state.cliente_seleccionado
   }
 }
-function matchDispatchToProps(dispatch) { return bindActionCreators({ setSortTableClientesFreeLB, setItemsLoadTableClientesFreeLB, setInfoTableClientesFreeLB }, dispatch) }
+function matchDispatchToProps(dispatch) { return bindActionCreators({ setOrderTareasEmpleado, setItemsLoadTableClientesFreeLB, setInfoTableClientesFreeLB }, dispatch) }
 export default connect(mapStateToProps, matchDispatchToProps)(PanelLista);

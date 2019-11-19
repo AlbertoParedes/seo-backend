@@ -42,15 +42,18 @@ class PanelLinkbuildingPaid extends Component {
           beneficio={this.props.cliente_seleccionado.servicios.linkbuilding.paid.beneficio ? functions.getDecimcals(this.props.cliente_seleccionado.servicios.linkbuilding.paid.beneficio).toString() : '0'}
           inversion_mensual={this.props.cliente_seleccionado.servicios.linkbuilding.paid.inversion_mensual ? functions.getDecimcals(this.props.cliente_seleccionado.servicios.linkbuilding.paid.inversion_mensual).toString() : '0'}
           porcentaje_perdida={this.props.cliente_seleccionado.servicios.linkbuilding.paid.porcentaje_perdida ? this.props.cliente_seleccionado.servicios.linkbuilding.paid.porcentaje_perdida.toString() : '0'}
-        />
+          estrategia={this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.estrategia?this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.estrategia:{}}
+          micronichos={this.props.cliente_seleccionado.servicios.linkbuilding.paid.micronichos.activo ? this.props.cliente_seleccionado.servicios.linkbuilding.paid.micronichos.activo : false}
 
-        <Estrategia
+       />
+
+        {/*<Estrategia
           id_cliente={this.props.cliente_seleccionado.id_cliente}
           empleado={this.props.empleado}
           anchors={this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.anchors ? this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.anchors : {}}
           destinos={this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.destinos ? this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.destinos : {}}
           micronichos={this.props.cliente_seleccionado.servicios.linkbuilding.paid.micronichos.activo ? this.props.cliente_seleccionado.servicios.linkbuilding.paid.micronichos.activo : false}
-        />
+        />*/}
 
         <InformacionEmpleados
           id_cliente={this.props.cliente_seleccionado.id_cliente}

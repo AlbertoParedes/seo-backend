@@ -17,6 +17,20 @@ class ListaOpciones extends Component {
       }
     }
 
+    shouldComponentUpdate = (nextProps, nextState) => {
+      var update =false 
+      if(this.state.opcion_selected!==nextProps.opcion_selected){
+        update = true
+      }else if(this.state.opciones!==nextProps.opciones){
+        update = true
+      }else if(this.state.search_new!==nextProps.search_new){
+        update = true
+      }else if(this.state!==nextState){
+        update = true
+      }
+      return update
+    }
+
     componentWillMount = () => {
       document.addEventListener('mousedown',this.clickOutSide, false);
       var self = this
@@ -35,7 +49,7 @@ class ListaOpciones extends Component {
     componentWillReceiveProps = (newProps) => {
       if(this.state.opcion_selected!==newProps.opcion_selected)this.setState({opcion_selected:newProps.opcion_selected})
       if(this.state.opciones!==newProps.opciones)this.setState({opciones:newProps.opciones})
-      if(this.state.search_new!==newProps.search_new)this.setState({search_new:newProps.search_new})
+      //if(this.state.search_new!==newProps.search_new)this.setState({search_new:newProps.search_new})
     }
 
     clickLink = (e,id,obj) => {
@@ -58,7 +72,7 @@ class ListaOpciones extends Component {
       }
     }
     enterKeyNew = (event) => {
-      if(event.key === 'Enter' && this.state.correct_new_item && this.props.search_new!==this.state.search_new && this.state.search_new.trim()!==''){
+      if(event.key === 'Enter' && this.state.correct_new_item && this.props.search_new!==this.state.search_new && this.state.search_new.trim()!=='' && this.state.search_new.trim()!=='' && (!this.props.excluirSearch || !this.props.excluirSearch.includes(functions.cleanProtocolo(this.state.search_new)))){
         this.props.guardarNew(this.state.search_new);
         this.cancelarPopUp()
       }
@@ -82,8 +96,11 @@ class ListaOpciones extends Component {
 
     render() {
 
+      console.log('render pop');
+      
+
       return (
-        <div className={`container-opt-search ${this.props._class}`}  ref={node=>this.node=node}>
+        <div className={`container-opt-search ${this.props._class}`}  ref={node=>this.node=node} onClick={(e)=>e.stopPropagation()}>
 
           <div className={`opciones-search-popup ${this.props._class_div?this.props._class_div:''} ${this.state.visible && !this.props.hover?'opciones-search-show-popup':''}`}>
             <div className={`${this.props._class_container?this.props._class_container:''}`}>
@@ -131,7 +148,7 @@ class ListaOpciones extends Component {
               <li className={`${this.props._class_new?this.props._class_new:''}`}>
                 <i className="material-icons align-center new-destino">forward</i>
                 <input onKeyPress={ event => this.enterKeyNew(event)} className='break_sentence' placeholder={this.props.placeholder_new?this.props.placeholder_new:''} value={this.state.search_new} onChange={(e)=>this.changeNew(e.target.value)}/>
-                {this.state.correct_new_item && this.props.search_new!==this.state.search_new && this.state.search_new.trim()!=='' ?
+                {this.state.correct_new_item && this.props.search_new!==this.state.search_new && this.state.search_new.trim()!=='' && (!this.props.excluirSearch || !this.props.excluirSearch.includes(functions.cleanProtocolo(this.state.search_new))) ?
                   <i onClick={()=>{this.props.guardarNew(this.state.search_new);this.cancelarPopUp()}} className="material-icons align-center save-destino">save</i> : null
                 }
               </li>

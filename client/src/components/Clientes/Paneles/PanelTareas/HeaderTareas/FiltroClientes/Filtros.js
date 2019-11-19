@@ -33,6 +33,7 @@ class Filtros extends Component {
       {
         id_tarea,
         estado: 'no_completado',//No completado, en proceso, completado
+        completado:false,
         eliminado: false,
         title: '',
         descripcion: '',

@@ -12,7 +12,9 @@ class PanelLista extends Component {
   constructor(props){
       super(props);
       this.state={
-        items:ITEMS, sortBy:'dominio', des:false,
+        items:ITEMS, 
+        sortBy:'dominio', 
+        des:false,
         searchBy:this.props.searchBy,
         search:this.props.search,
         clientes_ordenados:[],

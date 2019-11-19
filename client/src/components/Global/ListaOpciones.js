@@ -21,7 +21,7 @@ class ListaOpciones extends Component {
 
     render() {
       return (
-        <div className='container-opt-search'  ref={node=>this.node=node}>
+        <div className={`container-opt-search`} style={this.props.style?this.props.style:{}} ref={node=>this.node=node}>
           <span  onClick={()=>this.setState({visible:true})}>{this.state.opciones[this.state.opcion_selected].valor}
             <i className={`material-icons arrow-opc-search ${this.state.visible?'arrow-opc-search-active':''}`}> expand_more </i>
           </span>

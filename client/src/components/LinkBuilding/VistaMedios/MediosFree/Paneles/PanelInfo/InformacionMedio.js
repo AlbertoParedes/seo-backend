@@ -15,8 +15,6 @@ class InformacionMedio extends Component {
     super(props);
     this.state = {
       web: this.props.web,
-      dr: this.props.dr,
-      ur: this.props.ur,
       status: this.props.status,
     }
   }
@@ -24,8 +22,6 @@ class InformacionMedio extends Component {
   shouldComponentUpdate = (nextProps, nextState) => {
 
     if (this.props.web !== nextProps.web ||
-      this.props.dr !== nextProps.dr ||
-      this.props.ur !== nextProps.ur ||
       this.props.status !== nextProps.status
     ) {
       return true;
@@ -37,8 +33,6 @@ class InformacionMedio extends Component {
 
   componentWillReceiveProps = (newProps) => {
     if (this.props.web !== newProps.web) { this.setState({ web: newProps.web }) }
-    if (this.props.dr !== newProps.dr) { this.setState({ dr: newProps.dr }) }
-    if (this.props.ur !== newProps.ur) { this.setState({ ur: newProps.ur }) }
     if (this.props.status !== newProps.status) { this.setState({ status: newProps.status }) }
   }
 
@@ -68,8 +62,6 @@ class InformacionMedio extends Component {
     }
 
     multiPath[`Servicios/Linkbuilding/Free/Medios/categorias/${this.props.categoria}/medios/${this.props.id_medio}/web`] = this.state.web.trim();
-    multiPath[`Servicios/Linkbuilding/Free/Medios/categorias/${this.props.categoria}/medios/${this.props.id_medio}/dr`] = this.state.dr.trim() !== '' ? (+this.state.dr) : null
-    multiPath[`Servicios/Linkbuilding/Free/Medios/categorias/${this.props.categoria}/medios/${this.props.id_medio}/ur`] = this.state.ur.trim() !== '' ? (+this.state.ur) : null
 
     if (this.state.status === 'Eliminado') {
       multiPath[`Servicios/Linkbuilding/Free/Medios/categorias/${this.props.categoria}/medios/${this.props.id_medio}/eliminado`] = true
@@ -96,8 +88,6 @@ class InformacionMedio extends Component {
   render() {
     var edited = false;
     if (this.props.web !== this.state.web ||
-      this.props.dr !== this.state.dr ||
-      this.props.ur !== this.state.ur ||
       this.props.status !== this.state.status
     ) {
       edited = true;
@@ -127,12 +117,6 @@ class InformacionMedio extends Component {
         {/*URL*/}
         <div className='col-2-input'>
           <SimpleInput title='Web del nuevo medio' _class_container={this.state.web.trim() === '' || web_repetida || !isLink ? 'error-form-input' : null} text={this.state.web} changeValue={web => { this.setState({ web }) }} />
-        </div>
-
-        {/*dr*/}
-        <div className='col-2-input'>
-          <SimpleInput type='int' title='DR' _class_container={this.state.dr.trim() === '' ? 'error-form-input' : null} text={this.state.dr.toString()} changeValue={dr => { this.setState({ dr }) }} />
-          <SimpleInput type='int' title='UR' _class_container={this.state.ur.trim() === '' ? 'error-form-input' : null} text={this.state.ur.toString()} changeValue={ur => { this.setState({ ur }) }} />
         </div>
 
         {/*ur y Estado*/}

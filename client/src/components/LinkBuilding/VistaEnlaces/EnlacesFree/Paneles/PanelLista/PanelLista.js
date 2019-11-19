@@ -365,6 +365,7 @@ class PanelLista extends Component {
                 changeSort={(valor) => this.changeSort(valor)}
                 sortBy={this.state.sortBy}
                 enlaces_ordenados={this.state.enlaces_ordenados}
+                enlaces={this.state.enlaces}
                 bloqueado={bloqueado}
                 empleado={this.props.empleado}
                 fecha={this.props.fecha}

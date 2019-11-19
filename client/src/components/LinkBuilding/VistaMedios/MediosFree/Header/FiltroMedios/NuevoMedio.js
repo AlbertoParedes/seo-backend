@@ -43,6 +43,7 @@ class NuevosEnlaces extends Component {
       descripcion: '',
       dominio: functions.getDominio(this.state.web.trim()),
       dr: 0,
+      da: 0,
       ur: 0,
       eliminado: false,
       enlaces: {},
@@ -50,7 +51,22 @@ class NuevosEnlaces extends Component {
       web: this.state.web.trim(),
       requiere_aprobacion: false,
       requiere_fecha: false,
-      requiere_registro: false
+      requiere_registro: false,
+      
+      tematicas:{
+        prensarank:['todas'],
+        google:['todas']
+      },
+      f_nf: "",
+      rdDomain: 0,
+      rdDomainDF:0,
+      rdInternas:0,
+      ldDomain: 0,
+      ldInternas: 0,
+      precio: 0,
+      claves:"",
+      trafico:0
+
     }
     multiPath[`Servicios/Linkbuilding/Free/Medios/categorias/${this.props.categoria_seleccionada.id}/medios/${key}`] = medio
 

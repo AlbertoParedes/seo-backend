@@ -24,14 +24,20 @@ class PanelLinkbuildingFree extends Component {
           follows={this.props.cliente_seleccionado.follows.toString().toLowerCase()}
           nofollows={this.props.cliente_seleccionado.nofollows.toString().toLowerCase()}
           enlaces_por_seo={this.props.cliente_seleccionado.servicios.linkbuilding.paid.enlaces_por_seo ? this.props.cliente_seleccionado.servicios.linkbuilding.paid.enlaces_por_seo : false}
+          estrategia={this.props.cliente_seleccionado.servicios.linkbuilding.free.home.estrategia?this.props.cliente_seleccionado.servicios.linkbuilding.free.home.estrategia:{}}
+
         />
 
+         {/*
         <Estrategia
           id_cliente={this.props.cliente_seleccionado.id_cliente}
           empleado={this.props.empleado}
           anchors={this.props.cliente_seleccionado.servicios.linkbuilding.free.home.anchors ? this.props.cliente_seleccionado.servicios.linkbuilding.free.home.anchors : {}}
           destinos={this.props.cliente_seleccionado.servicios.linkbuilding.free.home.destinos ? this.props.cliente_seleccionado.servicios.linkbuilding.free.home.destinos : {}}
-        />
+
+          estrategia={this.props.cliente_seleccionado.servicios.linkbuilding.free.home.estrategia?this.props.cliente_seleccionado.servicios.linkbuilding.free.home.estrategia:{}}
+
+        />*/}
 
         <InformacionEmpleados
           id_cliente={this.props.cliente_seleccionado.id_cliente}

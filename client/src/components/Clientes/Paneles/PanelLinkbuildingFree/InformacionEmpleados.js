@@ -315,7 +315,7 @@ class InformacionEmpleados extends Component {
           : null}
 
 
-        <p className='title-informacion-alumno'>3. Empleados</p>
+        <p className='title-informacion-alumno'>2. Empleados</p>
 
         <div className='ei-parent'>
 

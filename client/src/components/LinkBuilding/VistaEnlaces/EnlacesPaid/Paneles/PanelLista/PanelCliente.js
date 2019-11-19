@@ -232,7 +232,7 @@ class PanelCliente extends Component {
 
                     } else if (i < 200) {
                       result.push(
-                        <ItemEnlacePaid key={k} enlace={enlace} inversionMensualString={this.props.inversionMensualString} bloqueado={this.props.bloqueado} />
+                        <ItemEnlacePaid key={k} enlace={enlace} enlaces={this.props.enlaces} inversionMensualString={this.props.inversionMensualString} bloqueado={this.props.bloqueado} />
                       );
                     }
                     return result;
@@ -256,7 +256,7 @@ class PanelCliente extends Component {
 
                     } else if (i < 200) {
                       result.push(
-                        <ItemEnlacePaidSeo key={k} enlace={enlace} inversionMensualString={this.props.inversionMensualString} bloqueado={this.props.bloqueado} />
+                        <ItemEnlacePaidSeo key={k} enlace={enlace} enlaces={this.props.enlaces} inversionMensualString={this.props.inversionMensualString} bloqueado={this.props.bloqueado} />
                       );
                     }
                     return result;

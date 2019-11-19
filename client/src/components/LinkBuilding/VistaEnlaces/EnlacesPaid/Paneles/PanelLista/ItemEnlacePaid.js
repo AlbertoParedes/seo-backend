@@ -25,7 +25,8 @@ class ItemEnlacePaid extends Component {
       destinos_disponibles: {}, id_destino_selected: false,
       anchors_disponibles: {}, id_anchor_selected: false,
       micronichos_disponibles: {},
-      show_description: false
+      show_description: false,
+      destinosRepetidos:[]
 
     };
   }
@@ -431,7 +432,36 @@ class ItemEnlacePaid extends Component {
     }
 
     var destinos_disponibles = {}, id_destino_selected = false;
+    var destinosDisponibles = {}
+    //crear destinos disponibles y que no se repitan
+    console.log(this.props);
 
+    var estrategia = this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.estrategia
+
+    if(estrategia && estrategia.urls){
+      Object.entries(estrategia.urls).forEach(([i,url])=>{
+        var repetidas = Object.entries(this.props.enlaces).filter(([k,e])=>e.destino && url.url===e.destino)
+        if(repetidas.length<2 || (this.props.enlace.destino && functions.cleanProtocolo(this.props.enlace.destino)===functions.cleanProtocolo(url.url))){
+          destinosDisponibles[i]={ valor: url.url }
+        }
+        if(this.props.enlace.destino && functions.cleanProtocolo(url.url)===functions.cleanProtocolo(this.props.enlace.destino)){
+          id_destino_selected = i
+        }
+      })
+    }
+
+    var destinosRepetidos = []
+    //crear array de repetidos para no añadirlos como un enlace nuevo
+    Object.entries(this.props.enlaces).forEach(([i,enlace])=>{
+      if(enlace.destino){
+        var repetidos = Object.entries(this.props.enlaces).filter(([j,e])=>{return e.destino && functions.cleanProtocolo(e.destino)===functions.cleanProtocolo(enlace.destino) && !destinosRepetidos.includes(functions.cleanProtocolo(enlace.destino)) })
+        if(repetidos.length>=2){
+          destinosRepetidos.push(functions.cleanProtocolo(enlace.destino))
+        }
+      }
+    })
+    
+    /*
     if (this.props.enlace.destino && functions.cleanProtocolo(this.props.cliente_seleccionado.web) === functions.cleanProtocolo(this.props.enlace.destino)) {
       id_destino_selected = 'home'
     }
@@ -452,7 +482,10 @@ class ItemEnlacePaid extends Component {
 
       })
     } catch (e) { }
-    this.setState({ destinos_disponibles, id_destino_selected, show_destinos: true })
+
+    */
+
+    this.setState({ destinos_disponibles: destinosDisponibles, id_destino_selected, show_destinos: true, destinosRepetidos })
   }
   seleccionarDestino = (id_medio, obj) => {
     var multiPath = {};
@@ -483,8 +516,25 @@ class ItemEnlacePaid extends Component {
       return false;
     }
 
-    var anchors_disponibles = {}, id_anchor_selected = false;
+    var anchors_disponibles = {}, id_anchor_selected = false, achorsDisponibles= {};
 
+    var estrategia = this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.estrategia
+
+    if(estrategia && estrategia.urls && this.props.enlace.destino){
+      var keywords = Object.entries(estrategia.urls).find(([i,u])=>functions.cleanProtocolo(u.url)===functions.cleanProtocolo(this.props.enlace.destino))
+      
+      if(keywords && keywords[1].keywords){
+        keywords = keywords[1].keywords
+        Object.entries(keywords).forEach(([i,keyword])=>{
+          if (this.props.enlace.anchor && keyword.keyword.toLowerCase() === this.props.enlace.anchor.toLowerCase()) {
+            id_anchor_selected = i
+          }
+          achorsDisponibles[i]={valor:keyword.keyword}
+        })
+      }
+    }
+
+    /*
     try {
       var anchors = this.props.cliente_seleccionado.servicios.linkbuilding.paid.home.anchors;
       Object.entries(anchors).forEach(([k, d]) => {
@@ -497,7 +547,8 @@ class ItemEnlacePaid extends Component {
 
       })
     } catch (e) { }
-    this.setState({ anchors_disponibles, id_anchor_selected, show_anchors: true })
+    */
+    this.setState({ anchors_disponibles:achorsDisponibles, id_anchor_selected, show_anchors: true })
   }
   seleccionarAnchor = (id_anchor, obj) => {
     var multiPath = {};
@@ -601,9 +652,9 @@ class ItemEnlacePaid extends Component {
         .then(() => {
           this.props.setPopUpInfo({ visibility: true, status: 'done', moment: Date.now(), text: 'Se han guardado los cambios correctamente' })
           if (id === 'destino') {
-            this.setState({ id_destino_selected: false })
+            this.setState({ id_destino_selected: false,show_destinos:false })
           } else if (id === 'anchor') {
-            this.setState({ id_anchor_selected: false })
+            this.setState({ id_anchor_selected: false, show_anchors:false })
           }
         })
         .catch(err => {
@@ -827,6 +878,7 @@ class ItemEnlacePaid extends Component {
                 eliminar={() => { this.eliminar('destino') }}
                 guardarNew={(txt) => { this.guardarNew('destino', txt) }}
                 new={true}
+                excluirSearch={this.state.destinosRepetidos}
               />
               : null}
 

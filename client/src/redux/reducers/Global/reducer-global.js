@@ -12,7 +12,11 @@ var global = {
 
   timeCliente: {
 
-  }
+  },
+
+  
+
+
 
 }
 

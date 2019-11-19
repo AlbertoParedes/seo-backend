@@ -202,7 +202,7 @@ class PanelCliente extends Component {
                     const k = item[0], enlace = item[1];
                     if (i < 200) {
                       result.push(
-                        <ItemEnlaceFree key={k} enlace={enlace} bloqueado={this.props.bloqueado} />
+                        <ItemEnlaceFree key={k} enlace={enlace} enlaces={this.props.enlaces} bloqueado={this.props.bloqueado} />
                       );
                     }
                     return result;

@@ -44,7 +44,8 @@ import {
   setFiltrosFreePaid,
 
   setFiltrosTracking,
-  setNotificaciones
+  setNotificaciones,
+  setTareasEmpleado
 
 } from '../redux/actions';
 
@@ -52,10 +53,13 @@ import Clientes from './Clientes/Clientes'
 import Tracking from './Tracking/Tracking'
 import LinkBuilding from './LinkBuilding/LinkBuilding'
 import PopupInfo from './Global/PopupInfo';
+import Empleado from './Empleado/Empleado'
 
 import Firebase from 'firebase'
 
 const db = firebase.database().ref();
+const dbCloud = firebase.firestore();
+
 
 
 class Home extends Component {
@@ -322,6 +326,8 @@ class Home extends Component {
       //console.log(multiPath);
       //db.update(multiPath)
       this.props.setMediosFree(medios);
+      console.log(medios);
+      
     })
 
     db.child('Servicios/Linkbuilding/Paid/Plataformas/lista').once("value", snapshot => {
@@ -423,16 +429,34 @@ class Home extends Component {
 
       if (!empleado.online_state) {
         multiPath[`Empleados/${this.state.empleado.id_empleado}/online_state`] = true;
-        db.update(multiPath)
-          .then(() => {
-          })
-          .catch(err => {
-            console.log(err);
-          })
+        db
+        .update(multiPath)
+        .then(() => {})
+        .catch(err => {
+          console.log(err);
+        })
       }
 
-
       this.props.setEmpleado(empleado);
+    })
+
+    console.log('kknn', this.state.empleado);
+    
+
+    var taskRef = dbCloud.collection('Servicios/Tareas/tareas');
+    taskRef = taskRef.where(`empleados.${this.state.empleado.id_empleado}`, '==', true)
+    taskRef = taskRef.where(`completado`, '==', false)
+    
+    taskRef.onSnapshot(snapshot => {
+      var tareas = {}
+      snapshot.forEach(doc => {
+        tareas[doc.id] = doc.data()
+        var a = moment();
+        var b = moment(doc.data().fecha_limite)
+        tareas[doc.id].diferencia_dias = a.diff(b, 'days')  
+      });
+      this.props.setTareasEmpleado(tareas)
+          
     })
 
     //introducimos las sesiones
@@ -661,6 +685,20 @@ class Home extends Component {
             <div id='btn-linkbuilding' onClick={() => this.changePanel('linkbuilding')} className={`${this.props.panel_home === 'linkbuilding' ? 'active' : ''}`} ><i className="material-icons"> link </i></div>
           </div>
 
+
+          {/*BOTON EMPLEADO*/}
+          <div className='container-icons-bar'>
+
+            {this.props.tareasEmpleado && Object.entries(this.props.tareasEmpleado).length>0?
+              <div className='globo-tareas'>
+                {Object.entries(this.props.tareasEmpleado).length}
+              </div>
+              :
+              null
+            }
+            <div id='btn-linkbuilding' onClick={() => this.changePanel('empleado')} className={`${this.props.panel_home === 'empleado' ? 'active' : ''}`} ><i className="material-icons"> assignment_ind </i></div>
+          </div>
+
         </div>
 
         <div className='container-paneles'>
@@ -668,6 +706,7 @@ class Home extends Component {
           {this.props.clientes && this.props.panel_home === 'clientes' ? <Clientes visibility={this.props.panel_home === 'clientes' ? true : false} /> : null}
           {this.props.clientes && this.props.panel_home === 'tracking' ? <Tracking visibility={this.props.panel_home === 'tracking' ? true : false} /> : null}
           {this.props.clientes && this.props.panel_home === 'linkbuilding' ? <LinkBuilding visibility={this.props.panel_home === 'linkbuilding' ? true : false} /> : null}
+          {this.props.clientes && this.props.panel_home === 'empleado' ? <Empleado visibility={this.props.panel_home === 'empleado' ? true : false} /> : null}
 
         </div>
 
@@ -694,6 +733,7 @@ function mapStateToProps(state) {
   return {
     clientes: state.clientes,
     empleado: state.empleado,
+    tareasEmpleado: state.panelEmpleado.tareasEmpleado,
     panel_home: state.panel_home,
     vistasLinkbuilding: state.linkbuilding.vistas,
     cliente_seleccionado: state.cliente_seleccionado,
@@ -751,7 +791,8 @@ function matchDispatchToProps(dispatch) {
     setFiltrosFreePaid,
 
     setFiltrosTracking,
-    setNotificaciones
+    setNotificaciones,
+    setTareasEmpleado
 
   }, dispatch)
 }

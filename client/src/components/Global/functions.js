@@ -356,4 +356,52 @@ export function getEnlacesRestantesFree(cliente, fecha, filtros_empleados){
 
 export function isEmpty(obj) { for (var key in obj) { if (obj.hasOwnProperty(key)) return false; } return true; }
 
+export function getProcentajeDfDomain(rdDomain,rdDomainDF){
+
+  //(rdDomainDF/rdDomain)*100
+
+  //si alguna de las dos variables esta vacia la sustituiremos por 0
+  if(rdDomain==='')rdDomain=0
+  if(rdDomainDF==='')rdDomainDF=0
+
+  //convertimos las variables a number, ya que de primeras son strings
+  rdDomain = (+rdDomain)
+  rdDomainDF = (+rdDomainDF)
+
+  return (rdDomainDF/rdDomain)*100
+
+}
+
+export function getRatioDomain(rdDomain,ldDomain){
+
+  //rdDomain/ldDomain
+
+  //si alguna de las dos variables esta vacia la sustituiremos por 0
+  if(rdDomain==='')rdDomain=0
+  if(ldDomain==='')ldDomain=0
+
+  //convertimos las variables a number, ya que de primeras son strings
+  rdDomain = (+rdDomain)
+  ldDomain = (+ldDomain)
+
+  return rdDomain/ldDomain
+
+}
+export function getRatioInternas(rdInternas,ldInternas){
+
+  //rdDomain/ldDomain
+
+  //si alguna de las dos variables esta vacia la sustituiremos por 0
+  if(rdInternas==='')rdInternas=0
+  if(ldInternas==='')ldInternas=0
+
+  //convertimos las variables a number, ya que de primeras son strings
+  rdInternas = (+rdInternas)
+  ldInternas = (+ldInternas)
+
+  return rdInternas/ldInternas
+
+}
+
+
 export default getEnlacesRestantesFree;

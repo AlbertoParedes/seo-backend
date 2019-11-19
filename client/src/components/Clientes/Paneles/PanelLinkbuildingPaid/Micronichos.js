@@ -125,7 +125,7 @@ class Micronichos extends Component {
           : null}
 
 
-        <p className='title-informacion-alumno'>5. Micronichos</p>
+        <p className='title-informacion-alumno'>4. Micronichos</p>
 
         {Object.keys(this.state.micronichos).length > 0 ?
 

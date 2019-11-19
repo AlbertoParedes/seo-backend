@@ -145,7 +145,8 @@ class EditTask extends Component {
     batch.set(newTask,
       {
         id_tarea,
-        estado: 'No completado'/*No completado, en proceso, completado*/,
+        estado: 'no_completado',
+        completado:false,
         eliminado: false,
         title,
         descripcion,
@@ -428,12 +429,14 @@ class EditTask extends Component {
         this.multiPathConv(multipath, 'estado', 'texto', tarea.estado, 'en_proceso')
       }
 
+      cambios.push({ id: 'completado', valor: estado==='completado'?true:false })
       cambios.push({ id: 'en_proceso', valor: en_proceso }) 
       this.multiPathConv(multipath, 'en_proceso', 'en_proceso', tarea.en_proceso, en_proceso)
 
     }else{
       if (tarea.estado !== estado) {
         cambios.push({ id: 'estado', valor: estado })
+        cambios.push({ id: 'completado', valor: estado==='completado'?true:false })
         this.multiPathConv(multipath, 'estado', 'texto', tarea.estado, estado)
       }
     }
