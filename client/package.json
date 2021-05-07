@@ -30,7 +30,7 @@
     "react-star-rating-component": "^1.4.1",
     "react-stopwatch": "^2.0.3",
     "redux": "^4.0.4",
-    "underscore": "^1.9.1",
+    "underscore": "^1.12.1",
     "xlsx": "^0.14.5"
   },
   "scripts": {
