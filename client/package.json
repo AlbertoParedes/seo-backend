@@ -31,7 +31,7 @@
     "react-stopwatch": "^2.0.3",
     "redux": "^4.0.4",
     "underscore": "^1.9.1",
-    "xlsx": "^0.14.5"
+    "xlsx": "^0.17.0"
   },
   "scripts": {
     "start": "react-scripts start",
